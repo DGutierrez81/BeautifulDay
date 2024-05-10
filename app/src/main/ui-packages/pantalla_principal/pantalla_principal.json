@@ -1,0 +1,123 @@
+{
+  "name": "pantalla_principal",
+  "version": 32,
+  "source-key": {
+    "type": "figma",
+    "file": "OvtgJRjqKK7dZHFs854c5o",
+    "node": "45:185",
+    "version": "5724930835",
+    "component-id": "9c0f859c20462ed80a0ea8e8b01d536c7ea4560a"
+  },
+  "default": "Pantalla principal",
+  "design": {
+    "atoms": [
+      {
+        "type": "group",
+        "id": "top_level",
+        "root": "true"
+      },
+      {
+        "type": "text",
+        "id": "Sign up"
+      },
+      {
+        "type": "image",
+        "id": "Logo (1) 1"
+      },
+      {
+        "type": "text",
+        "id": "Log in"
+      }
+    ],
+    "modes": {
+      "Pantalla principal": {
+        "rules": [
+          {
+            "id": "top_level",
+            "padding": {
+              "top": "50.0",
+              "bottom": "50.0"
+            },
+            "children": [
+              "Sign up",
+              "Logo (1) 1",
+              "Log in"
+            ],
+            "item-spacing": "38.0",
+            "background-color": {
+              "alpha": "1.0",
+              "hue": "33.33333333333332",
+              "saturation": "0.13043478260869562",
+              "value": "0.27058823529411763"
+            }
+          },
+          {
+            "id": "Sign up",
+            "color": {
+              "alpha": "1.0",
+              "hue": "171.9183673469388",
+              "saturation": "1.0",
+              "value": "0.9607843137254902"
+            },
+            "text-content": "Sign up",
+            "overflow": "visible",
+            "text-align": "left",
+            "text-size": "96.0",
+            "line-height": "1.2158203125",
+            "typeface": "Jolly Lodger"
+          },
+          {
+            "id": "Logo (1) 1",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "350.270263671875"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "360.0"
+              }
+            },
+            "image-content": "logo_1_1.png",
+            "scale": "cover"
+          },
+          {
+            "id": "Log in",
+            "tap-handler": "$on Log in tapped",
+            "color": {
+              "alpha": "1.0",
+              "hue": "300.9448818897638",
+              "saturation": "0.996078431372549",
+              "value": "1.0"
+            },
+            "text-content": "Log in",
+            "overflow": "visible",
+            "text-align": "left",
+            "text-size": "96.0",
+            "line-height": "1.2158203125",
+            "typeface": "Jolly Lodger"
+          }
+        ]
+      }
+    }
+  },
+  "parameters": {
+    "on Log in tapped": {
+      "data-type": "void-callback",
+      "required": false,
+      "description": ""
+    }
+  },
+  "previews": [
+    {
+      "design": "Pantalla principal",
+      "size": {
+        "width": 360.0,
+        "height": 800.0
+      }
+    }
+  ],
+  "adin-component-search-paths": [],
+  "image-search-paths": [],
+  "vector-search-paths": []
+}

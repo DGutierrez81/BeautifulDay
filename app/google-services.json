@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "483883018159",
+    "project_id": "beautifulday-8e1ce",
+    "storage_bucket": "beautifulday-8e1ce.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:483883018159:android:71b7566978f8321466f15a",
+        "android_client_info": {
+          "package_name": "com.project.beautifulday"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCyGUSQ2AwZp2UHnah1xTeiIeNOyDCwh6g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
