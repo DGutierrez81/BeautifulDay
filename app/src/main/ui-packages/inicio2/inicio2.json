@@ -5,7 +5,7 @@
     "type": "figma",
     "file": "hm03ozO9vbvNU6xXOIATEj",
     "node": "8:1508",
-    "version": "5728053954",
+    "version": "5747247973",
     "component-id": "8fb26a8e69bae03b718702fcddca5562e99a6861"
   },
   "default": "Inicio2",
@@ -82,7 +82,7 @@
       },
       {
         "type": "group",
-        "id": "mdi:user-key-outline"
+        "id": "mdi:user-off-outline"
       },
       {
         "type": "group",
@@ -90,11 +90,11 @@
       },
       {
         "type": "vector",
-        "id": "Key"
+        "id": "Plus"
       },
       {
         "type": "vector",
-        "id": "Plus"
+        "id": "Vector"
       }
     ],
     "modes": {
@@ -115,7 +115,6 @@
             "children": [
               "Android Small - 1"
             ],
-            "item-spacing": "10.0",
             "background-color": {
               "alpha": "1.0",
               "hue": "186.3157894736842",
@@ -130,7 +129,8 @@
                 "sizing-mode": "shrink"
               },
               "height-constraints": {
-                "sizing-mode": "shrink"
+                "sizing-mode": "fixed",
+                "value": "640.0"
               }
             },
             "children": [
@@ -290,7 +290,8 @@
               }
             },
             "children": [
-              "Frame 3"
+              "Frame 3",
+              "mdi:user-off-outline"
             ],
             "item-spacing": "10.0",
             "background-color": {
@@ -540,14 +541,13 @@
             "main-axis-align": "start",
             "cross-axis-align": "start",
             "children": [
-              "mdi:user-key-outline",
               "mdi:user-add-outline"
             ],
             "item-spacing": "49.0",
             "clip-content": "false"
           },
           {
-            "id": "mdi:user-key-outline",
+            "id": "mdi:user-off-outline",
             "size-constraints": {
               "width-constraints": {
                 "sizing-mode": "fixed",
@@ -560,7 +560,7 @@
             },
             "is-structured": "false",
             "children": [
-              "Key"
+              "Vector"
             ]
           },
           {
@@ -581,24 +581,6 @@
             ]
           },
           {
-            "id": "Key",
-            "margin": {
-              "top": "8.333343505859375",
-              "bottom": "8.333324432373047"
-            },
-            "size-constraints": {
-              "width-constraints": {
-                "sizing-mode": "proportional",
-                "value": "1.0"
-              },
-              "height-constraints": {
-                "sizing-mode": "proportional",
-                "value": "1.0"
-              }
-            },
-            "vector-content": "key.svg"
-          },
-          {
             "id": "Plus",
             "margin": {
               "left": "2.08331298828125",
@@ -617,6 +599,26 @@
               }
             },
             "vector-content": "plus.svg"
+          },
+          {
+            "id": "Vector",
+            "margin": {
+              "left": "5.72918701171875",
+              "top": "8.333343505859375",
+              "right": "8.33331298828125",
+              "bottom": "2.083324432373047"
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              }
+            },
+            "vector-content": "vector.svg"
           }
         ]
       }
@@ -627,7 +629,7 @@
       "design": "Inicio2",
       "size": {
         "width": 360.0,
-        "height": 640.3999633789062
+        "height": 640.0
       }
     }
   ],

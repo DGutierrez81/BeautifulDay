@@ -1,6 +1,8 @@
 package com.project.beautifulday.Meal.Data.Response
 
 import com.project.beautifulday.Meal.MealService
+import com.project.beautifulday.Meal.ui.States.IngredientState
+import com.project.beautifulday.Meal.ui.States.ListMealIngredientState
 import com.project.beautifulday.Meal.ui.States.ListMealsState
 import com.project.beautifulday.Meal.ui.States.MealState
 import javax.inject.Inject
@@ -13,6 +15,34 @@ class MealRepository@Inject constructor(private val api: MealService) {
         return if(response.isSuccessful){
             response.body()?.getListMealState() ?: ListMealsState()
         }else ListMealsState()
+    }
+
+    suspend fun getRandomMeal():ListMealsState{
+        val response = api.getRandomMeal()
+        return if(response.isSuccessful){
+            response.body()?.getListMealState() ?: ListMealsState()
+        }else ListMealsState()
+    }
+
+    suspend fun getListCategory(): ListMealsState{
+        val response = api.getListCategory()
+        return if(response.isSuccessful){
+            response.body()?.getListMealState() ?: ListMealsState()
+        }else ListMealsState()
+    }
+
+    suspend fun getListArea(): ListMealsState{
+        val response = api.getListArea()
+        return if(response.isSuccessful){
+            response.body()?.getListMealState() ?: ListMealsState()
+        }else ListMealsState()
+    }
+
+    suspend fun getListIngredient(): ListMealIngredientState{
+        val response = api.getListIngredient()
+        return if(response.isSuccessful){
+            response.body()?.getListIngredient() ?: ListMealIngredientState()
+        }else ListMealIngredientState()
     }
 
     private fun ListMeals.getListMealState(): ListMealsState{
@@ -41,4 +71,20 @@ class MealRepository@Inject constructor(private val api: MealService) {
                 strMeasure14?:"", strMeasure15?:"", strMeasure16?:"", strMeasure17?:"", strMeasure18?:"", strMeasure19?:"", strMeasure20?:"",)
         )
     }
+
+    private fun ListMealIngredient.getListIngredient(): ListMealIngredientState{
+        return ListMealIngredientState(
+            meals = this.meals?.map{it.getIngredient()}
+        )
+    }
+
+    private fun Ingredient.getIngredient(): IngredientState{
+        return IngredientState(
+            idIngredient = this.idIngredient,
+            strIngredient = this.strIngredient,
+            strDescription = this.strDescription,
+            strType = this.strType
+        )
+    }
+
 }

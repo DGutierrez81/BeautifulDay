@@ -22,14 +22,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.google.relay.compose.ColumnScopeInstanceImpl.weight
+import com.project.beautifulday.Meal.MealUseCases.UseCaseListArea
+import com.project.beautifulday.Meal.MealUseCases.UseCaseListIngredient
 import com.project.beautifulday.Meal.MealUseCases.UseCaseMealName
+import com.project.beautifulday.Meal.MealUseCases.UseCaseRandom
+import com.project.beautifulday.Meal.MealUseCases.UseListCategoy
+import com.project.beautifulday.Meal.ui.States.IngredientState
 import com.project.beautifulday.Meal.ui.States.MealState
+import com.project.beautifulday.Meal.ui.States.MealUser
+import com.project.beautifulday.R
+import com.project.beautifulday.inicio2.jotiOne
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -37,14 +47,37 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MealViewmodel@Inject constructor(private val useCaseMealName: UseCaseMealName): ViewModel() {
+class MealViewmodel@Inject constructor(private val useCaseMealName: UseCaseMealName,
+    private val useCaseRandom: UseCaseRandom, private val useListCategoy: UseListCategoy,
+    private val useCaseListArea: UseCaseListArea, private val useCaseListIngredient: UseCaseListIngredient): ViewModel() {
 
     private val _mealsData = MutableStateFlow<List<MealState>>(emptyList())
     val mealsData: StateFlow<List<MealState>> = _mealsData
 
+    private val _ingredientData = MutableStateFlow<List<IngredientState>>(emptyList())
+    val ingredientData: StateFlow<List<IngredientState>> = _ingredientData
+
+    var mealList by mutableStateOf(mutableListOf<MealState>())
+        private set
+
+    var meal by mutableStateOf(MealUser())
+        private set
     var mealName by mutableStateOf("")
+        private set
 
     var showOutLineText by mutableStateOf(false)
+        private set
+
+    var showViewCenter by mutableStateOf(true)
+        private set
+
+    var ingredients by mutableStateOf<MutableList<String>>(mutableListOf())
+        private set
+
+    var measures by mutableStateOf<MutableList<String>>(mutableListOf())
+        private set
+
+
 
     fun getMealName(name: String){
         viewModelScope.launch {
@@ -52,8 +85,65 @@ class MealViewmodel@Inject constructor(private val useCaseMealName: UseCaseMealN
         }
     }
 
+    fun getRandom(){
+        viewModelScope.launch {
+            mealList = (useCaseRandom().meals?: mutableListOf()).toMutableList()
+            getMeal()
+        }
+    }
+
+
+    fun getMeal(){
+        for(meal in mealList){
+            saveMeal(idMeal = meal?.idMeal ?: "",
+                strMeal = meal?.strMeal ?: "",
+                strCategory = meal?.strCategory ?: "",
+                strArea = meal?.strArea ?: "",
+                strInstructions = meal?.strInstructions ?: "",
+                strMealThumb = meal?.strMealThumb ?: "",
+                strTags = meal?.strTags ?: "",
+                strYoutube = meal?.strYoutube ?: "",
+                strIngredients = meal.strIngredients,
+                strMeasures = meal.strMeasures)
+        }
+        /*
+        LazyColumn(){
+            itemsIndexed(meals){index, item ->
+                saveMeal(idMeal = meal?.idMeal ?: "",
+                    strMeal = meal?.strMeal ?: "",
+                    strCategory = meal?.strCategory ?: "",
+                    strArea = meal?.strArea ?: "",
+                    strInstructions = meal?.strInstructions ?: "",
+                    strMealThumb = meal?.strMealThumb ?: "",
+                    strTags = meal?.strTags ?: "",
+                    strYoutube = meal?.strYoutube ?: "",
+                    strIngredients = meal.strIngredients,
+                    strMeasures = meal.strMeasures)
+            }
+        }
+
+         */
+    }
+
+    fun getListCategory(){
+        viewModelScope.launch {
+            _mealsData.value = useListCategoy().meals?: mutableListOf()
+        }
+    }
+
+    fun getListArea(){
+        viewModelScope.launch{
+            _mealsData.value = useCaseListArea().meals?: mutableListOf()
+        }
+    }
+
+    fun getListIngredient(){
+        viewModelScope.launch {
+            _ingredientData.value = useCaseListIngredient().meals?: mutableListOf()
+        }
+    }
     @Composable
-    fun ShowMealsName(meals: List<MealState>){
+    fun ShowMealsName(meals: List<MealState>, navController: NavController){
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ){
@@ -74,8 +164,8 @@ class MealViewmodel@Inject constructor(private val useCaseMealName: UseCaseMealN
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            GetImages(meal = item)
-                            GetImages(meal = nextItem)
+                            GetImages(meal = item, navController)
+                            GetImages(meal = nextItem, navController)
                         }
                     }
                 }
@@ -84,7 +174,7 @@ class MealViewmodel@Inject constructor(private val useCaseMealName: UseCaseMealN
     }
     
     @Composable
-    fun GetImages(meal: MealState?){
+    fun GetImages(meal: MealState?, navController: NavController){
         meal?.strMealThumb.let{ url ->
             Box(
                 modifier = Modifier.
@@ -99,21 +189,59 @@ class MealViewmodel@Inject constructor(private val useCaseMealName: UseCaseMealN
                             .height(120.dp)
                             .clip(RoundedCornerShape(100.dp))
                             .clickable {
-
+                                saveMeal(
+                                    idMeal = meal?.idMeal ?: "",
+                                    strMeal = meal?.strMeal ?: "",
+                                    strCategory = meal?.strCategory ?: "",
+                                    strArea = meal?.strArea ?: "",
+                                    strInstructions = meal?.strInstructions ?: "",
+                                    strMealThumb = meal?.strMealThumb ?: "",
+                                    strTags = meal?.strTags ?: "",
+                                    strYoutube = meal?.strYoutube ?: "",
+                                    strIngredients = meal?.strIngredients ?: mutableListOf(),
+                                    strMeasures = meal?.strMeasures ?: mutableListOf()
+                                )
+                                navController.navigate("myCard")
                             }
                     )
                     Text(
                         text = meal?.strMeal?:"", modifier = Modifier
-                            .height(75.dp)
+                            .height(120.dp)
                             .width(120.dp)
                             .padding(16.dp)
                             .align(Alignment.CenterHorizontally),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        fontFamily = jotiOne,
+                        color = colorResource(id = R.color.paynesGray)
                     )
                 }
             }
         }
     }
+
+    fun saveMeal(
+        idMeal: String,
+        strMeal: String,
+        strCategory: String,
+        strArea: String,
+        strInstructions: String,
+        strMealThumb: String,
+        strTags: String,
+        strYoutube: String,
+        strIngredients: MutableList<String>,
+        strMeasures: MutableList<String>
+    ){
+        ingredients.clear()
+        measures.clear()
+
+        strIngredients.forEach{if(it != "") ingredients.add(it)}
+        strMeasures.forEach { if(it != "") measures.add(it) }
+
+        meal = MealUser(idMeal, strMeal, strCategory, strArea, strInstructions, strMealThumb, strTags, strYoutube, ingredients, measures, "")
+
+    }
+
+
 
     fun changeMealName(name: String){
         mealName = name
@@ -122,4 +250,9 @@ class MealViewmodel@Inject constructor(private val useCaseMealName: UseCaseMealN
     fun changeshowOutLineText(result: Boolean){
         showOutLineText = !result
     }
+
+    fun changeViewCenter(result: Boolean){
+        showViewCenter = result
+    }
+
 }
