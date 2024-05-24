@@ -1,43 +1,131 @@
 package com.project.beautifulday.Meal.ui
 
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Card
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import com.project.beautifulday.Meal.ui.ViewModels.MealViewmodel
+import com.project.beautifulday.Meal.ui.ViewModels.ViewmodelAplication
+import com.project.beautifulday.R
+import com.project.beautifulday.androidsmall1.jotiOne
+
 
 @Composable
 fun ListCategory(navController: NavController, viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication){
     val mealsData by viewmodel.mealsData.collectAsState()
-    val ingredientData by viewmodel.ingredientData.collectAsState()
+    val mealCategory by viewmodel.categoyData.collectAsState()
+    val meal = viewmodel.meal
+    val actionTranslate by viewmodelA.actionTranslate.observeAsState(true)
+    //val actionTranslate = viewmodelA.actionTranslate
+    val state = viewmodelA.state.value
+    //val slide = viewmodelA.slide
+    val slide by viewmodelA.slide.observeAsState(false)
+    val catagoria = viewmodel.categoria
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = colorResource(id = R.color.paynesGray)),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        for(category in mealCategory){
+            if(category.strCategory == catagoria){
+                Text(
+                    text = category.strCategory?: "", modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(5.dp), fontFamily = jotiOne, fontSize = 24.sp, color = colorResource(
+                        id = R.color.silver
+                    ), textAlign = TextAlign.Center
+                )
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Column(
+                        modifier = Modifier
+                            .background(colorResource(id = R.color.paynesGray))
+                    ) {
+
+                        AsyncImage(
+                            model = category.strCategoryThumb,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(300.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                        Spacer(modifier = Modifier.padding(3.dp))
+                        TextButton(onClick = {
+                            viewmodelA.changeActionTranslate(!actionTranslate)
+                        }) {
+                            Text(text = "Traducir", fontFamily = jotiOne, color = colorResource(id = R.color.silver))
+                        }
+                        LazyColumn(
+                            modifier = Modifier
+                                .padding(20.dp)
+                                .height(200.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            item {
+
+                                ActionTransalate(
+                                    actionTranslate = actionTranslate,
+                                    text = category.strCategoryDescription?:"",
+                                    viewmodelA = viewmodelA,
+                                    context = context,
+                                    state = state
+                                )
+                            }
+                        }
+
+                    }
+
+                }
+            }
+        }
+    }
+
+
+    /*
     
     LazyColumn(){
-        items(ingredientData){item ->
+        items(mealCategory){item ->
+            /*
             Column {
                 Text(text = item.idIngredient?:"")
                 Text(text = item.strIngredient?:"")
                 Text(text = item.strType?:"")
                 Text(text = item.strDescription?:"")
             }
-            /*
-            if(item.strCategory != null){
-                Column {
-                    Text(text = "Categorias:")
-                    Text(text = item.strCategory?: "")
-                }
-            }
-            if(item.strArea != null){
-                Column {
-                    Text(text = "Paises:")
-                    Text(text = item.strArea?: "")
-                }
-            }
-            
+
              */
+
+            Text(text = item.idCategory?:"")
+            Text(text = item.strCategory?:"")
+            AsyncImage(model = item.strCategoryThumb, contentDescription = null)
+            Text(text = item.strCategoryDescription?:"")
+            
+
         }
     }
+
+     */
 }

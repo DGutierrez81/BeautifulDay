@@ -10,8 +10,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.project.beautifulday.Meal.ui.MealViewmodel
-import com.project.beautifulday.Meal.ui.ViewmodelAplication
+import com.project.beautifulday.Meal.ui.ViewModels.LogViewmodel
+import com.project.beautifulday.Meal.ui.ViewModels.MealViewmodel
+import com.project.beautifulday.Meal.ui.ViewModels.ViewmodelAplication
 import com.project.beautifulday.Navigation.NavManager
 import com.project.beautifulday.ui.theme.BeautifulDayTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,6 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewmodel: MealViewmodel by viewModels()
     private val viewmodelA: ViewmodelAplication by viewModels()
+    private val LgViewModel: LogViewmodel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -29,7 +31,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    NavManager(viewmodel, this@MainActivity, viewmodelA)
+                    NavManager(viewmodel, this@MainActivity, viewmodelA, LgViewModel)
                 }
             }
         }

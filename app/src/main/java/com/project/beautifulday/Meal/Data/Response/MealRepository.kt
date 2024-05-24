@@ -1,7 +1,9 @@
 package com.project.beautifulday.Meal.Data.Response
 
 import com.project.beautifulday.Meal.MealService
+import com.project.beautifulday.Meal.ui.States.CategoriesState
 import com.project.beautifulday.Meal.ui.States.IngredientState
+import com.project.beautifulday.Meal.ui.States.ListCategoriesState
 import com.project.beautifulday.Meal.ui.States.ListMealIngredientState
 import com.project.beautifulday.Meal.ui.States.ListMealsState
 import com.project.beautifulday.Meal.ui.States.MealState
@@ -24,8 +26,14 @@ class MealRepository@Inject constructor(private val api: MealService) {
         }else ListMealsState()
     }
 
-    suspend fun getListCategory(): ListMealsState{
+    suspend fun getListCategory(): ListCategoriesState{
         val response = api.getListCategory()
+        return if(response.isSuccessful){
+            response.body()?.getListCategoiesState() ?: ListCategoriesState()
+        }else ListCategoriesState()
+    }
+    suspend fun getListCategories(): ListMealsState{
+        val response = api.getListCategories()
         return if(response.isSuccessful){
             response.body()?.getListMealState() ?: ListMealsState()
         }else ListMealsState()
@@ -43,6 +51,27 @@ class MealRepository@Inject constructor(private val api: MealService) {
         return if(response.isSuccessful){
             response.body()?.getListIngredient() ?: ListMealIngredientState()
         }else ListMealIngredientState()
+    }
+
+    suspend fun getMealById(id: String): ListMealsState{
+        val response = api.getMealById(id)
+        return if(response.isSuccessful){
+            response.body()?.getListMealState() ?: ListMealsState()
+        }else ListMealsState()
+    }
+
+    suspend fun getMealCategory(category: String): ListCategoriesState{
+        val response = api.getMealCategory(category)
+        return if(response.isSuccessful){
+            response.body()?.getListCategoiesState() ?: ListCategoriesState()
+        }else ListCategoriesState()
+    }
+
+    suspend fun getMealArea(area: String):ListMealsState{
+        val response = api.getMealArea(area)
+        return if(response.isSuccessful){
+            response.body()?.getListMealState() ?: ListMealsState()
+        } else ListMealsState()
     }
 
     private fun ListMeals.getListMealState(): ListMealsState{
@@ -84,6 +113,21 @@ class MealRepository@Inject constructor(private val api: MealService) {
             strIngredient = this.strIngredient,
             strDescription = this.strDescription,
             strType = this.strType
+        )
+    }
+
+    private fun ListCategories.getListCategoiesState(): ListCategoriesState{
+        return ListCategoriesState(
+            categories = this.categories?.map{it.getCategoriesState()}
+        )
+    }
+
+    private fun Categories.getCategoriesState(): CategoriesState {
+        return CategoriesState(
+            idCategory = this.idCategory,
+            strCategory = this.strCategory,
+            strCategoryThumb = this.strCategoryThumb,
+            strCategoryDescription = this.strCategoryDescription
         )
     }
 

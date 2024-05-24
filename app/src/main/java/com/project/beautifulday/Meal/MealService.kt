@@ -4,9 +4,12 @@ import com.project.beautifulday.Meal.Data.Response.ListCategories
 import com.project.beautifulday.Meal.Data.Response.ListMealArea
 import com.project.beautifulday.Meal.Data.Response.ListMealIngredient
 import com.project.beautifulday.Meal.Data.Response.ListMeals
+import com.project.beautifulday.Meal.Data.Response.Meal
+import com.project.beautifulday.Util.Constans.Companion.ALLCATEGORY
 import com.project.beautifulday.Util.Constans.Companion.AREA
 import com.project.beautifulday.Util.Constans.Companion.CATEGORY
 import com.project.beautifulday.Util.Constans.Companion.FILTER
+import com.project.beautifulday.Util.Constans.Companion.ID
 import com.project.beautifulday.Util.Constans.Companion.INGREDIENT
 import com.project.beautifulday.Util.Constans.Companion.RANDOM
 import com.project.beautifulday.Util.Constans.Companion.SEARCH
@@ -23,7 +26,7 @@ interface MealService {
     suspend fun getRandomMeal(): Response<ListMeals>
 
     @GET(FILTER)
-    suspend fun getMealArea(@Query("a") area: String): Response<ListMealArea>
+    suspend fun getMealArea(@Query("a") area: String): Response<ListMeals>
 
     @GET(FILTER)
     suspend fun getMealCategory(@Query("c") category: String): Response<ListCategories>
@@ -37,6 +40,12 @@ interface MealService {
     @GET(AREA)
     suspend fun getListArea(): Response<ListMeals>
 
+    @GET(ALLCATEGORY)
+    suspend fun getListCategory(): Response<ListCategories>
+
     @GET(CATEGORY)
-    suspend fun getListCategory(): Response<ListMeals>
+    suspend fun getListCategories(): Response<ListMeals>
+
+    @GET(ID)
+    suspend fun getMealById(@Query("i") id: String): Response<ListMeals>
 }
