@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
-import com.project.beautifulday.Meal.ui.ViewModels.LogViewmodel
+import com.project.beautifulday.ViewModels.LogViewmodel
 
 @Composable
 fun BlankView(navController: NavController, LgViewModel: LogViewmodel){

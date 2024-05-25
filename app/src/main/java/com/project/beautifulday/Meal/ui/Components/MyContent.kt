@@ -29,9 +29,9 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.project.beautifulday.Meal.ui.States.MealState
 import com.project.beautifulday.Meal.ui.States.MealUser
-import com.project.beautifulday.Meal.ui.ViewModels.LogViewmodel
-import com.project.beautifulday.Meal.ui.ViewModels.MealViewmodel
-import com.project.beautifulday.Meal.ui.ViewModels.ViewmodelAplication
+import com.project.beautifulday.ViewModels.LogViewmodel
+import com.project.beautifulday.ViewModels.MealViewmodel
+import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.R
 import com.project.beautifulday.androidsmall1.jotiOne
 
@@ -180,7 +180,7 @@ fun MyContent(innerPadding: PaddingValues,
             Box(modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.BottomCenter){
                 Column {
-                    ViewCenter(showCenter = showViewCenter, navController = navController, viewmodel, LgViewModel = LgViewModel)
+                    ViewCenter(showCenter = showViewCenter, navController = navController, viewmodelA, LgViewModel = LgViewModel)
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()

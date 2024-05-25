@@ -45,10 +45,11 @@ import com.project.beautifulday.Meal.ui.Components.MyBottomBar
 import com.project.beautifulday.Meal.ui.Components.MyContent
 import com.project.beautifulday.Meal.ui.Components.MyTopBar
 import com.project.beautifulday.Meal.ui.States.MealState
-import com.project.beautifulday.Meal.ui.ViewModels.LogViewmodel
-import com.project.beautifulday.Meal.ui.ViewModels.MealViewmodel
-import com.project.beautifulday.Meal.ui.ViewModels.ViewmodelAplication
+import com.project.beautifulday.ViewModels.LogViewmodel
+import com.project.beautifulday.ViewModels.MealViewmodel
+import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.R
+
 
 
 @Composable
@@ -61,6 +62,8 @@ fun PrincipalScreen(navController: NavController, viewmodel: MealViewmodel, cont
     val login = LgViewModel.login
     var order = 1
     if(login) order = 3
+
+
 
 
 

@@ -19,15 +19,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.project.beautifulday.Meal.ui.ViewModels.LogViewmodel
-import com.project.beautifulday.Meal.ui.ViewModels.MealViewmodel
+import com.project.beautifulday.ViewModels.LogViewmodel
+import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.R
+import com.project.beautifulday.ViewModels.ViewmodelAplication
 
 
 @Composable
 fun ViewCenter(showCenter: Int,
                navController: NavController,
-               viewmodel: MealViewmodel,
+               viewmodelA: ViewmodelAplication,
                LgViewModel: LogViewmodel
 ){
     when(showCenter){
@@ -39,8 +40,8 @@ fun ViewCenter(showCenter: Int,
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                MyImage(R.drawable.olla ,navController, "cooking pot", "meal", "Vamos a comer")
-                MyImage(R.drawable.glass, navController, "glass", "cocktail", "¿Una copita?")
+                MyImage(R.drawable.olla ,navController, "cooking pot", "meal", "Vamos a comer", viewmodelA)
+                MyImage(R.drawable.glass, navController, "glass", "cocktail", "¿Una copita?", viewmodelA)
             }
         }
         2 -> {

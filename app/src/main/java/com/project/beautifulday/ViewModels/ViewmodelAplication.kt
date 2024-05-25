@@ -1,4 +1,4 @@
-package com.project.beautifulday.Meal.ui.ViewModels
+package com.project.beautifulday.ViewModels
 
 import android.content.Context
 import android.net.Uri
@@ -29,7 +29,7 @@ import com.project.beautifulday.Firebase.AuthService
 import com.project.beautifulday.Firebase.FirestoreService
 import com.project.beautifulday.Firebase.StorageService
 import com.project.beautifulday.Meal.ui.States.Traduction
-import com.project.beautifulday.User
+
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -110,6 +110,9 @@ class ViewmodelAplication@Inject constructor(private val storageService: Storage
         private set
 
     var showAlert by mutableStateOf(false)
+        private set
+
+    var screen by mutableStateOf("")
         private set
 
 
@@ -361,6 +364,10 @@ class ViewmodelAplication@Inject constructor(private val storageService: Storage
 
     fun changeUriVideo(uriVi: String){
         uriVideo = uriVi
+    }
+
+    fun changeScreen(result: String){
+        screen = result
     }
 
 

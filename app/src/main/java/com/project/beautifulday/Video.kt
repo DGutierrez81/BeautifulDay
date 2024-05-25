@@ -15,7 +15,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
-import com.project.beautifulday.Meal.ui.ViewModels.ViewmodelAplication
+import com.project.beautifulday.ViewModels.ViewmodelAplication
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable

@@ -1,4 +1,4 @@
-package com.project.beautifulday.Meal.ui.ViewModels
+package com.project.beautifulday.ViewModels
 
 import android.util.Log
 import androidx.compose.foundation.background
@@ -54,6 +54,8 @@ class LogViewmodel@Inject constructor(private val authService: AuthService, priv
 
     var login by mutableStateOf(false)
         private set
+
+
 
 
 

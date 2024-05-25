@@ -3,7 +3,6 @@ package com.project.beautifulday.Meal.ui
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,33 +14,26 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.project.beautifulday.Meal.ui.Components.CreateDialog
-import com.project.beautifulday.Meal.ui.Components.ViewCenter
+import com.project.beautifulday.Meal.ui.Components.MyOutlinedTectField
 import com.project.beautifulday.Meal.ui.Components.createAlert
-import com.project.beautifulday.Meal.ui.ViewModels.MealViewmodel
-import com.project.beautifulday.Meal.ui.ViewModels.ViewmodelAplication
+import com.project.beautifulday.ViewModels.MealViewmodel
+import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.R
-import com.project.beautifulday.androidsmall1.jotiOne
 
 @Composable
 fun CreateNewMeal(navController: NavController, viewmodel: MealViewmodel, viewmodelA: ViewmodelAplication, context: ComponentActivity){
@@ -101,7 +93,19 @@ fun CreateNewMeal(navController: NavController, viewmodel: MealViewmodel, viewmo
                     )
                 )
 
+
                 Spacer(modifier = Modifier.padding(2.dp))
+
+                MyOutlinedTectField(
+                    value = name,
+                    onValueChange = viewmodelA::changeName, //Equivalente a {newName -> viewmodelA.changeName(newName)}
+                    focusRequester = focusRequester,
+                    label = "Nombre"
+                )
+
+
+
+                /*
                 OutlinedTextField(
                     value = name, onValueChange = { viewmodelA.changeName(it) },
                     modifier = Modifier
@@ -124,8 +128,18 @@ fun CreateNewMeal(navController: NavController, viewmodel: MealViewmodel, viewmo
                     )
                 )
 
+                 */
+
                 Spacer(modifier = Modifier.padding(2.dp))
 
+                MyOutlinedTectField(
+                    value = descripcion,
+                    onValueChange = viewmodelA::changeDescripcion,
+                    focusRequester = focusRequester,
+                    label = "Descripción"
+                )
+
+                /*
                 OutlinedTextField(
                     value = descripcion, onValueChange = { viewmodelA.changeDescripcion(it) },
                     modifier = Modifier
@@ -148,8 +162,18 @@ fun CreateNewMeal(navController: NavController, viewmodel: MealViewmodel, viewmo
                     )
                 )
 
+                 */
+
                 Spacer(modifier = Modifier.padding(2.dp))
 
+                MyOutlinedTectField(
+                    value = ingrediente,
+                    onValueChange = viewmodelA::changeIngrediente,
+                    focusRequester = focusRequester,
+                    label = "Ingredientes"
+                )
+
+                /*
                 OutlinedTextField(
                     value = ingrediente, onValueChange = { viewmodelA.changeIngrediente(it) },
                     modifier = Modifier
@@ -172,8 +196,18 @@ fun CreateNewMeal(navController: NavController, viewmodel: MealViewmodel, viewmo
                     )
                 )
 
+                 */
+
                 Spacer(modifier = Modifier.padding(2.dp))
 
+                MyOutlinedTectField(
+                    value = foto,
+                    onValueChange = viewmodelA::changeUriFoto,
+                    focusRequester = focusRequester,
+                    label = "Foto"
+                )
+
+                /*
                 OutlinedTextField(
                     value = foto, onValueChange = { viewmodelA.changeUriFoto(it) },
                     modifier = Modifier
@@ -196,8 +230,18 @@ fun CreateNewMeal(navController: NavController, viewmodel: MealViewmodel, viewmo
                     )
                 )
 
+                 */
+
                 Spacer(modifier = Modifier.padding(2.dp))
 
+                MyOutlinedTectField(
+                    value = video,
+                    onValueChange = viewmodelA::changeUriVideo,
+                    focusRequester = focusRequester,
+                    label = "Video"
+                )
+
+                /*
                 OutlinedTextField(
                     value = video, onValueChange = { viewmodelA.changeUriVideo(it) },
                     modifier = Modifier
@@ -219,6 +263,8 @@ fun CreateNewMeal(navController: NavController, viewmodel: MealViewmodel, viewmo
                         imeAction = ImeAction.Done
                     )
                 )
+
+                 */
                 Spacer(modifier = Modifier.padding(15.dp))
             }
         }
@@ -252,7 +298,7 @@ fun CreateNewMeal(navController: NavController, viewmodel: MealViewmodel, viewmo
                     Text(text = "Enviar datos", modifier = Modifier
                         .padding(10.dp)
                         .clickable {
-                            createAlert(navController,viewmodelA, viewmodel, context)
+                            createAlert(navController, viewmodelA, viewmodel, context)
                             viewmodelA.changeAlert(!showAlert)
                             /*
                             viewmodel.saveMeal(

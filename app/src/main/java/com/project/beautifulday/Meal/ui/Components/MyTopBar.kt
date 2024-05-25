@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.project.beautifulday.Meal.ui.States.MealState
-import com.project.beautifulday.Meal.ui.ViewModels.MealViewmodel
-import com.project.beautifulday.Meal.ui.ViewModels.ViewmodelAplication
+import com.project.beautifulday.ViewModels.MealViewmodel
+import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.R
 import com.project.beautifulday.androidsmall1.jotiOne
 
@@ -40,6 +40,7 @@ fun MyTopBar(
     viewmodelA: ViewmodelAplication,
     showDialog: Boolean
 ){
+    val screen = viewmodelA.screen
     if(showMenu){
         Column(
             modifier = Modifier
@@ -51,6 +52,13 @@ fun MyTopBar(
                 modifier = Modifier.padding(top = 20.dp, start = 20.dp, end = 20.dp)
             ){
                 item {
+                    Mytext(text = "Busqueda por nombre") {
+                        viewmodel.changeshowOutLineText(
+                            showOutLineText
+                        )
+                    }
+
+                    /*
                     Text(text = "Busqueda por nombre",
                         fontFamily = jotiOne,
                         color = colorResource(id = R.color.paynesGray),
@@ -59,6 +67,8 @@ fun MyTopBar(
                                 showOutLineText
                             )
                         })
+
+                     */
                     Spacer(modifier = Modifier.padding(20.dp))
                     Text(
                         text = "Random",
@@ -70,13 +80,18 @@ fun MyTopBar(
                         }
                     )
                     Spacer(modifier = Modifier.padding(20.dp))
+
                     Column {
+                        Mytext(text = "Categorias") { viewmodelA.changeSlide(slide) }
+                        /*
                         Text(
                             text = "Categorias",
                             fontFamily = jotiOne,
                             color = colorResource(id = R.color.paynesGray),
                             modifier = Modifier.clickable { viewmodelA.changeSlide(slide) }
                         )
+
+                         */
                         AnimatedVisibility(
                             visible = slide
                         ) {
@@ -85,6 +100,12 @@ fun MyTopBar(
                                     .padding(3.dp)
                                     .background(colorResource(id = R.color.electricBlue))
                             ) {
+                                Mytext(text = "Categoria") {
+                                    viewmodel.getListCategories()
+                                    viewmodelA.changeSlide(slide)
+                                    viewmodelA.chageShowDialog(showDialog)
+                                }
+                                /*
                                 Text(
                                     text = "Categoria", modifier = Modifier
                                         .padding(2.dp)
@@ -96,6 +117,16 @@ fun MyTopBar(
                                     color = colorResource(id = R.color.paynesGray),
                                     fontFamily = jotiOne
                                 )
+
+                                 */
+
+                                Mytext(text = "Paises") {
+                                    viewmodel.getListArea()
+                                    viewmodelA.changeSlide(slide)
+                                    viewmodelA.chageShowDialog(showDialog)
+                                }
+
+                                /*
                                 Text(
                                     text = "Paises", modifier = Modifier
                                         .padding(2.dp)
@@ -108,6 +139,16 @@ fun MyTopBar(
                                     color = colorResource(id = R.color.paynesGray),
                                     fontFamily = jotiOne
                                 )
+
+                                 */
+
+                                Mytext(text = "Ingredientes") {
+                                    viewmodel.getListIngredient()
+                                    navController.navigate("cardIngredient")
+                                }
+
+
+                                /*
                                 Text(
                                     text = "Ingredientes", modifier = Modifier
                                         .padding(2.dp)
@@ -118,37 +159,92 @@ fun MyTopBar(
                                     color = colorResource(id = R.color.paynesGray),
                                     fontFamily = jotiOne
                                 )
+
+                                 */
                             }
                         }
                     }
                     if(login){
                         Spacer(modifier = Modifier.padding(20.dp))
+                        Mytext(text = "Almacen") { navController.navigate("listMealUser") }
+                        /*
                         Text(
                             text = "Almacen",
                             fontFamily = jotiOne,
                             color = colorResource(id = R.color.paynesGray),
                             modifier = Modifier.clickable { navController.navigate("listMealUser") }
                         )
+
+                         */
                         Spacer(modifier = Modifier.padding(20.dp))
-                        Text(
-                            text = "Ver recetas socios",
-                            fontFamily = jotiOne,
-                            color = colorResource(id = R.color.paynesGray),
-                            modifier = Modifier.clickable { navController.navigate("listMealUserCreater") }
-                        )
-                        Spacer(modifier = Modifier.padding(20.dp))
-                        Text(
-                            text = "Crear receta",
-                            fontFamily = jotiOne,
-                            color = colorResource(id = R.color.paynesGray),
-                            modifier = Modifier.clickable { navController.navigate("createNewMeal") }
-                        )
-                        Spacer(modifier = Modifier.padding(20.dp))
-                        Text(
-                            text = "Donde comer",
-                            fontFamily = jotiOne,
-                            color = colorResource(id = R.color.paynesGray)
-                        )
+                        if(screen == "meal"){
+
+                            Mytext(text = "Ver recetas socios") { navController.navigate("listMealUserCreater") }
+                            /*
+                            Text(
+                                text = "Ver recetas socios",
+                                fontFamily = jotiOne,
+                                color = colorResource(id = R.color.paynesGray),
+                                modifier = Modifier.clickable { navController.navigate("listMealUserCreater") }
+                            )
+
+                             */
+                            Spacer(modifier = Modifier.padding(20.dp))
+                            Mytext(text = "Crear receta") { navController.navigate("createNewMeal")  }
+                            /*
+                            Text(
+                                text = "Crear receta",
+                                fontFamily = jotiOne,
+                                color = colorResource(id = R.color.paynesGray),
+                                modifier = Modifier.clickable { navController.navigate("createNewMeal") }
+                            )
+
+                             */
+                            Spacer(modifier = Modifier.padding(20.dp))
+                            Mytext(text = "Donde comer") {   }
+                            /*
+                            Text(
+                                text = "Donde comer",
+                                fontFamily = jotiOne,
+                                color = colorResource(id = R.color.paynesGray),
+                                modifier = Modifier.clickable {  }
+                            )
+
+                             */
+                        }else{
+                            Mytext(text = "Ver cocktail socios") { navController.navigate("listMealUserCreater") }
+                            /*
+                            Text(
+                                text = "Ver cocktail socios",
+                                fontFamily = jotiOne,
+                                color = colorResource(id = R.color.paynesGray),
+                                modifier = Modifier.clickable { navController.navigate("listMealUserCreater") }
+                            )
+
+                             */
+                            Spacer(modifier = Modifier.padding(20.dp))
+                            Mytext(text = "Crear cocktail") { navController.navigate("createNewMeal") }
+                            /*
+                            Text(
+                                text = "Crear cocktail",
+                                fontFamily = jotiOne,
+                                color = colorResource(id = R.color.paynesGray),
+                                modifier = Modifier.clickable { navController.navigate("createNewMeal") }
+                            )
+
+                             */
+                            Spacer(modifier = Modifier.padding(20.dp))
+                            Mytext(text = "Donde beber") { }
+                            /*
+                            Text(
+                                text = "Donde beber",
+                                fontFamily = jotiOne,
+                                color = colorResource(id = R.color.paynesGray),
+                                modifier = Modifier.clickable {  }
+                            )
+
+                             */
+                        }
                     }
                 }
             }
@@ -184,3 +280,4 @@ fun MyTopBar(
         }
     }
 }
+

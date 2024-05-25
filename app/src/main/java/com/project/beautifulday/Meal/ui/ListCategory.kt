@@ -25,8 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.project.beautifulday.Meal.ui.ViewModels.MealViewmodel
-import com.project.beautifulday.Meal.ui.ViewModels.ViewmodelAplication
+import com.project.beautifulday.ViewModels.MealViewmodel
+import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.R
 import com.project.beautifulday.androidsmall1.jotiOne
 

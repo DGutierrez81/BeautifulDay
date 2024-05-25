@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.project.beautifulday.BlankView
+import com.project.beautifulday.Cocktail.ui.CocktailScreen
 import com.project.beautifulday.LogIn
 import com.project.beautifulday.Meal.ui.Camera
 import com.project.beautifulday.Meal.ui.CardIngredient
@@ -18,16 +19,17 @@ import com.project.beautifulday.Meal.ui.ListMealUser
 import com.project.beautifulday.Meal.ui.ListMealUserCreater
 import com.project.beautifulday.Meal.ui.MealNameScreen
 import com.project.beautifulday.Meal.ui.MealScreen
-import com.project.beautifulday.Meal.ui.ViewModels.MealViewmodel
+import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.Meal.ui.MyCard
 import com.project.beautifulday.Meal.ui.PrincipalScreen
-import com.project.beautifulday.Meal.ui.ViewModels.LogViewmodel
-import com.project.beautifulday.Meal.ui.ViewModels.ViewmodelAplication
+import com.project.beautifulday.ViewModels.LogViewmodel
+import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.RegisterUser
 import com.project.beautifulday.Video
+import com.project.beautifulday.ViewModels.CocktailViewmodel
 
 @Composable
-fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel){
+fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel, cocktailViewmodel: CocktailViewmodel){
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = "blankView"){
@@ -135,6 +137,10 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
 
         composable("video"){
             Video(navController = navController, viewmodelA = viewmodelA)
+        }
+
+        composable("cocktail"){
+            CocktailScreen(navController, viewmodel, context, viewmodelA, LgViewModel)
         }
 
     }

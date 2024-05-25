@@ -1,4 +1,4 @@
-package com.project.beautifulday.Meal.ui.ViewModels
+package com.project.beautifulday.ViewModels
 
 import android.util.Log
 import android.widget.Toast
@@ -135,16 +135,8 @@ class MealViewmodel@Inject constructor(private val useCaseMealName: UseCaseMealN
 
     fun getRandom(){
         viewModelScope.launch {
-
             mealList = (useCaseRandom().meals?: mutableListOf()).toMutableList()
             getMeal()
-
-
-            /*
-            _mealsData.value = (useCaseRandom().meals?: mutableListOf()).toMutableList()
-            getMeal()
-
-             */
         }
     }
 
@@ -219,9 +211,7 @@ class MealViewmodel@Inject constructor(private val useCaseMealName: UseCaseMealN
 
     fun getMealById(id: String){
         viewModelScope.launch {
-            //_mealsData.value = useCaseMealId(id).meals?: mutableListOf()
-
-            mealList = (useCaseMealId(id).meals?: mutableListOf()).toMutableList()
+            mealList = (useCaseRandom().meals?: mutableListOf()).toMutableList()
             getMeal()
         }
     }

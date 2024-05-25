@@ -10,9 +10,9 @@ import com.project.beautifulday.Meal.ui.Components.Alert
 import com.project.beautifulday.Meal.ui.Components.MyBottomBar
 import com.project.beautifulday.Meal.ui.Components.MyContent
 import com.project.beautifulday.Meal.ui.Components.MyTopBar
-import com.project.beautifulday.Meal.ui.ViewModels.LogViewmodel
-import com.project.beautifulday.Meal.ui.ViewModels.MealViewmodel
-import com.project.beautifulday.Meal.ui.ViewModels.ViewmodelAplication
+import com.project.beautifulday.ViewModels.LogViewmodel
+import com.project.beautifulday.ViewModels.MealViewmodel
+import com.project.beautifulday.ViewModels.ViewmodelAplication
 
 @Composable
 fun RegisterUser(navController: NavController, loginVM: LogViewmodel, viewmodel: MealViewmodel, viewmodelA: ViewmodelAplication){

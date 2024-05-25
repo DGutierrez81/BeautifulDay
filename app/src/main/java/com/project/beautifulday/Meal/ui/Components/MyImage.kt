@@ -17,11 +17,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.project.beautifulday.R
+import com.project.beautifulday.ViewModels.LogViewmodel
+import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.androidsmall1.jotiOne
 
 
 @Composable
-fun MyImage(model: Any?, navController: NavController, contentDescription: String, route: String, textDescription: String){
+fun MyImage(model: Any?, navController: NavController, contentDescription: String, route: String, textDescription: String, viewmodelA: ViewmodelAplication){
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
@@ -30,7 +32,10 @@ fun MyImage(model: Any?, navController: NavController, contentDescription: Strin
             model = model, contentDescription = contentDescription,
             modifier = Modifier
                 .height(50.dp)
-                .clickable { navController.navigate(route) }
+                .clickable {
+                    viewmodelA.changeScreen(route)
+                    navController.navigate(route)
+                }
         )
         Text(
             text = textDescription,

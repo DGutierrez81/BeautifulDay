@@ -6,6 +6,7 @@ import com.project.beautifulday.Cocktail.ui.States.drinkState
 import javax.inject.Inject
 
 
+
 class CocktailRepository @Inject constructor(private val api: CocktailService){
 
     suspend fun vCocktail(name: String): CocktailState {
@@ -48,3 +49,4 @@ class CocktailRepository @Inject constructor(private val api: CocktailService){
         )
     }
 }
+

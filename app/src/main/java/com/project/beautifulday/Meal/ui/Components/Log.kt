@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.navigation.NavController
-import com.project.beautifulday.Meal.ui.ViewModels.LogViewmodel
+import com.project.beautifulday.ViewModels.LogViewmodel
 
 @Composable
 fun Log(navController: NavController, LgViewmodel: LogViewmodel){

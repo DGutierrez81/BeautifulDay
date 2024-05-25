@@ -33,13 +33,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.project.beautifulday.Meal.ui.Components.BusquedaNombre
 import com.project.beautifulday.Meal.ui.Components.DialogCategory
 import com.project.beautifulday.Meal.ui.Components.MyBottomBar
 import com.project.beautifulday.Meal.ui.Components.MyTopBar
+import com.project.beautifulday.Meal.ui.Components.ScreenCenter
 import com.project.beautifulday.Meal.ui.Components.ViewCenter
-import com.project.beautifulday.Meal.ui.ViewModels.LogViewmodel
-import com.project.beautifulday.Meal.ui.ViewModels.MealViewmodel
-import com.project.beautifulday.Meal.ui.ViewModels.ViewmodelAplication
+import com.project.beautifulday.ViewModels.LogViewmodel
+import com.project.beautifulday.ViewModels.MealViewmodel
+import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.R
 import com.project.beautifulday.androidsmall1.jotiOne
 
@@ -60,7 +62,7 @@ fun MealScreen(navController: NavController, viewmodel: MealViewmodel, context: 
 
     Scaffold(
         modifier = Modifier.background(colorResource(id = R.color.electricBlue)),
-        topBar = { MyTopBar(meal, true, viewmodel, showOutLineText, login, "", navController, slide, viewmodelA, showDialog) },
+        topBar = { MyTopBar(meal, true, viewmodel, showOutLineText, login, "Comida", navController, slide, viewmodelA, showDialog) },
         bottomBar = { MyBottomBar(order, navController, LgViewModel) }
     ) { innerPadding ->
         Box(
@@ -70,93 +72,22 @@ fun MealScreen(navController: NavController, viewmodel: MealViewmodel, context: 
                 .padding(innerPadding),
             contentAlignment = Alignment.TopCenter
         ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Box(modifier = Modifier
-                    .fillMaxWidth(),
-                    contentAlignment = Alignment.TopEnd
-                ){
-                    Icon(painter = painterResource(id = R.drawable.inicio2_nube),
-                        contentDescription = null,
-                        modifier = Modifier.padding(top = 30.dp, end = 50.dp),
-                        tint = colorResource(id = R.color.white)
-                    )
-                }
-                Text(
-                    text = "Beautiful",
-                    fontSize = 32.sp,
-                    fontFamily = jotiOne,
-                    color = colorResource(id = R.color.selectiveYellow),
-                    modifier = Modifier.padding(top = 50.dp)
-                )
-                Box(modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.BottomCenter){
-                    Column {
-                        ViewCenter(showCenter = 2, navController = navController, viewmodel, LgViewModel = LgViewModel)
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(colorResource(id = R.color.selectiveYellow)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "DAY",
-                                fontFamily = jotiOne,
-                                fontSize = 32.sp,
-                                color = colorResource(id = R.color.electricBlue),
-                                modifier = Modifier.padding(20.dp)
-                            )
-                        }
-                    }
-                }
-            }
+            ScreenCenter(
+                navController = navController,
+                viewmodelA = viewmodelA,
+                LgViewModel = LgViewModel,
+                showCenter = 2
+            )
+
             if(showOutLineText){
-                Box(modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center){
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceAround,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        OutlinedTextField(value = viewmodel.mealName, onValueChange = { viewmodel.changeMealName(it)},
-                            label = { Text(text = "Busqueda por nombre") },
-                            modifier = Modifier
-                                .padding(5.dp)
-                                .background(color = Color.Transparent),
-                            shape = RoundedCornerShape(100.dp),
-                            colors = TextFieldDefaults.colors(
-                                unfocusedIndicatorColor = Color.Transparent,
-                                focusedIndicatorColor = Color.Transparent,
-                                focusedContainerColor = Color.White
-                            )
-                        )
-                        AsyncImage(model = R.drawable.logo,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .width(50.dp)
-                                .height(50.dp)
-                                .clickable {
-                                    viewmodel.getMealName(viewmodel.mealName)
-                                    navController.navigate("mealNameScreen")
-                                    viewmodel.changeshowOutLineText(showOutLineText)
-                                    viewmodelA.clean()
-                                    viewmodel.changeMealName("")
-                                })
-                    }
-                }
+                BusquedaNombre(
+                    navController = navController,
+                    viewmodel = viewmodel,
+                    viewmodelA = viewmodelA,
+                    showOutLineText = showOutLineText
+                )
             }
         }
-        /*
-        innerPadding -> MyContent(innerPadding = innerPadding,
-        navController,
-        viewmodel,
-        viewmodelA,
-        LgViewModel = LgViewModel,
-        showOutLineText,
-            false,
-           meal,
-            2)
-    }
-
-         */
 }
 
 @Composable

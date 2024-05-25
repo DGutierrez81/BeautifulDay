@@ -11,7 +11,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.project.beautifulday.Meal.ui.ViewModels.LogViewmodel
+import com.project.beautifulday.ViewModels.LogViewmodel
 import com.project.beautifulday.R
 
 @Composable

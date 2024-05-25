@@ -3,10 +3,10 @@ package com.project.beautifulday.Meal.ui.Components
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.navigation.NavController
-import com.project.beautifulday.Meal.ui.ViewModels.MealViewmodel
-import com.project.beautifulday.Meal.ui.ViewModels.ViewmodelAplication
+import com.project.beautifulday.ViewModels.MealViewmodel
+import com.project.beautifulday.ViewModels.ViewmodelAplication
 
-fun createAlert(navController: NavController , viewmodelA: ViewmodelAplication, viewmodel: MealViewmodel, context: ComponentActivity){
+fun createAlert(navController: NavController, viewmodelA: ViewmodelAplication, viewmodel: MealViewmodel, context: ComponentActivity){
     val name = viewmodelA.name
     val id = viewmodelA.id
     val descripcion = viewmodelA.descripcion

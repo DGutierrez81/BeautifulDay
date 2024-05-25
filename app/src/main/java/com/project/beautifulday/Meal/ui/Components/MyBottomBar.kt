@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.project.beautifulday.Meal.ui.ViewModels.LogViewmodel
+import com.project.beautifulday.ViewModels.LogViewmodel
 import com.project.beautifulday.R
 
 @Composable
