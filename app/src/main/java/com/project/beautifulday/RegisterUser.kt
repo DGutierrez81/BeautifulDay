@@ -10,12 +10,13 @@ import com.project.beautifulday.Meal.ui.Components.Alert
 import com.project.beautifulday.Meal.ui.Components.MyBottomBar
 import com.project.beautifulday.Meal.ui.Components.MyContent
 import com.project.beautifulday.Meal.ui.Components.MyTopBar
+import com.project.beautifulday.ViewModels.CocktailViewmodel
 import com.project.beautifulday.ViewModels.LogViewmodel
 import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 
 @Composable
-fun RegisterUser(navController: NavController, loginVM: LogViewmodel, viewmodel: MealViewmodel, viewmodelA: ViewmodelAplication){
+fun RegisterUser(navController: NavController, loginVM: LogViewmodel, viewmodel: MealViewmodel, viewmodelA: ViewmodelAplication, cocktailViewmodel: CocktailViewmodel){
     val meals by viewmodel.mealsData.collectAsState()
     //val slide = viewmodelA.slide
     val slide by viewmodelA.slide.observeAsState(false)
@@ -32,6 +33,7 @@ fun RegisterUser(navController: NavController, loginVM: LogViewmodel, viewmodel:
             showMenu = false,
             viewmodel = viewmodel,
             showOutLineText = false,
+                cocktailViewmodel,
             login = false,
             mealName = "",
             navController = navController,

@@ -24,6 +24,7 @@ import com.project.beautifulday.Meal.ui.States.MealState
 import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.R
+import com.project.beautifulday.ViewModels.CocktailViewmodel
 import com.project.beautifulday.androidsmall1.jotiOne
 
 
@@ -33,6 +34,7 @@ fun MyTopBar(
     showMenu: Boolean,
     viewmodel: MealViewmodel,
     showOutLineText: Boolean,
+    cocktailViewmodel: CocktailViewmodel,
     login: Boolean,
     mealName: String,
     navController: NavController,
@@ -58,195 +60,146 @@ fun MyTopBar(
                         )
                     }
 
-                    /*
-                    Text(text = "Busqueda por nombre",
-                        fontFamily = jotiOne,
-                        color = colorResource(id = R.color.paynesGray),
-                        modifier = Modifier.clickable {
-                            viewmodel.changeshowOutLineText(
-                                showOutLineText
-                            )
-                        })
+                    if(screen == "meal"){
 
-                     */
-                    Spacer(modifier = Modifier.padding(20.dp))
-                    Text(
-                        text = "Random",
-                        fontFamily = jotiOne,
-                        color = colorResource(id = R.color.paynesGray),
-                        modifier = Modifier.clickable {
-                            viewmodel.getRandom()
-                            navController.navigate("myCard")
-                        }
-                    )
-                    Spacer(modifier = Modifier.padding(20.dp))
+                        Spacer(modifier = Modifier.padding(20.dp))
 
-                    Column {
-                        Mytext(text = "Categorias") { viewmodelA.changeSlide(slide) }
-                        /*
                         Text(
-                            text = "Categorias",
+                            text = "Random",
                             fontFamily = jotiOne,
                             color = colorResource(id = R.color.paynesGray),
-                            modifier = Modifier.clickable { viewmodelA.changeSlide(slide) }
+                            modifier = Modifier.clickable {
+                                viewmodel.getRandom()
+                                navController.navigate("myCard")
+                            }
                         )
+                        Spacer(modifier = Modifier.padding(20.dp))
 
-                         */
-                        AnimatedVisibility(
-                            visible = slide
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .padding(3.dp)
-                                    .background(colorResource(id = R.color.electricBlue))
+                        Column {
+                            Mytext(text = "Categorias") { viewmodelA.changeSlide(slide) }
+
+                            AnimatedVisibility(
+                                visible = slide
                             ) {
-                                Mytext(text = "Categoria") {
-                                    viewmodel.getListCategories()
-                                    viewmodelA.changeSlide(slide)
-                                    viewmodelA.chageShowDialog(showDialog)
+                                Column(
+                                    modifier = Modifier
+                                        .padding(3.dp)
+                                        .background(colorResource(id = R.color.electricBlue))
+                                ) {
+                                    Mytext(text = "Categoria") {
+                                        viewmodel.getListCategories()
+                                        viewmodelA.changeSlide(slide)
+                                        viewmodelA.chageShowDialog(showDialog)
+                                    }
+
+                                    Mytext(text = "Paises") {
+                                        viewmodel.getListArea()
+                                        viewmodelA.changeSlide(slide)
+                                        viewmodelA.chageShowDialog(showDialog)
+                                    }
+
+                                    Mytext(text = "Ingredientes") {
+                                        viewmodel.getListIngredient()
+                                        navController.navigate("cardIngredient")
+                                    }
+
                                 }
-                                /*
-                                Text(
-                                    text = "Categoria", modifier = Modifier
-                                        .padding(2.dp)
-                                        .clickable {
-                                            viewmodel.getListCategories()
-                                            viewmodelA.changeSlide(slide)
-                                            viewmodelA.chageShowDialog(showDialog)
-                                        },
-                                    color = colorResource(id = R.color.paynesGray),
-                                    fontFamily = jotiOne
-                                )
-
-                                 */
-
-                                Mytext(text = "Paises") {
-                                    viewmodel.getListArea()
-                                    viewmodelA.changeSlide(slide)
-                                    viewmodelA.chageShowDialog(showDialog)
-                                }
-
-                                /*
-                                Text(
-                                    text = "Paises", modifier = Modifier
-                                        .padding(2.dp)
-                                        .clickable {
-                                            viewmodel.getListArea()
-                                            viewmodelA.changeSlide(slide)
-                                            viewmodelA.chageShowDialog(showDialog)
-                                            //navController.navigate("listCategory")
-                                        },
-                                    color = colorResource(id = R.color.paynesGray),
-                                    fontFamily = jotiOne
-                                )
-
-                                 */
-
-                                Mytext(text = "Ingredientes") {
-                                    viewmodel.getListIngredient()
-                                    navController.navigate("cardIngredient")
-                                }
-
-
-                                /*
-                                Text(
-                                    text = "Ingredientes", modifier = Modifier
-                                        .padding(2.dp)
-                                        .clickable {
-                                            viewmodel.getListIngredient()
-                                            navController.navigate("cardIngredient")
-                                        },
-                                    color = colorResource(id = R.color.paynesGray),
-                                    fontFamily = jotiOne
-                                )
-
-                                 */
                             }
                         }
-                    }
-                    if(login){
-                        Spacer(modifier = Modifier.padding(20.dp))
-                        Mytext(text = "Almacen") { navController.navigate("listMealUser") }
-                        /*
-                        Text(
-                            text = "Almacen",
-                            fontFamily = jotiOne,
-                            color = colorResource(id = R.color.paynesGray),
-                            modifier = Modifier.clickable { navController.navigate("listMealUser") }
-                        )
+                        if(login){
+                            Spacer(modifier = Modifier.padding(20.dp))
 
-                         */
-                        Spacer(modifier = Modifier.padding(20.dp))
-                        if(screen == "meal"){
+                            Mytext(text = "Favoritos") { navController.navigate("listMealUser") }
+
+                            Spacer(modifier = Modifier.padding(20.dp))
 
                             Mytext(text = "Ver recetas socios") { navController.navigate("listMealUserCreater") }
-                            /*
-                            Text(
-                                text = "Ver recetas socios",
-                                fontFamily = jotiOne,
-                                color = colorResource(id = R.color.paynesGray),
-                                modifier = Modifier.clickable { navController.navigate("listMealUserCreater") }
-                            )
 
-                             */
                             Spacer(modifier = Modifier.padding(20.dp))
+
                             Mytext(text = "Crear receta") { navController.navigate("createNewMeal")  }
-                            /*
-                            Text(
-                                text = "Crear receta",
-                                fontFamily = jotiOne,
-                                color = colorResource(id = R.color.paynesGray),
-                                modifier = Modifier.clickable { navController.navigate("createNewMeal") }
-                            )
 
-                             */
                             Spacer(modifier = Modifier.padding(20.dp))
+
                             Mytext(text = "Donde comer") {   }
-                            /*
-                            Text(
-                                text = "Donde comer",
-                                fontFamily = jotiOne,
-                                color = colorResource(id = R.color.paynesGray),
-                                modifier = Modifier.clickable {  }
-                            )
 
-                             */
-                        }else{
-                            Mytext(text = "Ver cocktail socios") { navController.navigate("listMealUserCreater") }
-                            /*
-                            Text(
-                                text = "Ver cocktail socios",
-                                fontFamily = jotiOne,
-                                color = colorResource(id = R.color.paynesGray),
-                                modifier = Modifier.clickable { navController.navigate("listMealUserCreater") }
-                            )
+                        }
+                    }else {
 
-                             */
+                        Spacer(modifier = Modifier.padding(20.dp))
+                        Text(
+                            text = "Random",
+                            fontFamily = jotiOne,
+                            color = colorResource(id = R.color.paynesGray),
+                            modifier = Modifier.clickable {
+                                cocktailViewmodel.getRandom()
+                                navController.navigate("cardCocktails")
+                            }
+                        )
+                        Spacer(modifier = Modifier.padding(20.dp))
+
+                        Column {
+                            Mytext(text = "Categorias") { viewmodelA.changeSlide(slide) }
+
+                            AnimatedVisibility(
+                                visible = slide
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .padding(3.dp)
+                                        .background(colorResource(id = R.color.electricBlue))
+                                ) {
+                                    Mytext(text = "Ordinarias") {
+                                        cocktailViewmodel.getCategory("Ordinary_Drink")
+                                        viewmodelA.changeSlide(slide)
+                                        navController.navigate("listaCocktailsApi")
+                                    }
+
+                                    Mytext(text = "Cocktails") {
+                                        cocktailViewmodel.getCategory("Cocktail")
+                                        viewmodelA.changeSlide(slide)
+                                        navController.navigate("listaCocktailsApi")
+                                    }
+
+
+                                    Mytext(text = "Alcoholicas") {
+                                        cocktailViewmodel.getAlcoholics("Alcoholic")
+                                        viewmodelA.changeSlide(slide)
+                                        navController.navigate("listaCocktailsApi")
+                                    }
+
+                                    Mytext(text = "Sin alcohol") {
+                                        cocktailViewmodel.getAlcoholics("Non_Alcoholic")
+                                        viewmodelA.changeSlide(slide)
+                                        navController.navigate("listaCocktailsApi")
+                                    }
+                                }
+                            }
+                        }
+                        if(login){
                             Spacer(modifier = Modifier.padding(20.dp))
+                            Mytext(text = "Favoritos") { navController.navigate("listCocktailUser") }
+
+                            Spacer(modifier = Modifier.padding(20.dp))
+
+                            Mytext(text = "Ver cocktail socios") { navController.navigate("listCocktailUserCreater") }
+
+                            Spacer(modifier = Modifier.padding(20.dp))
+
                             Mytext(text = "Crear cocktail") { navController.navigate("createNewMeal") }
-                            /*
-                            Text(
-                                text = "Crear cocktail",
-                                fontFamily = jotiOne,
-                                color = colorResource(id = R.color.paynesGray),
-                                modifier = Modifier.clickable { navController.navigate("createNewMeal") }
-                            )
 
-                             */
                             Spacer(modifier = Modifier.padding(20.dp))
-                            Mytext(text = "Donde beber") { }
-                            /*
-                            Text(
-                                text = "Donde beber",
-                                fontFamily = jotiOne,
-                                color = colorResource(id = R.color.paynesGray),
-                                modifier = Modifier.clickable {  }
-                            )
 
-                             */
+                            Mytext(text = "Donde beber") { }
+
                         }
                     }
+
+                    Spacer(modifier = Modifier.padding(20.dp))
+
+                    Mytext(text = "Registro Multimedia") { navController.navigate("registroM") }
                 }
+
             }
 
             Column {

@@ -34,9 +34,10 @@ import com.project.beautifulday.Meal.ui.Components.createAlert
 import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.R
+import com.project.beautifulday.ViewModels.CocktailViewmodel
 
 @Composable
-fun CreateNewMeal(navController: NavController, viewmodel: MealViewmodel, viewmodelA: ViewmodelAplication, context: ComponentActivity){
+fun CreateNewMeal(navController: NavController, viewmodel: MealViewmodel, viewmodelA: ViewmodelAplication, context: ComponentActivity, cocktailViewmodel: CocktailViewmodel){
 
     val name = viewmodelA.name
     val id by viewmodelA::id
@@ -46,6 +47,8 @@ fun CreateNewMeal(navController: NavController, viewmodel: MealViewmodel, viewmo
     val ingrediente = viewmodelA.ingrediente
     val focusRequester = viewmodelA.focusRequest
     val showAlert = viewmodelA.showAlert
+    val screen = viewmodelA.screen
+    val showCreateAlert = viewmodelA.showCreateAlert
 
     Column {
         Box(modifier = Modifier
@@ -298,8 +301,8 @@ fun CreateNewMeal(navController: NavController, viewmodel: MealViewmodel, viewmo
                     Text(text = "Enviar datos", modifier = Modifier
                         .padding(10.dp)
                         .clickable {
-                            createAlert(navController, viewmodelA, viewmodel, context)
-                            viewmodelA.changeAlert(!showAlert)
+                            createAlert(navController, viewmodelA, viewmodel, cocktailViewmodel, context)
+
                             /*
                             viewmodel.saveMeal(
                                 id,
@@ -340,37 +343,67 @@ fun CreateNewMeal(navController: NavController, viewmodel: MealViewmodel, viewmo
 
         Spacer(modifier = Modifier.weight(2f))
 
-        if (showAlert) {
+        if (showCreateAlert) {
             CreateDialog(
                 showAlert = showAlert,
                 tittle = "Aviso",
                 text = "Tiene registros sin rellenar\n¿Desea seguir?",
                 onDismiss = { viewmodelA.changeAlert(!showAlert) }) {
-                viewmodel.saveMeal(
-                    id,
-                    name,
-                    "",
-                    "",
-                    descripcion,
-                    foto,
-                    "",
-                    video,
-                    ingrediente
-                        .split(",", " ")
-                        .toMutableList(),
-                    mutableListOf()
-                )
-                viewmodel.saveNewMeals("CreateMeals", context) {
-                    Toast
-                        .makeText(
-                            context,
-                            "Receta guardada correctamente",
-                            Toast.LENGTH_SHORT
-                        )
-                        .show()
-                    viewmodelA.clean()
-                    navController.navigate("principal")
+                if(screen == "meals"){
+                    viewmodel.saveMeal(
+                        id,
+                        name,
+                        "",
+                        "",
+                        descripcion,
+                        foto,
+                        "",
+                        video,
+                        ingrediente
+                            .split(",", " ")
+                            .toMutableList(),
+                        mutableListOf()
+                    )
+                    viewmodel.saveNewMeals("CreateMeals", context) {
+                        Toast
+                            .makeText(
+                                context,
+                                "Receta guardada correctamente",
+                                Toast.LENGTH_SHORT
+                            )
+                            .show()
+                        viewmodelA.clean()
+                        navController.navigate("principal")
 
+                        viewmodelA.changeAlert(false)
+
+                    }
+                }else{
+                    cocktailViewmodel.SaveCocktail(
+                        idDrink = id,
+                        strDrink = name,
+                        strInstructions = descripcion,
+                        strDrinkThumb = foto,
+                        strList = ingrediente
+                            .split(",", " ")
+                            .toMutableList(),
+                        strMedia = video
+                    )
+
+                    cocktailViewmodel.saveNewCocktail("CreateCocktails", context) {
+                        Toast
+                            .makeText(
+                                context,
+                                "Cocktail guardado correctamente",
+                                Toast.LENGTH_SHORT
+                            )
+                            .show()
+                        viewmodelA.clean()
+                        navController.navigate("principal")
+
+                        viewmodelA.changeAlert(false)
+
+                    }
                 }
             }
         }

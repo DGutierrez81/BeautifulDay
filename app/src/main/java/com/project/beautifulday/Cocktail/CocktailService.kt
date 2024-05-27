@@ -1,6 +1,9 @@
 package com.project.beautifulday.Cocktail
 
 import com.project.beautifulday.Cocktail.Data.Cocktail
+import com.project.beautifulday.Util.Constans.Companion.FILTER
+import com.project.beautifulday.Util.Constans.Companion.ID
+import com.project.beautifulday.Util.Constans.Companion.RANDOM
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -10,21 +13,16 @@ interface CocktailService {
     //suspend fun getCocktail():Response<Cocktail>
     suspend fun getCocktail(@Query("s") cocktailName: String): Response<Cocktail>
 
-    @GET("random.php")
+    @GET(RANDOM)
     suspend fun getRandom(): Response<Cocktail>
 
-    @GET("filter.php?a=Alcoholic")
-    suspend fun getAlcoholics(): Response<Cocktail>
+    @GET(FILTER)
+    suspend fun getAlcoholics(@Query("a") election: String): Response<Cocktail>
 
-    @GET("filter.php?a=Non_Alcoholic")
-    suspend fun getNoAlcoholics(): Response<Cocktail>
 
-    @GET("filter.php?c=Ordinary_Drink")
-    suspend fun getOrdinary(): Response<Cocktail>
+    @GET(FILTER)
+    suspend fun getCategory(@Query("c") category: String): Response<Cocktail>
 
-    @GET("filter.php?g=Champagne_flute")
-    suspend fun getGlassChampagne(): Response<Cocktail>
-
-    @GET("filter.php?g=Cocktail_glass")
-    suspend fun getGlassCocktail(): Response<Cocktail>
+    @GET(ID)
+    suspend fun getCocktailById(@Query("i") id: String): Response<Cocktail>
 }

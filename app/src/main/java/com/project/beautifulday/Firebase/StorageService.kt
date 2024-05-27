@@ -90,7 +90,7 @@ class StorageService@Inject constructor(private val storage: FirebaseStorage) {
 
 
     suspend fun getAllImages(): List<Uri>{
-        val reference: StorageReference = storage.reference.child("download/")
+        val reference: StorageReference = storage.reference.child("picture/")
         /*
         reference.listAll().addOnSuccessListener{ result ->
             result.items.forEach{

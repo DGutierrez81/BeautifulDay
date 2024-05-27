@@ -33,9 +33,8 @@ import com.project.beautifulday.androidsmall1.jotiOne
 
 @Composable
 fun ListCategory(navController: NavController, viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication){
-    val mealsData by viewmodel.mealsData.collectAsState()
+
     val mealCategory by viewmodel.categoyData.collectAsState()
-    val meal = viewmodel.meal
     val actionTranslate by viewmodelA.actionTranslate.observeAsState(true)
     //val actionTranslate = viewmodelA.actionTranslate
     val state = viewmodelA.state.value

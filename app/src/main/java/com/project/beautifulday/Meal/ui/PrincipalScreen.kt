@@ -49,11 +49,11 @@ import com.project.beautifulday.ViewModels.LogViewmodel
 import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.R
-
+import com.project.beautifulday.ViewModels.CocktailViewmodel
 
 
 @Composable
-fun PrincipalScreen(navController: NavController, viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel){
+fun PrincipalScreen(navController: NavController, viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel, cocktailViewmodel: CocktailViewmodel){
     //viewmodel.changeViewCenter(true)
     val meals by viewmodel.mealsData.collectAsState()
     //val slide = viewmodelA.slide
@@ -69,7 +69,7 @@ fun PrincipalScreen(navController: NavController, viewmodel: MealViewmodel, cont
 
     Scaffold(
         modifier = Modifier.background(colorResource(id = R.color.electricBlue)),
-        topBar = { MyTopBar(meals,false, viewmodel, false, false, "", navController, slide, viewmodelA, showDialog) },
+        topBar = { MyTopBar(meals,false, viewmodel, false, cocktailViewmodel,  false, "", navController, slide, viewmodelA, showDialog) },
         bottomBar = { MyBottomBar(order, navController, LgViewModel) }
     ) { innerPadding -> MyContent(innerPadding, navController, viewmodel, viewmodelA, LgViewModel = LgViewModel,false, false, meals, 1)}
 }

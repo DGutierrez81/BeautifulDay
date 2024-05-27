@@ -86,8 +86,12 @@ fun Camera(navController: NavController, viewmodelA: ViewmodelAplication, contex
 
     if(showDialog2){
         Dialog(onDismissRequest = { showDialog2 = false }) {
-            Card(shape = RoundedCornerShape(12)) {
-                Column(modifier = Modifier.padding(24.dp)) {
+            Card(shape = RoundedCornerShape(12), modifier = Modifier.background(color = colorResource(
+                id = R.color.electricBlue
+            ))) {
+                Column(modifier = Modifier
+                    .padding(24.dp)
+                    .background(color = colorResource(id = R.color.electricBlue))) {
                     OutlinedButton(onClick = {
                         uri = viewmodelA.generateUri(context, namePhoto, "jpg")
                         intentCameraLaucher.launch(uri)
@@ -95,10 +99,11 @@ fun Camera(navController: NavController, viewmodelA: ViewmodelAplication, contex
                     }, modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp)
-                        .align(Alignment.CenterHorizontally),
-                        border = BorderStroke(2.dp, colorResource(id = R.color.electricBlue))
+                        .align(Alignment.CenterHorizontally)
+                        .background(color = colorResource(id =R.color.electricBlue)),
+                        border = BorderStroke(2.dp, colorResource(id = R.color.paynesGray))
                     ) {
-                        Text(text = "Foto", color = colorResource(id = R.color.electricBlue))
+                        Text(text = "Foto", color = colorResource(id = R.color.paynesGray))
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedButton(onClick = {
@@ -108,10 +113,11 @@ fun Camera(navController: NavController, viewmodelA: ViewmodelAplication, contex
                     }, modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp)
-                        .align(Alignment.CenterHorizontally),
-                        border = BorderStroke(2.dp, colorResource(id = R.color.electricBlue))
+                        .align(Alignment.CenterHorizontally)
+                        .background(color = colorResource(id =R.color.electricBlue)),
+                        border = BorderStroke(2.dp, colorResource(id = R.color.paynesGray))
                     ) {
-                        Text(text = "Video", color = colorResource(id = R.color.electricBlue))
+                        Text(text = "Video", color = colorResource(id = R.color.paynesGray))
                     }
                 }
             }
@@ -121,18 +127,23 @@ fun Camera(navController: NavController, viewmodelA: ViewmodelAplication, contex
 
     if(showDialog){
         Dialog(onDismissRequest = { showDialog = false }) {
-            Card(shape = RoundedCornerShape(12)) {
-                Column(modifier = Modifier.padding(24.dp)) {
+            Card(shape = RoundedCornerShape(12), modifier = Modifier.background(color = colorResource(
+                id = R.color.electricBlue
+            ))) {
+                Column(modifier = Modifier
+                    .padding(24.dp)
+                    .background(color = colorResource(id = R.color.electricBlue))) {
                     OutlinedButton(onClick = {
                         showDialog2 = true
                         showDialog = false
                     }, modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp)
-                        .align(Alignment.CenterHorizontally),
-                        border = BorderStroke(2.dp, colorResource(id = R.color.electricBlue))
+                        .align(Alignment.CenterHorizontally)
+                        .background(color = colorResource(id =R.color.electricBlue)),
+                        border = BorderStroke(2.dp, colorResource(id = R.color.paynesGray))
                     ) {
-                        Text(text = "Camera", color = colorResource(id = R.color.electricBlue))
+                        Text(text = "Camera", color = colorResource(id = R.color.paynesGray))
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedButton(onClick = {
@@ -141,10 +152,11 @@ fun Camera(navController: NavController, viewmodelA: ViewmodelAplication, contex
                     }, modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp)
-                        .align(Alignment.CenterHorizontally),
-                        border = BorderStroke(2.dp, colorResource(id = R.color.electricBlue))
+                        .align(Alignment.CenterHorizontally)
+                        .background(color = colorResource(id =R.color.electricBlue)),
+                        border = BorderStroke(2.dp, colorResource(id = R.color.paynesGray))
                     ) {
-                        Text(text = "Galery", color = colorResource(id = R.color.electricBlue))
+                        Text(text = "Galery", color = colorResource(id = R.color.paynesGray))
                     }
                 }
             }
@@ -171,8 +183,22 @@ fun Camera(navController: NavController, viewmodelA: ViewmodelAplication, contex
                 )){
             if(resultUri != null){
                 AsyncImage(model = resultUri, contentDescription = "image selected by user", contentScale = ContentScale.Crop)
-                viewmodelA.changeUriVideo(resultUri.toString())
+                //viewmodelA.changeUriVideo(resultUri.toString())
+
             }
+
+            /*
+            if(metada.equals(("video/mp4"))){
+                Icon(
+                    painterResource(id = R.drawable.ic_image),
+                    contentDescription = null,
+                    modifier = Modifier.size(100.dp),
+                    tint = colorResource(id = R.color.paynesGray)
+                )
+            }
+
+             */
+
 
             if(loading){
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
@@ -182,6 +208,9 @@ fun Camera(navController: NavController, viewmodelA: ViewmodelAplication, contex
                     )
                 }
             }
+
+
+
             if(!loading && resultUri == null){
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
                     Icon(
@@ -231,10 +260,11 @@ fun Camera(navController: NavController, viewmodelA: ViewmodelAplication, contex
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent),
             maxLines = 1,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
+            shape = RoundedCornerShape(22)
         )
         Spacer(modifier = Modifier.weight(1f))
-        OutlinedButton(onClick = { navController.navigate("listPhotos") },
+        OutlinedButton(onClick = { navController.navigate("registroM") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 36.dp)

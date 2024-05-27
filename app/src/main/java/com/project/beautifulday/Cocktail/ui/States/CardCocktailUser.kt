@@ -1,6 +1,5 @@
-package com.project.beautifulday.Meal.ui
+package com.project.beautifulday.Cocktail.ui.States
 
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
@@ -30,15 +29,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.project.beautifulday.Meal.ui.ActionTransalate
 import com.project.beautifulday.Meal.ui.Components.CreateDialog
+import com.project.beautifulday.R
+import com.project.beautifulday.ViewModels.CocktailViewmodel
 import com.project.beautifulday.ViewModels.LogViewmodel
 import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
-import com.project.beautifulday.R
 import com.project.beautifulday.androidsmall1.jotiOne
 
 @Composable
-fun CardMealUser(navController: NavController, viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel, Idoc: String, colec: String){
+fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel, Idoc: String, colec: String){
     val actionTranslate = viewmodel.actionTranslate
     //val actionTranslate by viewmodelA.actionTranslate.observeAsState(true)
     val state = viewmodelA.state.value
@@ -48,10 +49,11 @@ fun CardMealUser(navController: NavController, viewmodel: MealViewmodel, context
     val login = LgViewModel.login
 
     LaunchedEffect(key1 = true){
-        viewmodel.getMealUserById(Idoc, colec)
+        //viewmodel.getMealUserById(Idoc, colec)
+        viewmodel.getCocktailUserById(Idoc, colec)
     }
 
-    val meal = viewmodel.meal
+    val cocktail = viewmodel.cocktail
 
     Column(
         modifier = Modifier
@@ -61,7 +63,7 @@ fun CardMealUser(navController: NavController, viewmodel: MealViewmodel, context
     ) {
 
         Text(
-            text = meal.strMeal ?: "", modifier = Modifier
+            text = cocktail.strDrink ?: "", modifier = Modifier
                 .fillMaxWidth()
                 .padding(5.dp), fontFamily = jotiOne, fontSize = 24.sp, color = colorResource(
                 id = R.color.silver
@@ -74,7 +76,7 @@ fun CardMealUser(navController: NavController, viewmodel: MealViewmodel, context
             ) {
 
                 AsyncImage(
-                    model = meal.strMealThumb,
+                    model = cocktail.strDrinkThumb,
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -91,7 +93,7 @@ fun CardMealUser(navController: NavController, viewmodel: MealViewmodel, context
 
                         ActionTransalate(
                             actionTranslate = actionTranslate,
-                            text = "Ingredientes:" + "\n" + meal.strIngredients?.joinToString() + "\n" + ":Instructions:" + "\n" + meal.strInstructions,
+                            text = "Ingredientes:" + "\n" + cocktail.strList?.joinToString() + "\n" + ":Instructions:" + "\n" + cocktail.strInstructions,
                             viewmodelA = viewmodelA,
                             context = context,
                             state = state
@@ -135,11 +137,11 @@ fun CardMealUser(navController: NavController, viewmodel: MealViewmodel, context
                     },
                     color = colorResource(id = R.color.paynesGray)
                 )
-                if(colec == "CreateMeals"){
+                if(colec == "CreateCocktails"){
                     Text(text = "Ver video", modifier = Modifier
                         .padding(2.dp)
                         .clickable {
-                            viewmodelA.changeUriVideo(meal.strYoutube ?: "")
+                            viewmodelA.changeUriVideo(cocktail.strmedia ?: "")
                             navController.navigate("video")
                             viewmodelA.changeSlide(slide)
                         },
@@ -162,9 +164,3 @@ fun CardMealUser(navController: NavController, viewmodel: MealViewmodel, context
         viewmodelA.changeSlide(slide)
     }
 }
-
-
-/*
-viewmodel.deleteMeal(Idoc, colec){ navController.navigate("principal") }
-                        viewmodelA.changeSlide(slide)
- */

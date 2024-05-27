@@ -20,12 +20,13 @@ import com.project.beautifulday.Meal.ui.Components.MyBottomBar
 import com.project.beautifulday.Meal.ui.Components.MyTopBar
 import com.project.beautifulday.Meal.ui.Components.ScreenCenter
 import com.project.beautifulday.R
+import com.project.beautifulday.ViewModels.CocktailViewmodel
 import com.project.beautifulday.ViewModels.LogViewmodel
 import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 
 @Composable
-fun CocktailScreen(navController: NavController, viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel) {
+fun CocktailScreen(navController: NavController, viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel, cocktailViewmodel: CocktailViewmodel) {
 
     val meal by viewmodel.mealsData.collectAsState()
     val showOutLineText = viewmodel.showOutLineText
@@ -52,6 +53,7 @@ fun CocktailScreen(navController: NavController, viewmodel: MealViewmodel, conte
                 true,
                 viewmodel,
                 showOutLineText,
+                cocktailViewmodel,
                 login,
                 "Cocktail",
                 navController,
@@ -81,7 +83,8 @@ fun CocktailScreen(navController: NavController, viewmodel: MealViewmodel, conte
                     navController = navController,
                     viewmodel = viewmodel,
                     viewmodelA = viewmodelA,
-                    showOutLineText = showOutLineText
+                    showOutLineText = showOutLineText,
+                    cocktailViewmodel = cocktailViewmodel
                 )
             }
         }

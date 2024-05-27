@@ -8,6 +8,7 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
+import com.project.beautifulday.Cocktail.ui.States.CocktailUser
 import com.project.beautifulday.Meal.ui.States.MealUser
 import com.project.beautifulday.User
 import kotlinx.coroutines.Dispatchers
@@ -29,20 +30,6 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
             .addOnFailureListener {
                 Log.d("ERROR", "ERROR AL GUARDAR")
             }
-
-        /*
-        return suspendCancellableCoroutine { suspendCancellableCoroutine ->
-            fireStore.collection("Users")
-                .add(user)
-                .addOnSuccessListener {
-                    Log.d("GUARDAR OK", "SE GUARDO CORRECTAMENTE")
-                }
-                .addOnFailureListener {
-                    Log.d("ERROR", "ERROR AL GUARDAR")
-                }
-        }
-
-         */
     }
 
     suspend fun fetchMeal(email: String?): List<MealUser> {
@@ -67,6 +54,28 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
         }
     }
 
+    suspend fun fetchCocktail(email: String?): List<CocktailUser> {
+        return withContext(Dispatchers.IO) {
+            val documents = mutableListOf<CocktailUser>()
+            try {
+                val querySnapshot = fireStore.collection("Cocktails")
+                    .whereEqualTo("emailUser", email.toString())
+                    .get()
+                    .await()
+
+                for (document in querySnapshot.documents) {
+                    val myDocument = document.toObject(CocktailUser::class.java)?.copy(idDocument = document.id)
+                    if (myDocument != null) {
+                        documents.add(myDocument)
+                    }
+                }
+            } catch (e: Exception) {
+                Log.d("ERROR", "NO SE PUEDE ACCEDER AL REGISTRO: ${e.message}")
+            }
+            documents
+        }
+    }
+
     suspend fun fetchMealCreater(): List<MealUser> {
         return withContext(Dispatchers.IO) {
             val documents = mutableListOf<MealUser>()
@@ -77,6 +86,27 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
 
                 for (document in querySnapshot.documents) {
                     val myDocument = document.toObject(MealUser::class.java)?.copy(idDocument = document.id)
+                    if (myDocument != null) {
+                        documents.add(myDocument)
+                    }
+                }
+            } catch (e: Exception) {
+                Log.d("ERROR", "NO SE PUEDE ACCEDER AL REGISTRO: ${e.message}")
+            }
+            documents
+        }
+    }
+
+    suspend fun fetchCocktailCreater(): List<CocktailUser> {
+        return withContext(Dispatchers.IO) {
+            val documents = mutableListOf<CocktailUser>()
+            try {
+                val querySnapshot = fireStore.collection("CreateCocktails")
+                    .get()
+                    .await()
+
+                for (document in querySnapshot.documents) {
+                    val myDocument = document.toObject(CocktailUser::class.java)?.copy(idDocument = document.id)
                     if (myDocument != null) {
                         documents.add(myDocument)
                     }
@@ -166,6 +196,21 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
         }
     }
 
+    suspend fun getCocktailById(documento: String, colec: String): CocktailUser? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val documentSnapshot = fireStore.collection(colec)
+                    .document(documento)
+                    .get()
+                    .await()
+                documentSnapshot.toObject(CocktailUser::class.java)
+            } catch (e: Exception) {
+                Log.d("ERROR", "Error al obtener el documento: ${e.message}")
+                null
+            }
+        }
+    }
+
     /*
     fun getMealById(documento: String): MealUser{
         var mealUser = MealUser()
@@ -247,6 +292,55 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
         return result.task
     }
 
+
+    fun saveNewCocktail(colec: String, id: String, idDrink: String?, cocktail: CocktailUser, context: ComponentActivity): Task<Boolean> {
+        val result = TaskCompletionSource<Boolean>()
+
+        fireStore.collection(colec)
+            .whereEqualTo(id, idDrink)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                if (querySnapshot.isEmpty) {
+                    fireStore.collection(colec)
+                        .add(cocktail)
+                        .addOnSuccessListener {
+                            result.setResult(true)
+                            Log.d("GUARDAR OK", "EL REGISTRO SE GUARDO CORRECTAMENTE")
+                        }
+                        .addOnFailureListener {
+                            result.setResult(false)
+                            Log.d("ERROR AL GUARDAR", "ERROR AL GUARDAR EL REGISTRO")
+                        }
+                } else {
+                    result.setResult(false)
+                    fireStore.collection(colec)
+                        .get()
+                        .addOnSuccessListener {snapshot ->
+                            val lista = mutableListOf<String?>()
+                            snapshot.forEach { document ->
+                                val objeto = document.toObject(CocktailUser::class.java)
+                                objeto.idDrink?.let {
+                                    lista.add(it)
+                                }
+                            }
+                            lista.sortWith(compareBy { it })
+
+                            val lista2 = lista.last()!!.toInt()
+
+                            Toast.makeText(context, "Registro existente. ID: ${lista2 + 1} libre", Toast.LENGTH_SHORT).show()
+                        }
+                    //Toast.makeText(context,"Registro existente",Toast.LENGTH_SHORT).show()
+                    Log.d("ERROR", "EL REGISTRO YA EXISTE")
+                }
+            }
+            .addOnFailureListener {
+                result.setResult(false)
+                Log.d("ERROR AL VERIFICAR", "ERROR AL VERIFICAR SI EL REGISTRO EXISTE")
+            }
+
+        return result.task
+    }
+
     fun updateStars(colec: String, iDoc: String, meal: MealUser): Task<Boolean> {
         val result = TaskCompletionSource<Boolean>()
 
@@ -268,7 +362,7 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
         return result.task
     }
 
-    fun deleteMeal(colec: String, documento: String): Task<Boolean>{
+    fun deleteRegister(colec: String, documento: String): Task<Boolean>{
         val result = TaskCompletionSource<Boolean>()
 
         fireStore.collection(colec)
@@ -284,6 +378,8 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
             }
         return result.task
     }
+
+
 
 
     /*

@@ -1,5 +1,6 @@
 package com.project.beautifulday.ViewModels
 
+import android.app.AlertDialog
 import android.content.Context
 import android.net.Uri
 import android.util.Log
@@ -20,6 +21,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.tasks.Tasks
 import com.google.mlkit.common.model.DownloadConditions
 import com.google.mlkit.nl.translate.TranslateLanguage
 import com.google.mlkit.nl.translate.Translation
@@ -28,6 +30,7 @@ import com.google.mlkit.nl.translate.TranslatorOptions
 import com.project.beautifulday.Firebase.AuthService
 import com.project.beautifulday.Firebase.FirestoreService
 import com.project.beautifulday.Firebase.StorageService
+import com.project.beautifulday.ListUiState
 import com.project.beautifulday.Meal.ui.States.Traduction
 
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -115,6 +118,12 @@ class ViewmodelAplication@Inject constructor(private val storageService: Storage
     var screen by mutableStateOf("")
         private set
 
+    var showCreateAlert by mutableStateOf(false)
+        private set
+
+    private var _uiState = MutableStateFlow(ListUiState(false, emptyList()))
+    val uiState: StateFlow<ListUiState> = _uiState
+
 
 
     fun onTextToBeTranslatedChange(text: String){
@@ -191,6 +200,8 @@ class ViewmodelAplication@Inject constructor(private val storageService: Storage
                     focusManager.clearFocus()
                     resultUri = newUri
                     uriFoto = newUri.toString()
+                    imageName = newUri.lastPathSegment.toString()
+                    getMetadata(imageName)
                 }
             }
         }
@@ -208,6 +219,8 @@ class ViewmodelAplication@Inject constructor(private val storageService: Storage
                     focusManager.clearFocus()
                     resultUri = newUri
                     uriVideo = newUri.toString()
+                    imageName = newUri.lastPathSegment.toString()
+                    getMetadata(imageName)
                 }
             }
         }
@@ -251,6 +264,37 @@ class ViewmodelAplication@Inject constructor(private val storageService: Storage
         }
     }
 
+    fun getAllImages(){
+        viewModelScope.launch{
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            val result: List<String> = withContext(Dispatchers.IO){
+                storageService.getAllImages().map{it.toString()}
+            }
+            _uiState.value = _uiState.value.copy(isLoading = false, images = result)
+        }
+    }
+
+
+    fun deleteImage(imageName: String, context: ComponentActivity) {
+        viewModelScope.launch {
+            val success = storageService.removeImage(imageName)
+            if (success) {
+                // Si la eliminación es exitosa, muestra un mensaje de confirmación
+                showMessage(context, "Imagen eliminada satisfactoriamente")
+            } else {
+                // Si la eliminación falla, muestra un mensaje de error
+                showMessage(context, "No se pudo eliminar la imagen")
+            }
+        }
+    }
+
+    fun showMessage(context: Context, message: String) {
+        AlertDialog.Builder(context)
+            .setMessage(message)
+            .setPositiveButton("Aceptar", null) // Aquí puedes agregar un OnClickListener si lo necesitas
+            .show()
+    }
+
 
     /*
     var user by mutableStateOf(User())
@@ -281,6 +325,22 @@ class ViewmodelAplication@Inject constructor(private val storageService: Storage
     fun createFile(context: ComponentActivity, nombre: String, sufijo: String): File {
         val name: String = nombre.ifEmpty { SimpleDateFormat("yyyyMMdd_hhmmss").format(Date())+"image"}
         return File.createTempFile(name,sufijo, context.externalCacheDir)
+    }
+
+    fun deleteRegister(documento: String, colec: String,onSuccess: () -> Unit) {
+        viewModelScope.launch {
+            try {
+                val result = withContext(Dispatchers.IO) { Tasks.await(firestore.deleteRegister(colec, documento)) }
+                if (result) {
+                    onSuccess()
+                    Log.d("BIEN", "ESTA TODO BIEN")
+                } else {
+                    Log.d("ERROR", "Hubo un error al guardar el registro")
+                }
+            } catch (e: Exception) {
+                Log.d("Error al borrar cocktail", "Error ${e.localizedMessage}")
+            }
+        }
     }
 
 
@@ -327,6 +387,10 @@ class ViewmodelAplication@Inject constructor(private val storageService: Storage
         showAlert = result
     }
 
+    fun changeCreateAlerte(result: Boolean){
+        showCreateAlert = result
+    }
+
     fun changeIngrediente(ingredient: String){
         ingrediente = ingredient
     }
@@ -362,6 +426,7 @@ class ViewmodelAplication@Inject constructor(private val storageService: Storage
         namePhoto = name
     }
 
+
     fun changeUriVideo(uriVi: String){
         uriVideo = uriVi
     }
@@ -375,6 +440,8 @@ class ViewmodelAplication@Inject constructor(private val storageService: Storage
         _slide.value = false
         _actionTranslate.value = true
         showDialog = false
+        resultUri = null
+        id = ""
         descripcion = ""
         uriFoto = ""
         uriVideo = ""

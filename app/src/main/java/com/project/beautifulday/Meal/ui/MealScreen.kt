@@ -43,11 +43,12 @@ import com.project.beautifulday.ViewModels.LogViewmodel
 import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.R
+import com.project.beautifulday.ViewModels.CocktailViewmodel
 import com.project.beautifulday.androidsmall1.jotiOne
 
 
 @Composable
-fun MealScreen(navController: NavController, viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel){
+fun MealScreen(navController: NavController, viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel, cocktailViewmodel: CocktailViewmodel){
 
     val meal by viewmodel.mealsData.collectAsState()
     val showOutLineText = viewmodel.showOutLineText
@@ -62,7 +63,7 @@ fun MealScreen(navController: NavController, viewmodel: MealViewmodel, context: 
 
     Scaffold(
         modifier = Modifier.background(colorResource(id = R.color.electricBlue)),
-        topBar = { MyTopBar(meal, true, viewmodel, showOutLineText, login, "Comida", navController, slide, viewmodelA, showDialog) },
+        topBar = { MyTopBar(meal, true, viewmodel, showOutLineText, cocktailViewmodel, login, "Comida", navController, slide, viewmodelA, showDialog) },
         bottomBar = { MyBottomBar(order, navController, LgViewModel) }
     ) { innerPadding ->
         Box(
@@ -84,7 +85,8 @@ fun MealScreen(navController: NavController, viewmodel: MealViewmodel, context: 
                     navController = navController,
                     viewmodel = viewmodel,
                     viewmodelA = viewmodelA,
-                    showOutLineText = showOutLineText
+                    showOutLineText = showOutLineText,
+                    cocktailViewmodel = cocktailViewmodel
                 )
             }
         }

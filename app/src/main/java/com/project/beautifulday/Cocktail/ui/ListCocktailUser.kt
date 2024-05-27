@@ -22,13 +22,15 @@ import com.project.beautifulday.Meal.ui.Components.MyBottomBar
 import com.project.beautifulday.Meal.ui.Components.MyTopBar
 import com.project.beautifulday.Meal.ui.Components.ScreenCenter
 import com.project.beautifulday.R
+import com.project.beautifulday.ViewModels.CocktailViewmodel
 import com.project.beautifulday.ViewModels.LogViewmodel
 import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 
 @Composable
-fun ListCocktailUser(navController: NavController, viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel){
+fun ListCocktailUser(navController: NavController, viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel, cocktailViewmodel: CocktailViewmodel ){
    // val mealData by viewmodel.mealData.collectAsState()
+    val cocktail by cocktailViewmodel.cocktailUser.collectAsState()
 
     val showOutLineText = viewmodel.showOutLineText
     //val slide = viewmodelA.slide
@@ -37,7 +39,7 @@ fun ListCocktailUser(navController: NavController, viewmodel: MealViewmodel, con
     val login = LgViewModel.login
 
     LaunchedEffect(key1 = true){
-        viewmodel.fetchMeal()
+        cocktailViewmodel.fetchCocktail()
     }
 
     /*
@@ -58,6 +60,7 @@ fun ListCocktailUser(navController: NavController, viewmodel: MealViewmodel, con
                 showMenu = true,
                 viewmodel = viewmodel,
                 showOutLineText = showOutLineText,
+                cocktailViewmodel,
                 login = login,
                 mealName = "Favoritos",
                 navController = navController,
@@ -84,14 +87,15 @@ fun ListCocktailUser(navController: NavController, viewmodel: MealViewmodel, con
                 showCenter = 2
             )
             Box(modifier = Modifier.padding(start = 30.dp, end = 30.dp)){
-                viewmodel.ShowMealsNameUser(mealData = mutableListOf(), navController, "Meals")
+                cocktailViewmodel.ShowCocktailNameUser(cocktailData = cocktail, navController, "Cocktails")
             }
             if(showOutLineText){
                 BusquedaNombre(
                     navController = navController,
                     viewmodel = viewmodel,
                     viewmodelA = viewmodelA,
-                    showOutLineText = showOutLineText
+                    showOutLineText = showOutLineText,
+                    cocktailViewmodel = cocktailViewmodel
                 )
             }
         }

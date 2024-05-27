@@ -42,10 +42,11 @@ import com.project.beautifulday.ViewModels.LogViewmodel
 import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.R
+import com.project.beautifulday.ViewModels.CocktailViewmodel
 import com.project.beautifulday.androidsmall1.jotiOne
 
 @Composable
-fun ListMealUserCreater(navController: NavController, viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel){
+fun ListMealUserCreater(navController: NavController, viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel, cocktailViewmodel: CocktailViewmodel){
     val mealData by viewmodel.mealData.collectAsState()
     val meals by viewmodel.mealsData.collectAsState()
     val showOutLineText = viewmodel.showOutLineText
@@ -73,6 +74,7 @@ fun ListMealUserCreater(navController: NavController, viewmodel: MealViewmodel, 
                 showMenu = true,
                 viewmodel = viewmodel,
                 showOutLineText = showOutLineText,
+                cocktailViewmodel,
                 login = login,
                 mealName = "Socios",
                 navController = navController,
@@ -106,7 +108,8 @@ fun ListMealUserCreater(navController: NavController, viewmodel: MealViewmodel, 
                     navController = navController,
                     viewmodel = viewmodel,
                     viewmodelA = viewmodelA,
-                    showOutLineText = showOutLineText
+                    showOutLineText = showOutLineText,
+                    cocktailViewmodel = cocktailViewmodel
                 )
             }
         }

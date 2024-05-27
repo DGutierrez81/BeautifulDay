@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.project.beautifulday.R
+import com.project.beautifulday.ViewModels.CocktailViewmodel
 import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 
@@ -29,38 +30,70 @@ fun BusquedaNombre(
     navController: NavController,
     viewmodel: MealViewmodel,
     viewmodelA: ViewmodelAplication,
-    showOutLineText: Boolean
+    showOutLineText: Boolean,
+    cocktailViewmodel: CocktailViewmodel
 ){
+    val screen = viewmodelA.screen
     Box(modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center){
         Row(
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            OutlinedTextField(value = viewmodel.mealName, onValueChange = { viewmodel.changeMealName(it)},
-                label = { Text(text = "Busqueda por nombre") },
-                modifier = Modifier
-                    .padding(5.dp)
-                    .background(color = Color.Transparent),
-                shape = RoundedCornerShape(100.dp),
-                colors = TextFieldDefaults.colors(
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    focusedContainerColor = Color.White
+            if(screen == "meal"){
+                OutlinedTextField(value = viewmodel.mealName, onValueChange = { viewmodel.changeMealName(it)},
+                    label = { Text(text = "Busqueda por nombre") },
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .background(color = Color.Transparent),
+                    shape = RoundedCornerShape(100.dp),
+                    colors = TextFieldDefaults.colors(
+                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        focusedContainerColor = Color.White
+                    )
                 )
-            )
-            AsyncImage(model = R.drawable.logo,
-                contentDescription = null,
-                modifier = Modifier
-                    .width(50.dp)
-                    .height(50.dp)
-                    .clickable {
-                        viewmodel.getMealName(viewmodel.mealName)
-                        navController.navigate("mealNameScreen")
-                        viewmodel.changeshowOutLineText(showOutLineText)
-                        viewmodelA.clean()
-                        viewmodel.changeMealName("")
-                    })
+                AsyncImage(model = R.drawable.logo,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .width(50.dp)
+                        .height(50.dp)
+                        .clickable {
+                            viewmodel.getMealName(viewmodel.mealName)
+                            navController.navigate("mealNameScreen")
+                            viewmodel.changeshowOutLineText(showOutLineText)
+                            viewmodelA.clean()
+                            viewmodel.changeMealName("")
+                        }
+                )
+            }else{
+                OutlinedTextField(value = cocktailViewmodel.nameCocktail, onValueChange = { cocktailViewmodel.changeNameCocktail(it)},
+                    label = { Text(text = "Busqueda por nombre") },
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .background(color = Color.Transparent),
+                    shape = RoundedCornerShape(100.dp),
+                    colors = TextFieldDefaults.colors(
+                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        focusedContainerColor = Color.White
+                    )
+                )
+                AsyncImage(model = R.drawable.logo,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .width(50.dp)
+                        .height(50.dp)
+                        .clickable {
+                            cocktailViewmodel.getName(cocktailViewmodel.nameCocktail)
+                            navController.navigate("listaCocktailsApi")
+                            viewmodel.changeshowOutLineText(showOutLineText)
+                            cocktailViewmodel.changeNameCocktail("")
+                            cocktailViewmodel.clean()
+                        }
+                )
+            }
+
         }
     }
 }

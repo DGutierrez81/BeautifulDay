@@ -3,6 +3,7 @@ package com.project.beautifulday.Cocktail.Data
 import com.project.beautifulday.Cocktail.CocktailService
 import com.project.beautifulday.Cocktail.ui.States.CocktailState
 import com.project.beautifulday.Cocktail.ui.States.drinkState
+import com.project.beautifulday.Meal.ui.States.ListMealsState
 import javax.inject.Inject
 
 
@@ -27,6 +28,31 @@ class CocktailRepository @Inject constructor(private val api: CocktailService){
         }else {
             CocktailState()
         }
+    }
+
+    suspend fun getCategory(category: String): CocktailState{
+        val response = api.getCategory(category)
+        return if(response.isSuccessful){
+            response.body()?.getDrink() ?: CocktailState()
+        }else{
+            CocktailState()
+        }
+    }
+
+    suspend fun getAlcoholics(election: String): CocktailState{
+        val response = api.getAlcoholics(election)
+        return if(response.isSuccessful){
+            response.body()?.getDrink() ?: CocktailState()
+        }else{
+            CocktailState()
+        }
+    }
+
+    suspend fun getCocktailById(id: String): CocktailState {
+        val response = api.getCocktailById(id)
+        return if(response.isSuccessful){
+            response.body()?.getDrink() ?: CocktailState()
+        }else CocktailState()
     }
 
 

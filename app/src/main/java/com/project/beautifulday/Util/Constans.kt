@@ -13,5 +13,6 @@ class Constans {
         const val INGREDIENT = "list.php?i=list"
         const val ID = "lookup.php"
         const val ALLCATEGORY = "categories.php"
+
     }
 }

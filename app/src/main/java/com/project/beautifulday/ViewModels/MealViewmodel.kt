@@ -211,7 +211,7 @@ class MealViewmodel@Inject constructor(private val useCaseMealName: UseCaseMealN
 
     fun getMealById(id: String){
         viewModelScope.launch {
-            mealList = (useCaseRandom().meals?: mutableListOf()).toMutableList()
+            mealList = (useCaseMealId(id).meals?: mutableListOf()).toMutableList()
             getMeal()
         }
     }
@@ -460,26 +460,6 @@ class MealViewmodel@Inject constructor(private val useCaseMealName: UseCaseMealN
         }
         cleanVotes()
     }
-
-
-    fun deleteMeal(documento: String, colec: String,onSuccess: () -> Unit) {
-        viewModelScope.launch {
-            try {
-                val result = withContext(Dispatchers.IO) { Tasks.await(firestore.deleteMeal(colec, documento)) }
-                if (result) {
-                    onSuccess()
-                    Log.d("BIEN", "ESTA TODO BIEN")
-                } else {
-                    Log.d("ERROR", "Hubo un error al guardar el registro")
-                }
-            } catch (e: Exception) {
-                Log.d("Error al borrar cocktail", "Error ${e.localizedMessage}")
-            }
-        }
-    }
-
-
-
 
     fun changeMealName(name: String){
         mealName = name

@@ -42,6 +42,7 @@ import com.project.beautifulday.androidsmall1.jotiOne
 fun MyCard(navController: NavController, viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel) {
     val meal = viewmodel.meal
 
+
     val actionTranslate = viewmodel.actionTranslate
     //val actionTranslate by viewmodelA.actionTranslate.observeAsState(true)
     val state = viewmodelA.state.value
