@@ -32,7 +32,6 @@ import com.project.beautifulday.Firebase.FirestoreService
 import com.project.beautifulday.Firebase.StorageService
 import com.project.beautifulday.ListUiState
 import com.project.beautifulday.Meal.ui.States.Traduction
-
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -123,6 +122,15 @@ class ViewmodelAplication@Inject constructor(private val storageService: Storage
 
     private var _uiState = MutableStateFlow(ListUiState(false, emptyList()))
     val uiState: StateFlow<ListUiState> = _uiState
+
+    var averageRating by mutableStateOf(0.0)
+        private set
+
+    var listVotes by mutableStateOf(listOf<Double>())
+        private set
+
+    var currentRating by mutableStateOf(0.0)
+        private set
 
 
 
@@ -344,6 +352,8 @@ class ViewmodelAplication@Inject constructor(private val storageService: Storage
     }
 
 
+
+
     /*
     fun updateStars(iDoc: String, onSuccess:() -> Unit){
         viewModelScope.launch(Dispatchers.IO){
@@ -370,6 +380,27 @@ class ViewmodelAplication@Inject constructor(private val storageService: Storage
 
 
      */
+
+
+
+    fun calculateAverageRating(){
+        averageRating = if (listVotes.isNotEmpty()) {
+            listVotes.sum() / listVotes.size
+        } else {
+            0.0
+        }
+    }
+
+    fun updateListVotes(newRating: Double){
+        listVotes = listVotes + newRating
+    }
+
+    fun changeCurrentRating(current: Double){
+        currentRating = current
+    }
+
+    fun calculateAverage(votes: Int, valueVote: Double): Double = valueVote/votes
+
 
     fun changeActionTranslate(value: Boolean){
         _actionTranslate.value = value

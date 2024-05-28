@@ -243,14 +243,27 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
 
      */
 
-    fun saveNewMeal(colec: String, id: String, idMeal: String?, meal: MealUser, context: ComponentActivity): Task<Boolean> {
+    fun saveNewMeal(colec: String, id: String, idMeal: String?, meal: MealUser, email: String?, context: ComponentActivity): Task<Boolean> {
         val result = TaskCompletionSource<Boolean>()
+
+        if (idMeal == null || email.isNullOrEmpty()) {
+            result.setResult(false)
+            Log.d("ERROR", "idMeal o email es nulo/vacío")
+            return result.task
+        }
 
         fireStore.collection(colec)
             .whereEqualTo(id, idMeal)
             .get()
             .addOnSuccessListener { querySnapshot ->
-                if (querySnapshot.isEmpty) {
+                val existingMeals = querySnapshot.documents.mapNotNull { it.toObject(MealUser::class.java) }
+                val emailExists = existingMeals.any { it.emailUser == email }
+
+                if (emailExists) {
+                    result.setResult(false)
+                    Toast.makeText(context, "Registro existente con el mismo email e ID de comida", Toast.LENGTH_SHORT).show()
+                    Log.d("ERROR", "EL REGISTRO YA EXISTE")
+                } else {
                     fireStore.collection(colec)
                         .add(meal)
                         .addOnSuccessListener {
@@ -261,27 +274,6 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
                             result.setResult(false)
                             Log.d("ERROR AL GUARDAR", "ERROR AL GUARDAR EL REGISTRO")
                         }
-                } else {
-                    result.setResult(false)
-                    fireStore.collection(colec)
-                        .get()
-                        .addOnSuccessListener {snapshot ->
-                            val lista = mutableListOf<String?>()
-                            snapshot.forEach { document ->
-                                val objeto = document.toObject(MealUser::class.java)
-                                //if(objeto.idMeal == idMeal) Toast.makeText(context,"Registro existente Id: $idMeal",Toast.LENGTH_SHORT).show()
-                                objeto.idMeal?.let {
-                                    lista.add(it)
-                                }
-                            }
-                            lista.sortWith(compareBy { it })
-
-                            val lista2 = lista.last()!!.toInt()
-
-                            Toast.makeText(context, "Registro existente. ID: ${lista2 + 1} libre", Toast.LENGTH_SHORT).show()
-                        }
-                    //Toast.makeText(context,"Registro existente",Toast.LENGTH_SHORT).show()
-                    Log.d("ERROR", "EL REGISTRO YA EXISTE")
                 }
             }
             .addOnFailureListener {
@@ -293,14 +285,27 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
     }
 
 
-    fun saveNewCocktail(colec: String, id: String, idDrink: String?, cocktail: CocktailUser, context: ComponentActivity): Task<Boolean> {
+    fun saveNewCocktail(colec: String, id: String, idDrink: String?, cocktail: CocktailUser, email: String?,context: ComponentActivity): Task<Boolean> {
         val result = TaskCompletionSource<Boolean>()
+
+        if (idDrink == null || email.isNullOrEmpty()) {
+            result.setResult(false)
+            Log.d("ERROR", "idMeal o email es nulo/vacío")
+            return result.task
+        }
 
         fireStore.collection(colec)
             .whereEqualTo(id, idDrink)
             .get()
             .addOnSuccessListener { querySnapshot ->
-                if (querySnapshot.isEmpty) {
+                val existingMeals = querySnapshot.documents.mapNotNull { it.toObject(MealUser::class.java) }
+                val emailExists = existingMeals.any { it.emailUser == email }
+
+                if (emailExists) {
+                    result.setResult(false)
+                    Toast.makeText(context, "Registro existente con el mismo email e ID de comida", Toast.LENGTH_SHORT).show()
+                    Log.d("ERROR", "EL REGISTRO YA EXISTE")
+                } else {
                     fireStore.collection(colec)
                         .add(cocktail)
                         .addOnSuccessListener {
@@ -311,26 +316,6 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
                             result.setResult(false)
                             Log.d("ERROR AL GUARDAR", "ERROR AL GUARDAR EL REGISTRO")
                         }
-                } else {
-                    result.setResult(false)
-                    fireStore.collection(colec)
-                        .get()
-                        .addOnSuccessListener {snapshot ->
-                            val lista = mutableListOf<String?>()
-                            snapshot.forEach { document ->
-                                val objeto = document.toObject(CocktailUser::class.java)
-                                objeto.idDrink?.let {
-                                    lista.add(it)
-                                }
-                            }
-                            lista.sortWith(compareBy { it })
-
-                            val lista2 = lista.last()!!.toInt()
-
-                            Toast.makeText(context, "Registro existente. ID: ${lista2 + 1} libre", Toast.LENGTH_SHORT).show()
-                        }
-                    //Toast.makeText(context,"Registro existente",Toast.LENGTH_SHORT).show()
-                    Log.d("ERROR", "EL REGISTRO YA EXISTE")
                 }
             }
             .addOnFailureListener {
@@ -341,12 +326,34 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
         return result.task
     }
 
-    fun updateStars(colec: String, iDoc: String, meal: MealUser): Task<Boolean> {
+    fun updateStarsMeal(colec: String, iDoc: String, meal: MealUser): Task<Boolean> {
         val result = TaskCompletionSource<Boolean>()
 
         val plusVotes = hashMapOf(
             "points" to meal.points,
             "votes" to meal.votes
+        )
+        fireStore.collection(colec).document(iDoc)
+            .update(plusVotes as Map<String, Any>)
+            .addOnSuccessListener {
+                result.setResult(true)
+                Log.d("Actualizacion OK", "Se ha actualizado correctamente")
+            }
+            .addOnFailureListener {
+                result.setResult(false)
+                Log.d("Error al actualizar", "No se ha podido realizar la actualización.")
+            }
+
+        return result.task
+    }
+
+
+    fun updateStarsCocktail(colec: String, iDoc: String, drink: CocktailUser): Task<Boolean> {
+        val result = TaskCompletionSource<Boolean>()
+
+        val plusVotes = hashMapOf(
+            "puntuacion" to drink.puntuacion,
+            "votes" to drink.votes
         )
         fireStore.collection(colec).document(iDoc)
             .update(plusVotes as Map<String, Any>)

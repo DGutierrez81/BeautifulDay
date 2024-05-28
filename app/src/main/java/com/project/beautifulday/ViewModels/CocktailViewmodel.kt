@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -38,13 +39,11 @@ import com.project.beautifulday.Cocktail.CoktailUseCases.UseCaseAlcholic
 import com.project.beautifulday.Cocktail.CoktailUseCases.UseCaseCategoryCocktail
 import com.project.beautifulday.Cocktail.CoktailUseCases.UseCaseCocktailRandom
 import com.project.beautifulday.Cocktail.CoktailUseCases.UseCaseGetCocktailById
-import com.project.beautifulday.Cocktail.ui.States.CocktailState
 import com.project.beautifulday.Cocktail.ui.States.CocktailUser
 import com.project.beautifulday.Cocktail.ui.States.drinkState
+import com.project.beautifulday.Components.RatingBarImage
 import com.project.beautifulday.Firebase.AuthService
 import com.project.beautifulday.Firebase.FirestoreService
-import com.project.beautifulday.Meal.ui.States.MealState
-import com.project.beautifulday.Meal.ui.States.MealUser
 import com.project.beautifulday.R
 import com.project.beautifulday.androidsmall1.jotiOne
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -84,6 +83,27 @@ class CocktailViewmodel@Inject constructor(private val nameUseCase: NameUseCase,
         private set
 
     var ingredients by mutableStateOf<MutableList<String>>(mutableListOf())
+        private set
+
+    var puntuacion by mutableStateOf(0.0)
+        private set
+
+    var votes by mutableStateOf(0)
+        private set
+
+    var currentRating by mutableStateOf(0.0)
+        private set
+
+    var showVotes by mutableStateOf(false)
+        private set
+
+    var listVotes by mutableStateOf(listOf<Double>())
+        private set
+
+    var averageRating by mutableStateOf(0.0)
+        private set
+
+    var average by mutableStateOf(0.0)
         private set
 
     fun getName(name: String) {
@@ -174,28 +194,31 @@ class CocktailViewmodel@Inject constructor(private val nameUseCase: NameUseCase,
 
 
     @Composable
-    fun GetImagesUser(cocktail: CocktailUser?, navController: NavController, colec: String){
-        cocktail?.strDrinkThumb.let{ url ->
+    fun GetImagesUser(cocktail: CocktailUser?, navController: NavController, colec: String) {
+        cocktail?.strDrinkThumb?.let { url ->
             Box(
-                modifier = Modifier.
-                weight(1f),
+                modifier = Modifier
+                    .weight(1f),
                 contentAlignment = Alignment.Center
             ) {
                 Column {
-                    AsyncImage(model = url, contentDescription = "Cocktail Image",
+                    AsyncImage(
+                        model = url,
+                        contentDescription = "Cocktail Image",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .width(120.dp)
                             .height(120.dp)
                             .clip(RoundedCornerShape(100.dp))
                             .clickable {
-                                navController.navigate("cardCocktailUser/${cocktail?.idDocument}?colec=$colec")
+                                navController.navigate("cardCocktailUser/${cocktail.idDocument}?colec=$colec")
                                 actionTranslate = true
                             }
                     )
                     Text(
-                        text = cocktail?.strDrink?:"", modifier = Modifier
-                            .height(120.dp)
+                        text = cocktail?.strDrink ?: "",
+                        modifier = Modifier
+                            .height(75.dp)
                             .width(120.dp)
                             .padding(16.dp)
                             .align(Alignment.CenterHorizontally),
@@ -203,10 +226,19 @@ class CocktailViewmodel@Inject constructor(private val nameUseCase: NameUseCase,
                         fontFamily = jotiOne,
                         color = colorResource(id = R.color.paynesGray)
                     )
+                    Spacer(modifier = Modifier.height(1.dp))
+                    val average = calculateAverage(cocktail?.votes ?: 0, cocktail?.puntuacion ?: 0.0)
+
+                    if (colec == "CreateCocktails") {
+                        Box(modifier = Modifier.width(120.dp), contentAlignment = Alignment.Center) {
+                            RatingBarImage(rating = average)
+                        }
+                    }
                 }
             }
         }
     }
+
 
 
     @Composable
@@ -319,9 +351,10 @@ class CocktailViewmodel@Inject constructor(private val nameUseCase: NameUseCase,
 
 
     fun saveNewCocktail(colec: String, context: ComponentActivity, onSuccess: () -> Unit) {
+        val email = authService.email()
         viewModelScope.launch {
             val result = withContext(Dispatchers.IO) {
-                Tasks.await(firestore.saveNewCocktail(colec, "idDrink", drink.idDrink, drink, context))
+                Tasks.await(firestore.saveNewCocktail(colec, "idDrink", drink.idDrink, drink, email,context))
             }
             if (result) {
                 onSuccess()
@@ -330,6 +363,46 @@ class CocktailViewmodel@Inject constructor(private val nameUseCase: NameUseCase,
                 Log.d("ERROR", "Hubo un error al guardar el registro o el registro ya existe")
             }
         }
+    }
+
+    fun updateStars(iDoc: String, onSuccess: () -> Unit){
+        viewModelScope.launch {
+            val result = withContext(Dispatchers.IO) {
+                Tasks.await(firestore.updateStarsCocktail("CreateCocktails", iDoc, drink))
+            }
+            if (result) {
+                onSuccess()
+            } else {
+                // Manejo del caso cuando result es false
+                Log.d("ERROR", "Hubo un error al guardar el registro")
+            }
+        }
+        cleanVotes()
+    }
+
+    fun changeValueVotes(value: Double, text: String){
+        when(text){
+            "puntuacion" -> drink = drink.copy(puntuacion = value + drink.puntuacion!! )
+            "votes" -> drink = drink.copy(votes = drink.votes!! + value.toInt())
+        }
+    }
+
+    fun calculateAverageRating(){
+        averageRating = if (listVotes.isNotEmpty()) {
+            listVotes.sum() / listVotes.size
+        } else {
+            0.0
+        }
+    }
+
+    fun calculateAverage(votes: Int, valueVote: Double): Double = valueVote/votes
+
+    fun changeCurrentRating(current: Double){
+        currentRating = current
+    }
+
+    fun updateListVotes(newRating: Double){
+        listVotes = listVotes + newRating
     }
 
 
@@ -344,4 +417,15 @@ class CocktailViewmodel@Inject constructor(private val nameUseCase: NameUseCase,
     fun clean(){
         nameCocktail = ""
     }
+
+    fun changeShowVotes(result: Boolean){
+        showVotes = result
+    }
+
+    fun cleanVotes(){
+        puntuacion = 0.0
+        votes = 0
+        currentRating = 0.0
+    }
+
 }

@@ -16,11 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.project.beautifulday.Meal.ui.Components.BusquedaNombre
-import com.project.beautifulday.Meal.ui.Components.DialogCategory
-import com.project.beautifulday.Meal.ui.Components.MyBottomBar
-import com.project.beautifulday.Meal.ui.Components.MyTopBar
-import com.project.beautifulday.Meal.ui.Components.ScreenCenter
+import com.project.beautifulday.Components.BusquedaNombre
+import com.project.beautifulday.Components.DialogCategory
+import com.project.beautifulday.Components.MyBottomBar
+import com.project.beautifulday.Components.ScreenCenter
+import com.project.beautifulday.LogSig.MyTopBar
 import com.project.beautifulday.R
 import com.project.beautifulday.ViewModels.CocktailViewmodel
 import com.project.beautifulday.ViewModels.LogViewmodel
@@ -66,7 +66,7 @@ fun ListCocktailUserCreater(navController: NavController, viewmodel: MealViewmod
             )
         },
         bottomBar = {
-            MyBottomBar(order = 3, navController = navController, LgViewModel = LgViewModel)
+            MyBottomBar(order = 5, navController = navController, LgViewModel = LgViewModel, viewmodelA)
         }
     ) {innerPadding ->
         Box(
@@ -80,7 +80,7 @@ fun ListCocktailUserCreater(navController: NavController, viewmodel: MealViewmod
                 navController = navController,
                 viewmodelA = viewmodelA,
                 LgViewModel = LgViewModel,
-                showCenter = 2
+                showCenter = 3
             )
             Box(modifier = Modifier.padding(start = 30.dp, end = 30.dp)){
                 cocktailViewmodel.ShowCocktailNameUser(cocktailData = cocktailData, navController, "CreateCocktails")

@@ -7,31 +7,31 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.project.beautifulday.BlankView
+import com.project.beautifulday.Components.BlankView
 import com.project.beautifulday.Cocktail.ui.CocktailScreen
 import com.project.beautifulday.Cocktail.ui.ListCocktailUser
 import com.project.beautifulday.Cocktail.ui.ListCocktailUserCreater
 import com.project.beautifulday.Cocktail.ui.ListaCocktailsApi
-import com.project.beautifulday.Cocktail.ui.States.CardCocktailUser
-import com.project.beautifulday.Cocktail.ui.States.CardCocktails
-import com.project.beautifulday.LogIn
+import com.project.beautifulday.Cocktail.ui.CardCocktailUser
+import com.project.beautifulday.Cocktail.ui.CardCocktails
+import com.project.beautifulday.Components.RegistroM
+import com.project.beautifulday.LogSig.LogIn
 import com.project.beautifulday.Meal.ui.Camera
 import com.project.beautifulday.Meal.ui.CardIngredient
 import com.project.beautifulday.Meal.ui.CardMealUser
-import com.project.beautifulday.Meal.ui.Components.RegistroM
-import com.project.beautifulday.Meal.ui.CreateNewMeal
 import com.project.beautifulday.Meal.ui.ListCategory
 import com.project.beautifulday.Meal.ui.ListMealUser
 import com.project.beautifulday.Meal.ui.ListMealUserCreater
 import com.project.beautifulday.Meal.ui.MealNameScreen
 import com.project.beautifulday.Meal.ui.MealScreen
 import com.project.beautifulday.ViewModels.MealViewmodel
-import com.project.beautifulday.Meal.ui.MyCard
 import com.project.beautifulday.Meal.ui.PrincipalScreen
 import com.project.beautifulday.ViewModels.LogViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
-import com.project.beautifulday.RegisterUser
-import com.project.beautifulday.Video
+import com.project.beautifulday.LogSig.RegisterUser
+import com.project.beautifulday.Components.CreateRegister
+import com.project.beautifulday.Meal.ui.CardMeals
+import com.project.beautifulday.Components.Video
 import com.project.beautifulday.ViewModels.CocktailViewmodel
 
 @Composable
@@ -52,7 +52,7 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
             MealNameScreen(navController = navController, viewmodel = viewmodel, context = context, viewmodelA, LgViewModel, cocktailViewmodel)
         }
         composable("myCard"){
-            MyCard(navController = navController, viewmodel = viewmodel, context = context, viewmodelA, LgViewModel)
+            CardMeals(navController = navController, viewmodel = viewmodel, context = context, viewmodelA, LgViewModel)
         }
         composable("listCategory"){
             ListCategory(
@@ -122,7 +122,7 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
         }
 
         composable("createNewMeal"){
-            CreateNewMeal(
+            CreateRegister(
                 navController = navController,
                 viewmodel = viewmodel,
                 viewmodelA = viewmodelA,

@@ -15,11 +15,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.project.beautifulday.Meal.ui.Components.BusquedaNombre
-import com.project.beautifulday.Meal.ui.Components.DialogCategory
-import com.project.beautifulday.Meal.ui.Components.MyBottomBar
-import com.project.beautifulday.Meal.ui.Components.MyTopBar
-import com.project.beautifulday.Meal.ui.Components.ScreenCenter
+import com.project.beautifulday.Components.BusquedaNombre
+import com.project.beautifulday.Components.DialogCategory
+import com.project.beautifulday.Components.MyBottomBar
+import com.project.beautifulday.Components.ScreenCenter
+import com.project.beautifulday.LogSig.MyTopBar
 import com.project.beautifulday.R
 import com.project.beautifulday.ViewModels.CocktailViewmodel
 import com.project.beautifulday.ViewModels.LogViewmodel
@@ -36,7 +36,7 @@ fun ListaCocktailsApi(navController: NavController, viewmodel: MealViewmodel, co
     val showDialog = viewmodelA.showDialog
     val login = LgViewModel.login
     var order = 2
-    if(login) order = 3
+    if(login) order = 5
 
     if(showDialog) DialogCategory(
         onDismiss = { viewmodelA.chageShowDialog(showDialog) },
@@ -62,7 +62,7 @@ fun ListaCocktailsApi(navController: NavController, viewmodel: MealViewmodel, co
             viewmodelA,
             showDialog
         ) },
-        bottomBar = { MyBottomBar(order, navController, LgViewModel) }
+        bottomBar = { MyBottomBar(order, navController, LgViewModel, viewmodelA) }
 
     ) { innerPadding ->
         Box(
@@ -76,7 +76,7 @@ fun ListaCocktailsApi(navController: NavController, viewmodel: MealViewmodel, co
                 navController = navController,
                 viewmodelA = viewmodelA,
                 LgViewModel = LgViewModel,
-                showCenter = 2
+                showCenter = 3
             )
             Box(modifier = Modifier.padding(start = 30.dp, end = 30.dp)){
                 cocktailViewmodel.ShowCocktailsName(cocktail = cocktails, navController = navController)

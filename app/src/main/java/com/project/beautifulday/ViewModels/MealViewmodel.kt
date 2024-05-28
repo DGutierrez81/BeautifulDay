@@ -1,13 +1,13 @@
 package com.project.beautifulday.ViewModels
 
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,6 +35,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.google.android.gms.tasks.Tasks
 import com.google.relay.compose.ColumnScopeInstanceImpl.weight
+import com.project.beautifulday.Components.RatingBarImage
 import com.project.beautifulday.Firebase.AuthService
 import com.project.beautifulday.Firebase.FirestoreService
 import com.project.beautifulday.Meal.MealUseCases.UseCaseListArea
@@ -123,6 +124,18 @@ class MealViewmodel@Inject constructor(private val useCaseMealName: UseCaseMealN
         private set
 
     var currentRating by mutableStateOf(0.0)
+        private set
+
+    var showVotes by mutableStateOf(false)
+        private set
+
+    var listVotes by mutableStateOf(listOf<Double>())
+        private set
+
+    var averageRating by mutableStateOf(0.0)
+        private set
+
+    var average by mutableStateOf(0.0)
         private set
 
 
@@ -328,28 +341,30 @@ class MealViewmodel@Inject constructor(private val useCaseMealName: UseCaseMealN
 
 
     @Composable
-    fun GetImagesUser(meal: MealUser?, navController: NavController, colec: String){
-        meal?.strMealThumb.let{ url ->
+    fun GetImagesUser(meal: MealUser?, navController: NavController, colec: String) {
+        meal?.strMealThumb?.let { url ->
             Box(
-                modifier = Modifier.
-                weight(1f),
+                modifier = Modifier.weight(1f),
                 contentAlignment = Alignment.Center
             ) {
                 Column {
-                    AsyncImage(model = url, contentDescription = "Meal Image",
+                    AsyncImage(
+                        model = url,
+                        contentDescription = "Meal Image",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .width(120.dp)
                             .height(120.dp)
                             .clip(RoundedCornerShape(100.dp))
                             .clickable {
-                                navController.navigate("cardMealUser/${meal?.idDocument}?colec=$colec")
+                                navController.navigate("cardMealUser/${meal.idDocument}?colec=$colec")
                                 actionTranslate = true
                             }
                     )
                     Text(
-                        text = meal?.strMeal?:"", modifier = Modifier
-                            .height(120.dp)
+                        text = meal.strMeal ?: "",
+                        modifier = Modifier
+                            .height(75.dp)
                             .width(120.dp)
                             .padding(16.dp)
                             .align(Alignment.CenterHorizontally),
@@ -357,6 +372,14 @@ class MealViewmodel@Inject constructor(private val useCaseMealName: UseCaseMealN
                         fontFamily = jotiOne,
                         color = colorResource(id = R.color.paynesGray)
                     )
+                    Spacer(modifier = Modifier.height(1.dp))
+                    val average = calculateAverage(meal.votes ?: 0, meal.points ?: 0.0)
+
+                    if (colec == "CreateMeals") {
+                        Box(modifier = Modifier.width(120.dp), contentAlignment = Alignment.Center) {
+                            RatingBarImage(rating = average)
+                        }
+                    }
                 }
             }
         }
@@ -412,9 +435,10 @@ class MealViewmodel@Inject constructor(private val useCaseMealName: UseCaseMealN
     }
 
     fun saveNewMeals(colec: String, context: ComponentActivity, onSuccess: () -> Unit) {
+        val email = authService.email()
         viewModelScope.launch {
             val result = withContext(Dispatchers.IO) {
-                Tasks.await(firestore.saveNewMeal(colec, "idMeal", meal.idMeal, meal, context))
+                Tasks.await(firestore.saveNewMeal(colec, "idMeal", meal.idMeal, meal, email, context))
             }
             if (result) {
                 onSuccess()
@@ -449,7 +473,7 @@ class MealViewmodel@Inject constructor(private val useCaseMealName: UseCaseMealN
     fun updateStars(iDoc: String, onSuccess: () -> Unit){
         viewModelScope.launch {
             val result = withContext(Dispatchers.IO) {
-                Tasks.await(firestore.updateStars("Meals", iDoc, meal))
+                Tasks.await(firestore.updateStarsMeal("Meals", iDoc, meal))
             }
             if (result) {
                 onSuccess()
@@ -461,8 +485,34 @@ class MealViewmodel@Inject constructor(private val useCaseMealName: UseCaseMealN
         cleanVotes()
     }
 
+
+    fun changeValueVotes(value: Double, text: String){
+        when(text){
+            "puntuacion" -> meal = meal.copy(points = value + meal.points!! )
+            "votes" -> meal = meal.copy(votes = meal.votes!! + value.toInt())
+        }
+    }
+
     fun changeMealName(name: String){
         mealName = name
+    }
+
+    fun calculateAverageRating(){
+        averageRating = if (listVotes.isNotEmpty()) {
+            listVotes.sum() / listVotes.size
+        } else {
+            0.0
+        }
+    }
+
+    fun calculateAverage(votes: Int, valueVote: Double): Double = valueVote/votes
+
+    fun changeCurrentRating(current: Double){
+        currentRating = current
+    }
+
+    fun updateListVotes(newRating: Double){
+        listVotes = listVotes + newRating
     }
 
     fun changeshowOutLineText(result: Boolean){
@@ -479,6 +529,10 @@ class MealViewmodel@Inject constructor(private val useCaseMealName: UseCaseMealN
 
     fun changeTraducir(translate: String){
         categoria = translate
+    }
+
+    fun changeShowVotes(result: Boolean){
+        showVotes = result
     }
 
     fun cleanVotes(){
