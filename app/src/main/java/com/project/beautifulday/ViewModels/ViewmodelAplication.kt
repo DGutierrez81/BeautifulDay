@@ -9,13 +9,28 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -34,6 +49,7 @@ import com.project.beautifulday.ListUiState
 import com.project.beautifulday.Meal.ui.States.Traduction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -132,6 +148,29 @@ class ViewmodelAplication@Inject constructor(private val storageService: Storage
     var currentRating by mutableStateOf(0.0)
         private set
 
+    var email by mutableStateOf("")
+        private set
+
+    var user by mutableStateOf("")
+        private set
+
+    var dots by  mutableStateOf("")
+        private set
+
+
+    var progress by mutableStateOf(false)
+        private set
+
+
+
+
+    fun fetchUser(){
+        val email = authService.email()
+        viewModelScope.launch {
+            user = firestore.fetchUser(email).userName?: "nada que rascar"
+        }
+
+    }
 
 
     fun onTextToBeTranslatedChange(text: String){
@@ -239,6 +278,7 @@ class ViewmodelAplication@Inject constructor(private val storageService: Storage
 
 
 
+
     @Composable
     fun intentGalleryLaucher(): ManagedActivityResultLauncher<String, Uri?> {
         return rememberLauncherForActivityResult(ActivityResultContracts.GetContent()){
@@ -246,6 +286,22 @@ class ViewmodelAplication@Inject constructor(private val storageService: Storage
                 //viewmodel.uploadBasicImage(it)
                 uploadAndGetImage(it){ newUri ->
                     resultUri = newUri
+                    uriFoto = newUri.toString()
+                    imageName = newUri.lastPathSegment.toString()
+                    getMetadata(imageName)
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun intentGalleryLaucherVideo(): ManagedActivityResultLauncher<String, Uri?> {
+        return rememberLauncherForActivityResult(ActivityResultContracts.GetContent()){
+            if(it?.path?.isNotEmpty() == true){
+                //viewmodel.uploadBasicImage(it)
+                uploadAndGetImage(it){ newUri ->
+                    resultUri = newUri
+                    uriVideo = newUri.toString()
                     imageName = newUri.lastPathSegment.toString()
                     getMetadata(imageName)
                 }
@@ -321,6 +377,23 @@ class ViewmodelAplication@Inject constructor(private val storageService: Storage
      */
 
 
+    @Composable
+    fun getAnimatedDots(isLoading: Boolean): String {
+        LaunchedEffect(isLoading) {
+            while (isLoading) {
+                dots = when (dots) {
+                    "" -> "."
+                    "." -> ".."
+                    ".." -> "..."
+                    else -> ""
+                }
+                delay(600)
+            }
+        }
+        return dots
+    }
+
+
     fun generateUri(context: ComponentActivity, nombre: String, sufijo: String): Uri {
         return FileProvider.getUriForFile(
             Objects.requireNonNull(context),
@@ -347,6 +420,31 @@ class ViewmodelAplication@Inject constructor(private val storageService: Storage
                 }
             } catch (e: Exception) {
                 Log.d("Error al borrar cocktail", "Error ${e.localizedMessage}")
+            }
+        }
+    }
+
+    @Composable
+    fun OkTask() {
+        Box(contentAlignment = Alignment.Center) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(16.dp)
+            ) {
+                if (!progress) {
+                    Icon(
+                        imageVector = Icons.Filled.CheckCircle,
+                        contentDescription = "Icono de Éxito",
+                        tint = Color.Green,
+                        modifier = Modifier.size(120.dp)
+                    )
+                } else {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.primary,
+                        strokeWidth = 6.dp,
+                        modifier = Modifier.scale(2.5f)
+                    )
+                }
             }
         }
     }
@@ -465,6 +563,11 @@ class ViewmodelAplication@Inject constructor(private val storageService: Storage
     fun changeScreen(result: String){
         screen = result
     }
+
+    fun getEmail(){
+        email = authService.email().toString()
+    }
+
 
 
     fun clean(){

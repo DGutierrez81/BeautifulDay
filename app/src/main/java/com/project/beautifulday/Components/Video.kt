@@ -19,7 +19,7 @@ import com.project.beautifulday.ViewModels.ViewmodelAplication
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
-fun Video(navController: NavController, viewmodelA: ViewmodelAplication) {
+fun Video(viewmodelA: ViewmodelAplication) {
     val url = viewmodelA.uriVideo
     val mediaPlayer = ExoPlayer.Builder(LocalContext.current).build()
     val media = url?.let { MediaItem.fromUri(it) }

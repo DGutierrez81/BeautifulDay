@@ -2,12 +2,15 @@ package com.project.beautifulday.Components
 
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
 import com.project.beautifulday.ViewModels.CocktailViewmodel
 import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 
-fun createAlert(navController: NavController, viewmodelA: ViewmodelAplication, viewmodel: MealViewmodel, cocktailViewmodel: CocktailViewmodel, context: ComponentActivity){
+
+fun createAlert(navController: NavController, viewmodelA: ViewmodelAplication, viewmodel: MealViewmodel, cocktailViewmodel: CocktailViewmodel, user: String,context: ComponentActivity){
     val name = viewmodelA.name
     val id = viewmodelA.id
     val descripcion = viewmodelA.descripcion
@@ -20,8 +23,14 @@ fun createAlert(navController: NavController, viewmodelA: ViewmodelAplication, v
 
 
 
+
+
+
         for(i in lista){
-            if(i == "") viewmodelA.changeCreateAlerte(true) else confi = true
+            if(i == "") {
+                viewmodelA.changeCreateAlerte(true)
+                break
+            } else confi = true
         }
 
         if(confi){
@@ -38,9 +47,10 @@ fun createAlert(navController: NavController, viewmodelA: ViewmodelAplication, v
                     ingrediente
                         .split(",", " ")
                         .toMutableList(),
-                    mutableListOf()
+                    mutableListOf(),
+                    user
                 )
-                viewmodel.saveNewMeals("CreateMeals", context) {
+                viewmodel.saveNewMeals("CreateMeals", context, {navController.navigate("ok")}) {
                     Toast
                         .makeText(
                             context,
@@ -49,7 +59,8 @@ fun createAlert(navController: NavController, viewmodelA: ViewmodelAplication, v
                         )
                         .show()
                     viewmodelA.clean()
-                    navController.navigate("principal")
+                    navController.navigate("meal")
+
 
                 }
             }else{
@@ -62,22 +73,22 @@ fun createAlert(navController: NavController, viewmodelA: ViewmodelAplication, v
                         .split(",", " ")
                         .toMutableList(),
                     video,
-
+                    user
                 )
-                cocktailViewmodel.saveNewCocktail("CreateCocktails", context) {
+                cocktailViewmodel.saveNewCocktail("CreateCocktails", context, {navController.navigate("ok")}) {
                     Toast
                         .makeText(
                             context,
-                            "Registro guardado correctamente",
+                            "Cocktail guardado correctamente",
                             Toast.LENGTH_SHORT
                         )
                         .show()
                     viewmodelA.clean()
-                    navController.navigate("principal")
+                    navController.navigate("cocktail")
 
                 }
             }
-        }
+        }else navController.navigate("createNewMeal")
     }
 
 

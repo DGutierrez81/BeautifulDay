@@ -10,7 +10,8 @@ import com.project.beautifulday.ViewModels.LogViewmodel
 fun BlankView(navController: NavController, LgViewModel: LogViewmodel){
 
     LaunchedEffect(key1 = true){
-        if (!FirebaseAuth.getInstance().currentUser?.email.isNullOrEmpty()){
+        val isUserLogged = LgViewModel.isUserLogged()
+        if (isUserLogged){
             LgViewModel.changeLogin(true)
             navController.navigate("principal")
         }else{

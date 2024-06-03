@@ -12,6 +12,7 @@ data class MealUser(
     val strIngredients: MutableList<String>? = mutableListOf(),
     val strMeasures: MutableList<String>? = mutableListOf(),
     val emailUser: String? = "",
+    val nameUser: String? = "",
     val idDocument: String? = "",
     val points: Double? = 0.0,
     val votes: Int? = 0

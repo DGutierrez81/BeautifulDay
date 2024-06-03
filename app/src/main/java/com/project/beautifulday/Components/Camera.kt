@@ -1,6 +1,6 @@
 @file:Suppress("DEPRECATION")
 
-package com.project.beautifulday.Meal.ui
+package com.project.beautifulday.Components
 
 import android.net.Uri
 import androidx.activity.ComponentActivity
@@ -84,7 +84,9 @@ fun Camera(navController: NavController, viewmodelA: ViewmodelAplication, contex
     val intentGalleryLancher = viewmodelA.intentGalleryLaucher()
 
 
-    if(showDialog2){
+
+
+    if(showDialog){
         Dialog(onDismissRequest = { showDialog2 = false }) {
             Card(shape = RoundedCornerShape(12), modifier = Modifier.background(color = colorResource(
                 id = R.color.electricBlue
@@ -95,7 +97,7 @@ fun Camera(navController: NavController, viewmodelA: ViewmodelAplication, contex
                     OutlinedButton(onClick = {
                         uri = viewmodelA.generateUri(context, namePhoto, "jpg")
                         intentCameraLaucher.launch(uri)
-                        showDialog2 = false
+                        showDialog = false
                     }, modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp)
@@ -109,7 +111,7 @@ fun Camera(navController: NavController, viewmodelA: ViewmodelAplication, contex
                     OutlinedButton(onClick = {
                         uri = viewmodelA.generateUri(context, namePhoto, "mp4")
                         intentCameraLaucherVideo.launch(uri)
-                        showDialog2 = false
+                        showDialog = false
                     }, modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp)
@@ -118,45 +120,6 @@ fun Camera(navController: NavController, viewmodelA: ViewmodelAplication, contex
                         border = BorderStroke(2.dp, colorResource(id = R.color.paynesGray))
                     ) {
                         Text(text = "Video", color = colorResource(id = R.color.paynesGray))
-                    }
-                }
-            }
-
-        }
-    }
-
-    if(showDialog){
-        Dialog(onDismissRequest = { showDialog = false }) {
-            Card(shape = RoundedCornerShape(12), modifier = Modifier.background(color = colorResource(
-                id = R.color.electricBlue
-            ))) {
-                Column(modifier = Modifier
-                    .padding(24.dp)
-                    .background(color = colorResource(id = R.color.electricBlue))) {
-                    OutlinedButton(onClick = {
-                        showDialog2 = true
-                        showDialog = false
-                    }, modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp)
-                        .align(Alignment.CenterHorizontally)
-                        .background(color = colorResource(id =R.color.electricBlue)),
-                        border = BorderStroke(2.dp, colorResource(id = R.color.paynesGray))
-                    ) {
-                        Text(text = "Camera", color = colorResource(id = R.color.paynesGray))
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    OutlinedButton(onClick = {
-                        intentGalleryLancher.launch("*/*")
-                        showDialog = false
-                    }, modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp)
-                        .align(Alignment.CenterHorizontally)
-                        .background(color = colorResource(id =R.color.electricBlue)),
-                        border = BorderStroke(2.dp, colorResource(id = R.color.paynesGray))
-                    ) {
-                        Text(text = "Galery", color = colorResource(id = R.color.paynesGray))
                     }
                 }
             }

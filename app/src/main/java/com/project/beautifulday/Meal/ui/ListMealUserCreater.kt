@@ -3,8 +3,13 @@ package com.project.beautifulday.Meal.ui
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Text
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,6 +31,7 @@ import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.R
 import com.project.beautifulday.ViewModels.CocktailViewmodel
+import kotlinx.coroutines.delay
 
 
 @Composable
@@ -37,8 +43,9 @@ fun ListMealUserCreater(navController: NavController, viewmodel: MealViewmodel, 
     val slide by viewmodelA.slide.observeAsState(false)
     val showDialog = viewmodelA.showDialog
     val login = LgViewModel.login
+    val progrees by viewmodel.progress.observeAsState(true)
 
-    LaunchedEffect(key1 = true){
+    LaunchedEffect(Unit){
         viewmodel.fetchMealCreater()
     }
 
@@ -77,24 +84,45 @@ fun ListMealUserCreater(navController: NavController, viewmodel: MealViewmodel, 
                 .padding(innerPadding),
             contentAlignment = Alignment.TopCenter
         ) {
-            ScreenCenter(
-                navController = navController,
-                viewmodelA = viewmodelA,
-                LgViewModel = LgViewModel,
-                showCenter = 2
-            )
-            Box(modifier = Modifier.padding(start = 30.dp, end = 30.dp)){
-                viewmodel.ShowMealsNameUser(mealData = mealData, navController, "CreateMeals")
-            }
-            if(showOutLineText){
-                BusquedaNombre(
+            if(progrees){
+                Box(
+                    Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        CircularProgressIndicator()
+                        Spacer(modifier = Modifier.padding(3.dp))
+                        Text(
+                            text = "Cargando" + viewmodelA.getAnimatedDots(
+                                progrees
+                            )
+                        )
+                    }
+                }
+            }else{
+                ScreenCenter(
                     navController = navController,
-                    viewmodel = viewmodel,
                     viewmodelA = viewmodelA,
-                    showOutLineText = showOutLineText,
-                    cocktailViewmodel = cocktailViewmodel
+                    LgViewModel = LgViewModel,
+                    showCenter = 2
                 )
+                Box(modifier = Modifier.padding(start = 30.dp, end = 30.dp)){
+                    viewmodel.ShowMealsNameUser(mealData = mealData, navController, "CreateMeals")
+                }
+                if(showOutLineText){
+                    BusquedaNombre(
+                        navController = navController,
+                        viewmodel = viewmodel,
+                        viewmodelA = viewmodelA,
+                        showOutLineText = showOutLineText,
+                        cocktailViewmodel = cocktailViewmodel
+                    )
+                }
             }
+
         }
     }
 

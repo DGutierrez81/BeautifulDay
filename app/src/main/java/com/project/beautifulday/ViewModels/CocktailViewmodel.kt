@@ -28,8 +28,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.google.android.gms.tasks.Tasks
@@ -45,9 +48,11 @@ import com.project.beautifulday.Components.RatingBarImage
 import com.project.beautifulday.Firebase.AuthService
 import com.project.beautifulday.Firebase.FirestoreService
 import com.project.beautifulday.R
+import com.project.beautifulday.User
 import com.project.beautifulday.androidsmall1.jotiOne
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -69,8 +74,6 @@ class CocktailViewmodel@Inject constructor(private val nameUseCase: NameUseCase,
     val cocktailUser: StateFlow<List<CocktailUser>> = _cocktailUser.asStateFlow()
 
     var cocktail by mutableStateOf(CocktailUser())
-        private set
-    var drink by mutableStateOf(CocktailUser())
         private set
 
     var nameCocktail by mutableStateOf("")
@@ -103,60 +106,93 @@ class CocktailViewmodel@Inject constructor(private val nameUseCase: NameUseCase,
     var averageRating by mutableStateOf(0.0)
         private set
 
+
+
     var average by mutableStateOf(0.0)
         private set
 
+    private val _progress = MutableLiveData(true)
+    val progress: LiveData<Boolean> = _progress
+
+    private val _progressCreated = MutableLiveData(true)
+    val progressCreated: LiveData<Boolean> = _progressCreated
+
     fun getName(name: String) {
+        _progress.value = true
         viewModelScope.launch {
             _cocktailData.value = nameUseCase(name).drinks ?: mutableListOf()
+            delay(3000)
+            _progress.value = false
         }
     }
 
     fun getRandom() {
+        _progress.value = true
         viewModelScope.launch {
            // _cocktail.value = useCaseCocktailRandom.drinks ?: mutableListOf()
             cocktailList = (useCaseCocktailRandom().drinks ?: mutableListOf()).toMutableList()
             getCocktail()
+            delay(3000)
+            _progress.value = false
         }
     }
 
     fun getCategory(category: String){
+        _progress.value = true
         viewModelScope.launch {
             _cocktailData.value = useCaseCategoryCocktail(category).drinks ?: mutableListOf()
+            delay(3000)
+            _progress.value = false
         }
     }
 
     fun getCocktailById(id: String){
+        _progress.value = true
         viewModelScope.launch {
             cocktailList = (useCaseGetCocktailById(id).drinks?: mutableListOf()).toMutableList()
             getCocktail()
+            delay(3000)
+            _progress.value = false
         }
     }
 
     fun getAlcoholics(election: String){
+        _progress.value = true
         viewModelScope.launch{
             _cocktailData.value = useCaseAlcholic(election).drinks ?: mutableListOf()
+            delay(3000)
+            _progress.value = false
         }
     }
 
     fun fetchCocktail(){
+        _progress.value = true
         val email = authService.email()
 
         viewModelScope.launch {
             _cocktailUser.value = firestore.fetchCocktail(email)
+            delay(3000)
+            _progress.value = false
         }
     }
 
     fun fetchCocktailCreater(){
-
+        _progress.value = true
         viewModelScope.launch {
             _cocktailUser.value = firestore.fetchCocktailCreater()
+            delay(3000)
+            _progress.value = false
         }
     }
 
+
+
     fun getCocktailUserById(document: String, colec: String){
+        _progress.value = true
         viewModelScope.launch {
             cocktail = firestore.getCocktailById(document, colec)?: CocktailUser()
+            delay(3000)
+            _progress.value = false
         }
     }
 
@@ -227,7 +263,7 @@ class CocktailViewmodel@Inject constructor(private val nameUseCase: NameUseCase,
                         color = colorResource(id = R.color.paynesGray)
                     )
                     Spacer(modifier = Modifier.height(1.dp))
-                    val average = calculateAverage(cocktail?.votes ?: 0, cocktail?.puntuacion ?: 0.0)
+                    val average = calculateAverage(cocktail.votes ?: 0, cocktail.puntuacion ?: 0.0)
 
                     if (colec == "CreateCocktails") {
                         Box(modifier = Modifier.width(120.dp), contentAlignment = Alignment.Center) {
@@ -288,14 +324,15 @@ class CocktailViewmodel@Inject constructor(private val nameUseCase: NameUseCase,
                             .clip(RoundedCornerShape(100.dp))
                             .clickable {
                                 SaveCocktail(
-                                    idDrink = cocktail?.idDrink?: "",
-                                    strDrink = cocktail?.strDrink?: "",
-                                    strInstructions = cocktail?.strInstructions?: "",
-                                    strDrinkThumb = cocktail?.strDrinkThumb?: "",
-                                    strList = cocktail?.strIngredient?: mutableListOf(),
-                                    strMedia = null
+                                    idDrink = cocktail?.idDrink ?: "",
+                                    strDrink = cocktail?.strDrink ?: "",
+                                    strInstructions = cocktail?.strInstructions ?: "",
+                                    strDrinkThumb = cocktail?.strDrinkThumb ?: "",
+                                    strList = cocktail?.strIngredient ?: mutableListOf(),
+                                    strMedia = null,
+                                    nameUser = ""
                                 )
-                                getCocktailById(cocktail?.idDrink?:"")
+                                getCocktailById(cocktail?.idDrink ?: "")
                                 navController.navigate("cardCocktails")
                                 actionTranslate = true
                             }
@@ -324,7 +361,8 @@ class CocktailViewmodel@Inject constructor(private val nameUseCase: NameUseCase,
                 strInstructions = drink.strInstructions?: "",
                 strDrinkThumb = drink.strDrinkThumb?: "",
                 strList = drink.strIngredient,
-                strMedia = null
+                strMedia = null,
+                nameUser = ""
             )
         }
     }
@@ -335,7 +373,8 @@ class CocktailViewmodel@Inject constructor(private val nameUseCase: NameUseCase,
         strInstructions: String,
         strDrinkThumb: String,
         strList: MutableList<String>,
-        strMedia: String?
+        strMedia: String?,
+        nameUser: String?
     ) {
 
         val email = authService.email()
@@ -346,21 +385,28 @@ class CocktailViewmodel@Inject constructor(private val nameUseCase: NameUseCase,
         strList.forEach { if (it != "") ingredients.add(it) }
         //strMeasures.forEach { if(it != "") measures.add(it) }
 
-        drink = CocktailUser(email,idDrink, strDrink, strInstructions, strDrinkThumb, ingredients, strMedia)
+        cocktail = CocktailUser(email,idDrink, strDrink, strInstructions, strDrinkThumb, ingredients, strMedia, nameUser)
     }
 
 
-    fun saveNewCocktail(colec: String, context: ComponentActivity, onSuccess: () -> Unit) {
+    fun saveNewCocktail(colec: String, context: ComponentActivity, onOk:() -> Unit, onSuccess: () -> Unit) {
+        _progressCreated.value = true
         val email = authService.email()
         viewModelScope.launch {
             val result = withContext(Dispatchers.IO) {
-                Tasks.await(firestore.saveNewCocktail(colec, "idDrink", drink.idDrink, drink, email,context))
+                Tasks.await(firestore.saveNewCocktail(colec, "idDrink", cocktail.idDrink, cocktail, email,context))
             }
             if (result) {
+                onOk()
+                delay(3000)
+                _progressCreated.value = false
+                delay(3000)
                 onSuccess()
             } else {
                 // Manejo del caso cuando result es false
+                _progressCreated.value = false
                 Log.d("ERROR", "Hubo un error al guardar el registro o el registro ya existe")
+
             }
         }
     }
@@ -368,7 +414,7 @@ class CocktailViewmodel@Inject constructor(private val nameUseCase: NameUseCase,
     fun updateStars(iDoc: String, onSuccess: () -> Unit){
         viewModelScope.launch {
             val result = withContext(Dispatchers.IO) {
-                Tasks.await(firestore.updateStarsCocktail("CreateCocktails", iDoc, drink))
+                Tasks.await(firestore.updateStarsCocktail("CreateCocktails", iDoc, cocktail))
             }
             if (result) {
                 onSuccess()
@@ -382,8 +428,8 @@ class CocktailViewmodel@Inject constructor(private val nameUseCase: NameUseCase,
 
     fun changeValueVotes(value: Double, text: String){
         when(text){
-            "puntuacion" -> drink = drink.copy(puntuacion = value + drink.puntuacion!! )
-            "votes" -> drink = drink.copy(votes = drink.votes!! + value.toInt())
+            "puntuacion" -> cocktail = cocktail.copy(puntuacion = value + cocktail.puntuacion!! )
+            "votes" -> cocktail = cocktail.copy(votes = cocktail.votes!! + value.toInt())
         }
     }
 

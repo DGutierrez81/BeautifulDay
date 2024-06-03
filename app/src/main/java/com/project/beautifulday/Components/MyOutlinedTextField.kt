@@ -3,6 +3,7 @@ package com.project.beautifulday.Components
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -15,15 +16,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import kotlin.reflect.KFunction1
 
 @Composable
 fun MyOutlinedTectField(
     value: String,
     onValueChange: (String) -> Unit,
     focusRequester: FocusRequester,
-    label: String
+    label: String,
+    keyboardActions: () -> Unit
 ){
+
+
 
     OutlinedTextField(
         value = value, onValueChange = { onValueChange(it) },
@@ -43,7 +46,10 @@ fun MyOutlinedTectField(
         maxLines = 1,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Done
-        )
+            imeAction = ImeAction.Next
+        ),
+        keyboardActions = KeyboardActions(onNext = {keyboardActions()})
     )
 }
+
+//KeyboardActions(onNext = {focusManager.moveFocus(FocusDirection.Down)})

@@ -1,5 +1,7 @@
 package com.project.beautifulday.Meal.ui
 
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.animation.AnimatedVisibility
@@ -10,12 +12,16 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -38,29 +44,33 @@ import coil.compose.AsyncImage
 import com.project.beautifulday.Components.ActionTransalate
 import com.project.beautifulday.Components.CreateDialog
 import com.project.beautifulday.Components.RatingBar
+import com.project.beautifulday.Components.RatingBarImage
 import com.project.beautifulday.ViewModels.LogViewmodel
 import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.R
 import com.project.beautifulday.androidsmall1.jotiOne
+import kotlinx.coroutines.delay
 
 @Composable
-fun CardMealUser(navController: NavController, viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel, Idoc: String, colec: String){
+fun CardMealUser(navController: NavController, viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel, Idoc: String, colec: String) {
     val actionTranslate = viewmodel.actionTranslate
     //val actionTranslate by viewmodelA.actionTranslate.observeAsState(true)
     val state = viewmodelA.state.value
     //val slide = viewmodelA.slide
     val slide by viewmodelA.slide.observeAsState(false)
     val showAlert = viewmodelA.showAlert
-    val login = LgViewModel.login
     val showVotes = viewmodel.showVotes
     var currentRating = viewmodel.currentRating
+    val progrees by viewmodel.progress.observeAsState(true)
 
-    LaunchedEffect(key1 = true){
+    LaunchedEffect(key1 = true) {
         viewmodel.getMealUserById(Idoc, colec)
+        viewmodelA.getEmail()
     }
 
     val meal = viewmodel.meal
+    val email = viewmodelA.email
 
     Column(
         modifier = Modifier
@@ -82,14 +92,56 @@ fun CardMealUser(navController: NavController, viewmodel: MealViewmodel, context
                     .background(colorResource(id = R.color.paynesGray))
             ) {
 
-                AsyncImage(
-                    model = meal.strMealThumb,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(300.dp),
-                    contentScale = ContentScale.Crop
-                )
+                if(progrees){
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(300.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            CircularProgressIndicator(color = colorResource(id = R.color.silver))
+                            Spacer(modifier = Modifier.padding(3.dp))
+                            Text(
+                                text = "Cargando" + viewmodelA.getAnimatedDots(
+                                    progrees
+                                ), color = colorResource(id = R.color.silver)
+                            )
+                        }
+                    }
+                }else{
+                    AsyncImage(
+                        model = meal.strMealThumb,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(300.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    val average = viewmodel.calculateAverage(meal.votes ?: 0, meal.points ?: 0.0)
+                    if (colec == "CreateMeals") {
+                        Box(
+                            modifier = Modifier.width(120.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            RatingBarImage(rating = average)
+                        }
+                        Text(
+                            text = meal.votes.toString() + " votos",
+                            color = colorResource(id = R.color.silver),
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.End
+                        )
+                    }
+
+                }
                 LazyColumn(
                     modifier = Modifier
                         .padding(20.dp)
@@ -100,13 +152,20 @@ fun CardMealUser(navController: NavController, viewmodel: MealViewmodel, context
 
                         ActionTransalate(
                             actionTranslate = actionTranslate,
-                            text = "Ingredientes:" + "\n" + meal.strIngredients?.joinToString() + "\n" + ":Instructions:" + "\n" + meal.strInstructions,
+                            text = "Ingredients:" + "\n" + meal.strIngredients?.joinToString() + "\n" + ":Instructions:" + "\n" + meal.strInstructions,
                             viewmodelA = viewmodelA,
                             context = context,
                             state = state
                         )
                     }
                 }
+                if (colec == "CreateMeals") {
+                    Text(text = "Receta subida por\n${meal.nameUser}", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center, color = colorResource(
+                        id = R.color.silver
+                    )
+                    )
+                }
+
 
             }
 
@@ -136,48 +195,89 @@ fun CardMealUser(navController: NavController, viewmodel: MealViewmodel, context
                     .padding(3.dp)
                     .background(colorResource(id = R.color.silver))
             ) {
-                Text(text = "Traducir", modifier = Modifier
-                    .padding(2.dp)
-                    .clickable {
-                        viewmodel.changeActionTranslate(!actionTranslate)
-                        viewmodelA.changeSlide(slide)
-                    },
-                    color = colorResource(id = R.color.paynesGray)
-                )
-                if(colec == "CreateMeals"){
-                    Text(text = "Ver video", modifier = Modifier
+                Text(
+                    text = "Traducir", modifier = Modifier
                         .padding(2.dp)
                         .clickable {
-                            viewmodelA.changeUriVideo(meal.strYoutube ?: "")
-                            navController.navigate("video")
+                            viewmodel.changeActionTranslate(!actionTranslate)
                             viewmodelA.changeSlide(slide)
                         },
+                    color = colorResource(id = R.color.paynesGray)
+                )
+                Text(
+                    text = "Ver video", modifier = Modifier
+                        .padding(2.dp)
+                        .clickable {
+                            if (colec == "CreateMeals") {
+                                viewmodelA.changeUriVideo(meal.strYoutube ?: "")
+                                navController.navigate("video")
+                            } else {
+                                context.startActivity(
+                                    Intent(
+                                        Intent.ACTION_VIEW,
+                                        Uri.parse(meal.strYoutube)
+                                    )
+                                )
+                            }
+                            viewmodelA.changeSlide(slide)
+                        },
+                    color = colorResource(id = R.color.paynesGray)
+                )
+
+                if (email.equals(meal.emailUser)) {
+                    Text(
+                        text = "Borrar", modifier = Modifier
+                            .padding(2.dp)
+                            .clickable {
+                                viewmodelA.changeSlide(slide)
+                                viewmodelA.changeAlert(!showAlert)
+                            },
+                        color = colorResource(id = R.color.paynesGray)
+                    )
+                } else {
+                    Text(
+                        text = "Votar", modifier = Modifier
+                            .padding(2.dp)
+                            .clickable {
+                                viewmodelA.changeSlide(slide)
+                                viewmodel.changeShowVotes(!showVotes)
+                            },
                         color = colorResource(id = R.color.paynesGray)
                     )
                 }
-                Text(text = "Borrar", modifier = Modifier
-                    .padding(2.dp)
-                    .clickable {
-                        viewmodelA.changeAlert(!showAlert)
-                    },
+                Text(
+                    text = "Atras", modifier = Modifier
+                        .padding(2.dp)
+                        .clickable {
+                            //viewmodelA.changeSlide(slide)
+                            //viewmodelA.getEmail()
+                            viewmodelA.clean()
+                            navController.popBackStack()
+                        },
                     color = colorResource(id = R.color.paynesGray)
                 )
             }
         }
     }
 
-    CreateDialog(showAlert = showAlert  ,tittle = "Aviso", text = "¿Desea borrar el registro?", onDismiss = { viewmodelA.changeAlert(!showAlert) }) {
-        viewmodelA.deleteRegister(Idoc, colec){ navController.navigate("principal") }
+    CreateDialog(
+        showAlert = showAlert,
+        tittle = "Aviso",
+        text = "¿Desea borrar el registro?",
+        onDismiss = { viewmodelA.changeAlert(!showAlert) }) {
+        viewmodelA.deleteRegister(Idoc, colec) { navController.navigate("meal") }
         viewmodelA.changeSlide(slide)
         viewmodelA.changeAlert(!showAlert)
     }
 
     if (showVotes) {
         Dialog(onDismissRequest = { viewmodel.changeShowVotes(false) }) {
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.White),
-                contentAlignment = Alignment.Center) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White),
+                contentAlignment = Alignment.Center
+            ) {
                 Column {
                     RatingBar(
                         rating = currentRating,
@@ -193,15 +293,16 @@ fun CardMealUser(navController: NavController, viewmodel: MealViewmodel, context
 
                     Column {
 
-                        OutlinedButton(onClick = {
-                            viewmodel.changeValueVotes(currentRating, "puntuacion")
-                            viewmodel.changeValueVotes( 1.0, "votes")
-                            viewmodel.updateStars(Idoc){navController.popBackStack()}
-                            viewmodel.cleanVotes()
-                            viewmodel.changeShowVotes(false)
-                        }, modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp),
+                        OutlinedButton(
+                            onClick = {
+                                viewmodel.changeValueVotes(currentRating, "puntuacion")
+                                viewmodel.changeValueVotes(1.0, "votes")
+                                viewmodel.updateStars(Idoc) { navController.popBackStack() }
+                                viewmodel.cleanVotes()
+                                viewmodel.changeShowVotes(false)
+                            }, modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp),
                             border = BorderStroke(2.dp, colorResource(id = R.color.electricBlue))
                         ) {
                             Text(text = "Votar", color = colorResource(id = R.color.electricBlue))

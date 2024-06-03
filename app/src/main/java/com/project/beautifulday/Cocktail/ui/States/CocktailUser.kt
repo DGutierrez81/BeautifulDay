@@ -8,7 +8,8 @@ data class CocktailUser(
     val strDrinkThumb: String? = "",
     val strList: MutableList<String>? = mutableListOf(),
     val strmedia: String? = null,
+    val nameUser: String? = "",
     val votes: Int? = 0,
     val puntuacion: Double? = 0.0,
-    val idDocument: String? = ""
+    val idDocument: String? = "",
 )

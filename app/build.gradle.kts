@@ -146,6 +146,20 @@ dependencies {
     //DCS - Retrofit
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
+    //Map compose
+    implementation("com.google.maps.android:maps-compose:2.11.4")
+
+
+    // google map services
+    implementation ("com.google.android.gms:play-services-location:21.2.0")
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+
+    // google maps utils
+    implementation ("com.google.maps.android:android-maps-utils:3.4.0")
+
+    //Accompanist Permissions
+    implementation ("com.google.accompanist:accompanist-permissions:0.20.0")
+
     //DCS - Coil
     //DCS - Coil es una biblioteca de carga de imágenes para Android que es compatible con Jetpack Compose.
     implementation("io.coil-kt:coil-compose:2.4.0")

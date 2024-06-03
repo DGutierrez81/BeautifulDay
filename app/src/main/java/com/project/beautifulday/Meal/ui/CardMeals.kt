@@ -9,13 +9,16 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,6 +42,7 @@ import com.project.beautifulday.R
 import com.project.beautifulday.androidsmall1.jotiOne
 
 
+
 @Composable
 fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel) {
     val meal = viewmodel.meal
@@ -50,8 +54,9 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
     //val slide = viewmodelA.slide
     val slide by viewmodelA.slide.observeAsState(false)
     val login = LgViewModel.login
-
+    val progrees by viewmodel.progress.observeAsState(true)
     val mealState = viewmodel.mealsData
+
 
 
     Column(
@@ -74,14 +79,37 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
                     .background(colorResource(id = R.color.paynesGray))
             ) {
 
-                AsyncImage(
-                    model = meal.strMealThumb,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(300.dp),
-                    contentScale = ContentScale.Crop
-                )
+                if(progrees){
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(300.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            CircularProgressIndicator(color = colorResource(id = R.color.silver))
+                            Spacer(modifier = Modifier.padding(3.dp))
+                            Text(
+                                text = "Cargando" + viewmodelA.getAnimatedDots(
+                                    progrees
+                                ), color = colorResource(id = R.color.silver)
+                            )
+                        }
+                    }
+                }else{
+                    AsyncImage(
+                        model = meal.strMealThumb,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(300.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+
+
                 LazyColumn(
                     modifier = Modifier
                         .padding(20.dp)
@@ -92,7 +120,7 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
 
                         ActionTransalate(
                             actionTranslate = actionTranslate,
-                            text = "Ingredientes:" + "\n" + meal.strIngredients?.joinToString() + "\n" + ":Instructions:" + "\n" + meal.strInstructions,
+                            text = "Ingredients:" + "\n" + meal.strIngredients?.joinToString() + "\n" + ":Instructions:" + "\n" + meal.strInstructions,
                             viewmodelA = viewmodelA,
                             context = context,
                             state = state
@@ -112,9 +140,10 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
             tint = colorResource(
                 id = R.color.silver
             ),
-            modifier = Modifier.clickable {
-                viewmodelA.changeSlide(slide)
-            }
+            modifier = Modifier
+                .clickable {
+                    viewmodelA.changeSlide(slide)
+                }
                 .padding(start = 5.dp, top = 8.dp)
         )
 
@@ -139,7 +168,7 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
                     Text(text = "Guardar", modifier = Modifier
                         .padding(2.dp)
                         .clickable {
-                            viewmodel.saveNewMeals("Meals", context) {
+                            viewmodel.saveNewMeals("Meals", context, {navController.navigate("ok")}) {
                                 Toast
                                     .makeText(
                                         context,
@@ -149,7 +178,7 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
                                     .show()
                                 viewmodelA.changeSlide(slide)
                                 viewmodelA.clean()
-                                navController.navigate("principal")
+                                navController.navigate("meal")
                             }
                         },
                         color = colorResource(id = R.color.paynesGray))
@@ -160,7 +189,7 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
                             context.startActivity(
                                 Intent(
                                     Intent.ACTION_VIEW,
-                                    Uri.parse( meal.strYoutube)
+                                    Uri.parse(meal.strYoutube)
                                 )
                             )
                             viewmodelA.changeSlide(slide)
@@ -169,6 +198,15 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
 
 
                 }
+                Text(
+                    text = "Atras", modifier = Modifier
+                        .padding(2.dp)
+                        .clickable {
+                            viewmodelA.changeSlide(slide)
+                            navController.popBackStack()
+                        },
+                    color = colorResource(id = R.color.paynesGray)
+                )
             }
         }
     }

@@ -17,8 +17,8 @@ import androidx.navigation.NavController
 import com.project.beautifulday.Components.BusquedaNombre
 import com.project.beautifulday.Components.DialogCategory
 import com.project.beautifulday.Components.MyBottomBar
+import com.project.beautifulday.Components.MyTopBar
 import com.project.beautifulday.Components.ScreenCenter
-import com.project.beautifulday.LogSig.MyTopBar
 import com.project.beautifulday.R
 import com.project.beautifulday.ViewModels.CocktailViewmodel
 import com.project.beautifulday.ViewModels.LogViewmodel

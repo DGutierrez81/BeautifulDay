@@ -7,16 +7,20 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -35,10 +39,11 @@ import com.project.beautifulday.ViewModels.CocktailViewmodel
 import com.project.beautifulday.ViewModels.LogViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.androidsmall1.jotiOne
+import kotlinx.coroutines.delay
 
 @Composable
 fun CardCocktails(navController: NavController, viewmodel: CocktailViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel) {
-    val drink = viewmodel.drink
+    val drink = viewmodel.cocktail
 
 
     val actionTranslate = viewmodel.actionTranslate
@@ -47,6 +52,9 @@ fun CardCocktails(navController: NavController, viewmodel: CocktailViewmodel, co
     //val slide = viewmodelA.slide
     val slide by viewmodelA.slide.observeAsState(false)
     val login = LgViewModel.login
+    val progrees by viewmodel.progress.observeAsState(true)
+
+
 
     //val mealState = viewmodel.mealsData
 
@@ -70,15 +78,37 @@ fun CardCocktails(navController: NavController, viewmodel: CocktailViewmodel, co
                 modifier = Modifier
                     .background(colorResource(id = R.color.paynesGray))
             ) {
+                if(progrees){
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(300.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            CircularProgressIndicator(color = colorResource(id = R.color.silver))
+                            Spacer(modifier = Modifier.padding(3.dp))
+                            Text(
+                                text = "Cargando" + viewmodelA.getAnimatedDots(
+                                    progrees
+                                ), color = colorResource(id = R.color.silver)
+                            )
+                        }
+                    }
+                }else{
+                    AsyncImage(
+                        model = drink.strDrinkThumb,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(300.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                }
 
-                AsyncImage(
-                    model = drink.strDrinkThumb,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(300.dp),
-                    contentScale = ContentScale.Crop
-                )
+
                 LazyColumn(
                     modifier = Modifier
                         .padding(20.dp)
@@ -137,16 +167,16 @@ fun CardCocktails(navController: NavController, viewmodel: CocktailViewmodel, co
                     Text(text = "Guardar", modifier = Modifier
                         .padding(2.dp)
                         .clickable {
-                            viewmodel.saveNewCocktail("Cocktails", context) {
+                            viewmodel.saveNewCocktail("Cocktails", context, {navController.navigate("ok")}) {
                                 Toast
                                     .makeText(
                                         context,
-                                        "Comida guardada correctamente",
+                                        "Cocktail guardado correctamente",
                                         Toast.LENGTH_SHORT
                                     )
                                     .show()
                                 viewmodelA.clean()
-                                navController.navigate("principal")
+                                navController.navigate("cocktail")
                             }
                         },
                         color = colorResource(id = R.color.paynesGray)
@@ -160,6 +190,15 @@ fun CardCocktails(navController: NavController, viewmodel: CocktailViewmodel, co
 
                          */
                 }
+                Text(
+                    text = "Atras", modifier = Modifier
+                        .padding(2.dp)
+                        .clickable {
+                            viewmodelA.changeSlide(slide)
+                            navController.popBackStack()
+                        },
+                    color = colorResource(id = R.color.paynesGray)
+                )
             }
         }
     }

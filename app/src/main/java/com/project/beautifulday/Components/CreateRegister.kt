@@ -12,16 +12,28 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -46,6 +58,15 @@ fun CreateRegister(navController: NavController, viewmodel: MealViewmodel, viewm
     val showAlert = viewmodelA.showAlert
     val screen = viewmodelA.screen
     val showCreateAlert = viewmodelA.showCreateAlert
+    val intentGalleryLancher = viewmodelA.intentGalleryLaucher()
+    val intentGalleryLancheVideo = viewmodelA.intentGalleryLaucherVideo()
+    val focusManager = LocalFocusManager.current
+    LaunchedEffect(key1 = true){
+        viewmodelA.fetchUser()
+    }
+    val user = viewmodelA.user
+
+
 
     Column {
         Box(modifier = Modifier
@@ -56,19 +77,7 @@ fun CreateRegister(navController: NavController, viewmodel: MealViewmodel, viewm
             Column(
 
             ) {
-                /*
-                Text(
-                    text = "Beautiful",
-                    fontSize = 32.sp,
-                    fontFamily = jotiOne,
-                    color = colorResource(id = R.color.selectiveYellow),
-                    modifier = Modifier
-                        .padding(top = 10.dp)
-                        .fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
 
-                 */
                 Spacer(modifier = Modifier.padding(5.dp))
 
                 OutlinedTextField(
@@ -89,7 +98,7 @@ fun CreateRegister(navController: NavController, viewmodel: MealViewmodel, viewm
                     maxLines = 1,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Done
+                        imeAction = ImeAction.Next
                     )
                 )
 
@@ -100,35 +109,9 @@ fun CreateRegister(navController: NavController, viewmodel: MealViewmodel, viewm
                     value = name,
                     onValueChange = viewmodelA::changeName, //Equivalente a {newName -> viewmodelA.changeName(newName)}
                     focusRequester = focusRequester,
-                    label = "Nombre"
+                    label = "Nombre",
+                    keyboardActions = {focusManager.moveFocus(FocusDirection.Down)}
                 )
-
-
-
-                /*
-                OutlinedTextField(
-                    value = name, onValueChange = { viewmodelA.changeName(it) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 36.dp)
-                        .focusRequester(focusRequester),
-                    shape = RoundedCornerShape(22),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.White,
-                        unfocusedContainerColor = Color.White,
-                        disabledContainerColor = Color.White,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                    ),
-                    label = { Text(text = "Nombre") },
-                    maxLines = 1,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Done
-                    )
-                )
-
-                 */
 
                 Spacer(modifier = Modifier.padding(2.dp))
 
@@ -136,33 +119,10 @@ fun CreateRegister(navController: NavController, viewmodel: MealViewmodel, viewm
                     value = descripcion,
                     onValueChange = viewmodelA::changeDescripcion,
                     focusRequester = focusRequester,
-                    label = "Descripción"
+                    label = "Descripción",
+                    keyboardActions = {focusManager.moveFocus(FocusDirection.Down)}
                 )
 
-                /*
-                OutlinedTextField(
-                    value = descripcion, onValueChange = { viewmodelA.changeDescripcion(it) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 36.dp)
-                        .focusRequester(focusRequester),
-                    shape = RoundedCornerShape(22),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.White,
-                        unfocusedContainerColor = Color.White,
-                        disabledContainerColor = Color.White,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                    ),
-                    label = { Text(text = "Descripción") },
-                    maxLines = 1,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Done
-                    )
-                )
-
-                 */
 
                 Spacer(modifier = Modifier.padding(2.dp))
 
@@ -170,101 +130,41 @@ fun CreateRegister(navController: NavController, viewmodel: MealViewmodel, viewm
                     value = ingrediente,
                     onValueChange = viewmodelA::changeIngrediente,
                     focusRequester = focusRequester,
-                    label = "Ingredientes"
+                    label = "Ingredientes",
+                    keyboardActions = {focusManager.moveFocus(FocusDirection.Down)}
                 )
 
-                /*
-                OutlinedTextField(
-                    value = ingrediente, onValueChange = { viewmodelA.changeIngrediente(it) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 36.dp)
-                        .focusRequester(focusRequester),
-                    shape = RoundedCornerShape(22),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.White,
-                        unfocusedContainerColor = Color.White,
-                        disabledContainerColor = Color.White,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                    ),
-                    label = { Text(text = "Ingredientes") },
-                    maxLines = 1,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Done
-                    )
-                )
-
-                 */
 
                 Spacer(modifier = Modifier.padding(2.dp))
 
-                MyOutlinedTectField(
-                    value = foto,
-                    onValueChange = viewmodelA::changeUriFoto,
-                    focusRequester = focusRequester,
-                    label = "Foto"
-                )
-
-                /*
-                OutlinedTextField(
-                    value = foto, onValueChange = { viewmodelA.changeUriFoto(it) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 36.dp)
-                        .focusRequester(focusRequester),
-                    shape = RoundedCornerShape(22),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.White,
-                        unfocusedContainerColor = Color.White,
-                        disabledContainerColor = Color.White,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                    ),
-                    label = { Text(text = "foto") },
-                    maxLines = 1,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Done
+                Column {
+                    MyOutlinedTectField(
+                        value = foto,
+                        onValueChange = viewmodelA::changeUriFoto,
+                        focusRequester = focusRequester,
+                        label = "Foto",
+                        keyboardActions = {focusManager.moveFocus(FocusDirection.Down)}
                     )
-                )
-
-                 */
+                    Text(text = "Buscar en galeria", modifier = Modifier
+                        .clickable { intentGalleryLancher.launch("*/*") }
+                        .padding(horizontal = 36.dp))
+                }
 
                 Spacer(modifier = Modifier.padding(2.dp))
 
-                MyOutlinedTectField(
-                    value = video,
-                    onValueChange = viewmodelA::changeUriVideo,
-                    focusRequester = focusRequester,
-                    label = "Video"
-                )
-
-                /*
-                OutlinedTextField(
-                    value = video, onValueChange = { viewmodelA.changeUriVideo(it) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 36.dp)
-                        .focusRequester(focusRequester),
-                    shape = RoundedCornerShape(22),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.White,
-                        unfocusedContainerColor = Color.White,
-                        disabledContainerColor = Color.White,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                    ),
-                    label = { Text(text = "video") },
-                    maxLines = 1,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Done
+                Column {
+                    MyOutlinedTectField(
+                        value = video,
+                        onValueChange = viewmodelA::changeUriVideo,
+                        focusRequester = focusRequester,
+                        label = "Video",
+                        keyboardActions = {focusManager.moveFocus(FocusDirection.Down)}
                     )
-                )
+                    Text(text = "Buscar en galeria", modifier = Modifier
+                        .clickable { intentGalleryLancheVideo.launch("*/*") }
+                        .padding(horizontal = 36.dp))
+                }
 
-                 */
                 Spacer(modifier = Modifier.padding(15.dp))
             }
         }
@@ -276,61 +176,30 @@ fun CreateRegister(navController: NavController, viewmodel: MealViewmodel, viewm
             Column(modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally) {
                 Spacer(modifier = Modifier.weight(1f))
-                /*
-                Text(
-                    text = "DAY",
-                    fontFamily = jotiOne,
-                    fontSize = 32.sp,
-                    color = colorResource(id = R.color.electricBlue),
-                    modifier = Modifier.padding(10.dp)
-                )
 
-                 */
-                AsyncImage(model = R.drawable.logo, contentDescription = null)
+                AsyncImage(model = R.drawable.logo, contentDescription = null, modifier = Modifier.clickable {
+                    viewmodelA.clean()
+                    navController.popBackStack()
+                })
                 Spacer(modifier = Modifier.weight(1f))
                 Row (modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.Bottom){
-                    Text(text = "Buscar foto y video", modifier = Modifier
+                    Text(text = "Hacer foto y video", modifier = Modifier
                         .padding(10.dp)
                         .clickable { navController.navigate("camera") },
                         color = colorResource(id = R.color.paynesGray))
                     Text(text = "Enviar datos", modifier = Modifier
                         .padding(10.dp)
                         .clickable {
-                            createAlert(navController, viewmodelA, viewmodel, cocktailViewmodel, context)
-
-                            /*
-                            viewmodel.saveMeal(
-                                id,
-                                name,
-                                "",
-                                "",
-                                descripcion,
-                                foto,
-                                "",
-                                video,
-                                ingrediente
-                                    .split(",", " ")
-                                    .toMutableList(),
-                                mutableListOf()
+                            createAlert(
+                                navController,
+                                viewmodelA,
+                                viewmodel,
+                                cocktailViewmodel,
+                                user,
+                                context
                             )
-                            viewmodel.saveNewMeals("CreateMeals", context) {
-                                Toast
-                                    .makeText(
-                                        context,
-                                        "Receta guardada correctamente",
-                                        Toast.LENGTH_SHORT
-                                    )
-                                    .show()
-                                viewmodelA.clean()
-                                navController.navigate("principal")
-
-                            }
-
-                             */
-
-
                         },
                         color = colorResource(id = R.color.paynesGray))
 
@@ -340,71 +209,70 @@ fun CreateRegister(navController: NavController, viewmodel: MealViewmodel, viewm
 
         Spacer(modifier = Modifier.weight(2f))
 
-        if (showCreateAlert) {
-            CreateDialog(
-                showAlert = showAlert,
-                tittle = "Aviso",
-                text = "Tiene registros sin rellenar\n¿Desea seguir?",
-                onDismiss = { viewmodelA.changeAlert(!showAlert) }) {
-                if(screen == "meal"){
-                    viewmodel.saveMeal(
-                        id,
-                        name,
-                        "",
-                        "",
-                        descripcion,
-                        foto,
-                        "",
-                        video,
-                        ingrediente
-                            .split(",", " ")
-                            .toMutableList(),
-                        mutableListOf()
-                    )
-                    viewmodel.saveNewMeals("CreateMeals", context) {
-                        Toast
-                            .makeText(
-                                context,
-                                "Receta guardada correctamente",
-                                Toast.LENGTH_SHORT
-                            )
-                            .show()
-                        viewmodelA.clean()
-                        navController.navigate("principal")
+        CreateDialog(
+            showAlert = showCreateAlert,
+            tittle = "Aviso",
+            text = "Tiene registros sin rellenar\n¿Desea seguir?",
+            onDismiss = { viewmodelA.changeAlert(!showAlert) }) {
+            if(screen == "meal"){
+                viewmodel.saveMeal(
+                    id,
+                    name,
+                    "",
+                    "",
+                    descripcion,
+                    foto,
+                    "",
+                    video,
+                    ingrediente
+                        .split(",", " ")
+                        .toMutableList(),
+                    mutableListOf(),
+                    user
+                )
+                viewmodel.saveNewMeals("CreateMeals", context, {navController.navigate("ok")}) {
+                    Toast
+                        .makeText(
+                            context,
+                            "Receta guardada correctamente",
+                            Toast.LENGTH_SHORT
+                        )
+                        .show()
+                    viewmodelA.clean()
+                    navController.navigate("meal")
 
-                        viewmodelA.changeAlert(false)
+                    viewmodelA.changeCreateAlerte(false)
 
-                    }
-                }else{
-                    cocktailViewmodel.SaveCocktail(
-                        idDrink = id,
-                        strDrink = name,
-                        strInstructions = descripcion,
-                        strDrinkThumb = foto,
-                        strList = ingrediente
-                            .split(",", " ")
-                            .toMutableList(),
-                        strMedia = video
-                    )
+                }
+            }else{
+                cocktailViewmodel.SaveCocktail(
+                    idDrink = id,
+                    strDrink = name,
+                    strInstructions = descripcion,
+                    strDrinkThumb = foto,
+                    strList = ingrediente
+                        .split(",", " ")
+                        .toMutableList(),
+                    strMedia = video,
+                    nameUser = user
+                )
 
-                    cocktailViewmodel.saveNewCocktail("CreateCocktails", context) {
-                        Toast
-                            .makeText(
-                                context,
-                                "Cocktail guardado correctamente",
-                                Toast.LENGTH_SHORT
-                            )
-                            .show()
-                        viewmodelA.clean()
-                        navController.navigate("principal")
+                cocktailViewmodel.saveNewCocktail("CreateCocktails", context, {navController.navigate("ok")}) {
+                    Toast
+                        .makeText(
+                            context,
+                            "Cocktail guardado correctamente",
+                            Toast.LENGTH_SHORT
+                        )
+                        .show()
+                    viewmodelA.clean()
+                    navController.navigate("cocktail")
 
-                        viewmodelA.changeAlert(false)
+                    viewmodelA.changeCreateAlerte(false)
 
-                    }
                 }
             }
         }
-
-
     }
+
 }

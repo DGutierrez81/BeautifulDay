@@ -16,7 +16,7 @@ import com.project.beautifulday.Cocktail.ui.CardCocktailUser
 import com.project.beautifulday.Cocktail.ui.CardCocktails
 import com.project.beautifulday.Components.RegistroM
 import com.project.beautifulday.LogSig.LogIn
-import com.project.beautifulday.Meal.ui.Camera
+import com.project.beautifulday.Components.Camera
 import com.project.beautifulday.Meal.ui.CardIngredient
 import com.project.beautifulday.Meal.ui.CardMealUser
 import com.project.beautifulday.Meal.ui.ListCategory
@@ -25,11 +25,12 @@ import com.project.beautifulday.Meal.ui.ListMealUserCreater
 import com.project.beautifulday.Meal.ui.MealNameScreen
 import com.project.beautifulday.Meal.ui.MealScreen
 import com.project.beautifulday.ViewModels.MealViewmodel
-import com.project.beautifulday.Meal.ui.PrincipalScreen
+import com.project.beautifulday.Components.PrincipalScreen
 import com.project.beautifulday.ViewModels.LogViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.LogSig.RegisterUser
 import com.project.beautifulday.Components.CreateRegister
+import com.project.beautifulday.Components.OkTask
 import com.project.beautifulday.Meal.ui.CardMeals
 import com.project.beautifulday.Components.Video
 import com.project.beautifulday.ViewModels.CocktailViewmodel
@@ -147,7 +148,7 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
         }
 
         composable("video"){
-            Video(navController = navController, viewmodelA = viewmodelA)
+            Video(viewmodelA = viewmodelA)
         }
 
         composable("cocktail"){
@@ -204,6 +205,15 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
                 navController = navController,
                 viewmodel = viewmodelA,
                 context = context
+            )
+        }
+        composable("ok"){
+            OkTask(
+                viewmodel = viewmodel,
+                context = context,
+                viewmodelA = viewmodelA,
+                LgViewModel = LgViewModel,
+                cocktailViewmodel = cocktailViewmodel
             )
         }
 

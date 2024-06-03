@@ -3,10 +3,16 @@ package com.project.beautifulday.Meal.ui
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -25,7 +31,7 @@ import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.R
 import com.project.beautifulday.ViewModels.CocktailViewmodel
-
+import kotlinx.coroutines.delay
 
 
 @Composable
@@ -38,6 +44,7 @@ fun MealNameScreen(navController: NavController, viewmodel: MealViewmodel, conte
     val login = LgViewModel.login
     var order = 2
     if(login) order = 3
+    val progrees by viewmodel.progress.observeAsState(true)
 
     if(showDialog) DialogCategory(
         onDismiss = { viewmodelA.chageShowDialog(showDialog) },
@@ -46,6 +53,7 @@ fun MealNameScreen(navController: NavController, viewmodel: MealViewmodel, conte
         viewmodelA,
         navController = navController
     )
+
 
 
     Scaffold(
@@ -73,23 +81,44 @@ fun MealNameScreen(navController: NavController, viewmodel: MealViewmodel, conte
                 .padding(innerPadding),
             contentAlignment = Alignment.TopCenter
         ) {
-            ScreenCenter(
-                navController = navController,
-                viewmodelA = viewmodelA,
-                LgViewModel = LgViewModel,
-                showCenter = 2
-            )
-            Box(modifier = Modifier.padding(start = 30.dp, end = 30.dp)){
-                viewmodel.ShowMealsName(meals = meals, navController)
-            }
-            if(showOutLineText){
-                BusquedaNombre(
+
+            if(progrees){
+                Box(
+                    Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        CircularProgressIndicator(color = colorResource(id = R.color.paynesGray))
+                        Spacer(modifier = Modifier.padding(3.dp))
+                        Text(
+                            text = "Cargando" + viewmodelA.getAnimatedDots(
+                                progrees
+                            ), color = colorResource(id = R.color.paynesGray)
+                        )
+                    }
+                }
+            }else{
+                ScreenCenter(
                     navController = navController,
-                    viewmodel = viewmodel,
                     viewmodelA = viewmodelA,
-                    showOutLineText = showOutLineText,
-                    cocktailViewmodel = cocktailViewmodel
+                    LgViewModel = LgViewModel,
+                    showCenter = 2
                 )
+                Box(modifier = Modifier.padding(start = 30.dp, end = 30.dp)){
+                    viewmodel.ShowMealsName(meals = meals, navController)
+                }
+                if(showOutLineText){
+                    BusquedaNombre(
+                        navController = navController,
+                        viewmodel = viewmodel,
+                        viewmodelA = viewmodelA,
+                        showOutLineText = showOutLineText,
+                        cocktailViewmodel = cocktailViewmodel
+                    )
+                }
             }
         }
         /*

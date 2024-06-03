@@ -1,27 +1,18 @@
 package com.project.beautifulday.ViewModels
 
 import android.util.Log
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import coil.compose.AsyncImage
 import com.google.firebase.auth.FirebaseUser
 import com.project.beautifulday.Firebase.AuthService
 import com.project.beautifulday.Firebase.FirestoreService
@@ -55,6 +46,11 @@ class LogViewmodel@Inject constructor(private val authService: AuthService, priv
     var login by mutableStateOf(false)
         private set
 
+    var passwordVisibility by mutableStateOf(false)
+        private set
+
+
+
 
 
 
@@ -82,6 +78,8 @@ class LogViewmodel@Inject constructor(private val authService: AuthService, priv
 
         }
     }
+
+
 
 
 
@@ -131,6 +129,12 @@ class LogViewmodel@Inject constructor(private val authService: AuthService, priv
     }
 
 
+    fun isUserLogged(): Boolean {
+        return authService.isUserLogged()
+    }
+
+
+
 
     fun logOut(onSuccess: () -> Unit){
         viewModelScope.launch(Dispatchers.IO) {
@@ -169,9 +173,22 @@ class LogViewmodel@Inject constructor(private val authService: AuthService, priv
             containerColor = colorResource(id = R.color.paynesGray),
             modifier = Modifier.background(Color.Transparent))
     }
-
-
+   
      */
+
+
+    fun transformation(){
+        if(!passwordVisibility)PasswordVisualTransformation() else VisualTransformation.None
+    }
+
+    @Composable
+    fun changeIcon(){
+        if(passwordVisibility){
+            Icon(painter = painterResource(id = R.drawable.visibility), contentDescription = "Visisibility on", tint = colorResource(id = R.color.paynesGray))
+        }else{
+            Icon(painter = painterResource(id = R.drawable.visibility_off), contentDescription = "Visisibility of", tint = colorResource(id = R.color.paynesGray))
+        }
+    }
     fun showAlert(dialog: Boolean){
         _showAlert.value = !dialog
     }
@@ -190,6 +207,10 @@ class LogViewmodel@Inject constructor(private val authService: AuthService, priv
 
     fun changeLogin(result: Boolean){
         login = result
+    }
+
+    fun changePasswordVisibility(result: Boolean){
+        passwordVisibility = result
     }
 
     fun clean(){

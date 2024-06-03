@@ -1,4 +1,4 @@
-package com.project.beautifulday.Meal.ui
+package com.project.beautifulday.Components
 
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background

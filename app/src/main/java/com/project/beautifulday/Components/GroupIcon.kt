@@ -1,5 +1,6 @@
 package com.project.beautifulday.Components
 
+import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -62,9 +63,16 @@ fun GroupIcon(order: Int, navController: NavController, LgViewModel: LogViewmode
                 contentDescription = null,
                 tint = colorResource(id = R.color.silver),
                 modifier = Modifier.clickable {
-                    LgViewModel.logOut(){
+                    LgViewModel.logOut {
                         LgViewModel.clean()
-                        navController.navigate("principal")
+                        navController.navigate("principal") {
+                            // Limpia la pila de navegación hasta el destino inicial
+                            popUpTo(navController.graph.startDestinationId) {
+                                inclusive = true
+                            }
+                            // Esto asegura que la pantalla principal sea la única en la pila de backstack
+                            launchSingleTop = true
+                        }
                     }
                 }
             )
@@ -108,9 +116,16 @@ fun GroupIcon(order: Int, navController: NavController, LgViewModel: LogViewmode
                 contentDescription = null,
                 tint = colorResource(id = R.color.silver),
                 modifier = Modifier.clickable {
-                    LgViewModel.logOut(){
+                    LgViewModel.logOut {
                         LgViewModel.clean()
-                        navController.navigate("principal")
+                        navController.navigate("principal") {
+                            // Limpia la pila de navegación hasta el destino inicial
+                            popUpTo(navController.graph.startDestinationId) {
+                                inclusive = true
+                            }
+                            // Esto asegura que la pantalla principal sea la única en la pila de backstack
+                            launchSingleTop = true
+                        }
                     }
                 }
             )
@@ -153,7 +168,14 @@ fun GroupIcon(order: Int, navController: NavController, LgViewModel: LogViewmode
                 tint = colorResource(id = R.color.silver),
                 modifier = Modifier.clickable {
                     LgViewModel.clean()
-                    navController.navigate("principal")
+                    navController.navigate("principal"){
+                        // Limpia la pila de navegación hasta el destino inicial
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = true
+                        }
+                        // Esto asegura que la pantalla principal sea la única en la pila de backstack
+                        launchSingleTop = true
+                    }
                 }
             )
         }
