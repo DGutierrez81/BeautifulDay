@@ -1,6 +1,6 @@
 package com.project.beautifulday.Cocktail.ui
 
-import androidx.activity.ComponentActivity
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Text
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -31,39 +30,65 @@ import com.project.beautifulday.ViewModels.CocktailViewmodel
 import com.project.beautifulday.ViewModels.LogViewmodel
 import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
-import kotlinx.coroutines.delay
 
+
+/**
+ * Pantalla para mostrar la lista de cócteles creados por el usuario.
+ *
+ * @param navController Controlador de navegación para manejar las transiciones entre pantallas.
+ * @param viewmodel Instancia del [MealViewmodel] para realizar acciones relacionadas con las comidas.
+ * @param viewmodelA Instancia del [ViewmodelAplication] para realizar acciones relacionadas con la aplicación.
+ * @param LgViewModel Instancia del [LogViewmodel] para realizar acciones relacionadas con el inicio de sesión.
+ * @param cocktailViewmodel Instancia del [CocktailViewmodel] para realizar acciones relacionadas con los cócteles.
+ */
 @Composable
-fun ListCocktailUserCreater(navController: NavController, viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel, cocktailViewmodel: CocktailViewmodel){
+fun ListCocktailUserCreater(
+    navController: NavController,
+    viewmodel: MealViewmodel,
+    viewmodelA: ViewmodelAplication,
+    LgViewModel: LogViewmodel,
+    cocktailViewmodel: CocktailViewmodel
+) {
+    // Observa los datos de cócteles creados por el usuario
     val cocktailData by cocktailViewmodel.cocktailUser.collectAsState()
+    // Observa los datos de comidas del ViewModel
     val meals by viewmodel.mealsData.collectAsState()
+    // Observa el estado de showOutLineText del ViewModel de comidas
     val showOutLineText = viewmodel.showOutLineText
-    //val slide = viewmodelA.slide
+    // Observa el estado del slide del ViewModel de aplicación
     val slide by viewmodelA.slide.observeAsState(false)
+    // Observa el estado del showDialog del ViewModel de aplicación
     val showDialog = viewmodelA.showDialog
+    // Observa el estado de progreso del ViewModel de cócteles
     val progrees by cocktailViewmodel.progress.observeAsState(true)
+    // Observa el estado de login del ViewModel de inicio de sesión
     val login = LgViewModel.login
 
-    LaunchedEffect(key1 = true){
+    // Realiza la carga inicial de los cócteles creados por el usuario
+    LaunchedEffect(key1 = true) {
         cocktailViewmodel.fetchCocktailCreater()
     }
 
-    if(showDialog) DialogCategory(
-        onDismiss = { viewmodelA.chageShowDialog(showDialog) },
-        lista = meals,
-        viewmodel = viewmodel,
-        viewmodelA,
-        navController = navController
-    )
+    // Si showDialog es verdadero, muestra el diálogo de categoría
+    if (showDialog) {
+        DialogCategory(
+            onDismiss = { viewmodelA.chageShowDialog(showDialog) },
+            lista = meals,
+            viewmodel = viewmodel,
+            viewmodelA,
+            navController = navController
+        )
+    }
 
+    // Configura el Scaffold que contiene la estructura de la pantalla
     Scaffold(
         topBar = {
+            // Configuración de la barra superior personalizada
             MyTopBar(
-                meals = meals,
                 showMenu = true,
                 viewmodel = viewmodel,
                 showOutLineText = showOutLineText,
-                cocktailViewmodel,
+                cocktailViewmodel = cocktailViewmodel,
                 login = login,
                 mealName = "Socios",
                 navController = navController,
@@ -73,45 +98,47 @@ fun ListCocktailUserCreater(navController: NavController, viewmodel: MealViewmod
             )
         },
         bottomBar = {
+            // Configuración de la barra inferior personalizada
             MyBottomBar(order = 5, navController = navController, LgViewModel = LgViewModel, viewmodelA)
         }
-    ) {innerPadding ->
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(colorResource(id = R.color.electricBlue))
-                    .padding(innerPadding),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                if(progrees){
-                    Box(
-                        Modifier
-                            .fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            CircularProgressIndicator(color = colorResource(id = R.color.paynesGray))
-                            Spacer(modifier = Modifier.padding(3.dp))
-                            androidx.compose.material3.Text(
-                                text = "Cargando" + viewmodelA.getAnimatedDots(
-                                    progrees
-                                ), color = colorResource(id = R.color.paynesGray)
-                            )
-                        }
+    ) { innerPadding ->
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(colorResource(id = R.color.electricBlue))
+                .padding(innerPadding),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            // Si está en progreso, muestra un indicador de carga
+            if (progrees) {
+                Box(
+                    Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        CircularProgressIndicator(color = colorResource(id = R.color.paynesGray))
+                        Spacer(modifier = Modifier.padding(3.dp))
+                        androidx.compose.material3.Text(
+                            text = "Cargando" + viewmodelA.getAnimatedDots(progrees),
+                            color = colorResource(id = R.color.paynesGray)
+                        )
                     }
-                }else{
+                }
+            } else {
+                // Muestra el contenido central de la pantalla
                 ScreenCenter(
                     navController = navController,
                     viewmodelA = viewmodelA,
                     LgViewModel = LgViewModel,
                     showCenter = 3
                 )
-                Box(modifier = Modifier.padding(start = 30.dp, end = 30.dp)){
+                Box(modifier = Modifier.padding(start = 30.dp, end = 30.dp)) {
+                    // Muestra los nombres de los cócteles creados por el usuario
                     cocktailViewmodel.ShowCocktailNameUser(cocktailData = cocktailData, navController, "CreateCocktails")
                 }
-                if(showOutLineText){
+                // Si showOutLineText es verdadero, muestra el campo de búsqueda
+                if (showOutLineText) {
                     BusquedaNombre(
                         navController = navController,
                         viewmodel = viewmodel,
@@ -122,7 +149,5 @@ fun ListCocktailUserCreater(navController: NavController, viewmodel: MealViewmod
                 }
             }
         }
-
     }
-
 }

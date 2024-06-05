@@ -17,7 +17,6 @@ import com.project.beautifulday.Cocktail.ui.CardCocktails
 import com.project.beautifulday.Components.RegistroM
 import com.project.beautifulday.LogSig.LogIn
 import com.project.beautifulday.Components.Camera
-import com.project.beautifulday.Meal.ui.CardIngredient
 import com.project.beautifulday.Meal.ui.CardMealUser
 import com.project.beautifulday.Meal.ui.ListCategory
 import com.project.beautifulday.Meal.ui.ListMealUser
@@ -44,13 +43,13 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
             BlankView(navController = navController, LgViewModel)
         }
         composable("principal"){
-            PrincipalScreen(navController = navController, viewmodel = viewmodel, context = context, viewmodelA, LgViewModel,cocktailViewmodel)
+            PrincipalScreen(navController = navController, viewmodel = viewmodel, viewmodelA, LgViewModel, cocktailViewmodel)
         }
         composable("meal"){
-            MealScreen(navController = navController, viewmodel = viewmodel, context = context, viewmodelA, LgViewModel, cocktailViewmodel)
+            MealScreen(navController = navController, viewmodel = viewmodel, viewmodelA, LgViewModel, cocktailViewmodel)
         }
         composable("mealNameScreen"){
-            MealNameScreen(navController = navController, viewmodel = viewmodel, context = context, viewmodelA, LgViewModel, cocktailViewmodel)
+            MealNameScreen(navController = navController, viewmodel = viewmodel, viewmodelA, LgViewModel, cocktailViewmodel)
         }
         composable("myCard"){
             CardMeals(navController = navController, viewmodel = viewmodel, context = context, viewmodelA, LgViewModel)
@@ -63,15 +62,6 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
                 viewmodelA = viewmodelA
             )
         }
-        composable("cardIngredient"){
-            CardIngredient(
-                navController = navController,
-                viewmodel = viewmodel,
-                context = context,
-                viewmodelA = viewmodelA
-            )
-        }
-
         composable("login"){
             LogIn(
                 navController,
@@ -94,7 +84,6 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
             ListMealUser(
                 navController = navController,
                 viewmodel = viewmodel,
-                context = context,
                 viewmodelA = viewmodelA,
                 LgViewModel = LgViewModel,
                 cocktailViewmodel = cocktailViewmodel
@@ -140,7 +129,6 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
             ListMealUserCreater(
                 navController = navController,
                 viewmodel = viewmodel,
-                context = context,
                 viewmodelA = viewmodelA,
                 LgViewModel = LgViewModel,
                 cocktailViewmodel = cocktailViewmodel
@@ -152,16 +140,16 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
         }
 
         composable("cocktail"){
-            CocktailScreen(navController, viewmodel, context, viewmodelA, LgViewModel, cocktailViewmodel)
+            CocktailScreen(navController, viewmodel, viewmodelA, LgViewModel, cocktailViewmodel)
         }
         //ListaCocktailsApi
 
         composable("listaCocktailsApi"){
-            ListaCocktailsApi(navController, viewmodel, context, viewmodelA, LgViewModel, cocktailViewmodel)
+            ListaCocktailsApi(navController, viewmodel, viewmodelA, LgViewModel, cocktailViewmodel)
         }
 
         composable("listCocktailUser"){
-            ListCocktailUser(navController, viewmodel, context, viewmodelA, LgViewModel, cocktailViewmodel)
+            ListCocktailUser(navController, viewmodel, viewmodelA, LgViewModel, cocktailViewmodel)
         }
 
         composable("cardCocktails"){
@@ -193,7 +181,6 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
             ListCocktailUserCreater(
                 navController = navController,
                 viewmodel = viewmodel,
-                context = context,
                 viewmodelA = viewmodelA,
                 LgViewModel = LgViewModel,
                 cocktailViewmodel = cocktailViewmodel

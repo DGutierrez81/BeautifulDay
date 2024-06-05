@@ -10,7 +10,6 @@ import androidx.navigation.NavController
 import com.project.beautifulday.Components.Alert
 import com.project.beautifulday.Components.MyBottomBar
 import com.project.beautifulday.Components.MyContent
-import com.project.beautifulday.Components.MyTopBar
 import com.project.beautifulday.ViewModels.CocktailViewmodel
 import com.project.beautifulday.ViewModels.LogViewmodel
 import com.project.beautifulday.ViewModels.MealViewmodel

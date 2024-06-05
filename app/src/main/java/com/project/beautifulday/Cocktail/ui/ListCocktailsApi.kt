@@ -31,83 +31,112 @@ import com.project.beautifulday.ViewModels.LogViewmodel
 import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 
+/**
+ * Pantalla para mostrar la lista de cócteles obtenidos desde una API.
+ *
+ * @param navController Controlador de navegación para manejar las transiciones entre pantallas.
+ * @param viewmodel Instancia del [MealViewmodel] para realizar acciones relacionadas con las comidas.
+ * @param viewmodelA Instancia del [ViewmodelAplication] para realizar acciones relacionadas con la aplicación.
+ * @param LgViewModel Instancia del [LogViewmodel] para realizar acciones relacionadas con el inicio de sesión.
+ * @param cocktailViewmodel Instancia del [CocktailViewmodel] para realizar acciones relacionadas con los cócteles.
+ */
 @Composable
-fun ListaCocktailsApi(navController: NavController, viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel, cocktailViewmodel: CocktailViewmodel){
+fun ListaCocktailsApi(
+    navController: NavController,
+    viewmodel: MealViewmodel,
+    viewmodelA: ViewmodelAplication,
+    LgViewModel: LogViewmodel,
+    cocktailViewmodel: CocktailViewmodel
+) {
+    // Observa los datos de comidas del ViewModel
     val meals by viewmodel.mealsData.collectAsState()
+    // Observa los datos de cócteles obtenidos desde la API
     val cocktails by cocktailViewmodel.cocktailData.collectAsState()
+    // Observa el estado de showOutLineText del ViewModel de comidas
     val showOutLineText = viewmodel.showOutLineText
-    //val slide = viewmodelA.slide
+    // Observa el estado del slide del ViewModel de aplicación
     val slide by viewmodelA.slide.observeAsState(false)
+    // Observa el estado del showDialog del ViewModel de aplicación
     val showDialog = viewmodelA.showDialog
+    // Observa el estado de login del ViewModel de inicio de sesión
     val login = LgViewModel.login
+    // Observa el estado de progreso del ViewModel de cócteles
     val progrees by cocktailViewmodel.progress.observeAsState(true)
+    // Determina el orden de los elementos en la pantalla
     var order = 2
-    if(login) order = 5
+    if (login) order = 5
 
-    if(showDialog) DialogCategory(
-        onDismiss = { viewmodelA.chageShowDialog(showDialog) },
-        lista = meals,
-        viewmodel = viewmodel,
-        viewmodelA,
-        navController = navController
-    )
+    // Si showDialog es verdadero, muestra el diálogo de categoría
+    if (showDialog) {
+        DialogCategory(
+            onDismiss = { viewmodelA.chageShowDialog(showDialog) },
+            lista = meals,
+            viewmodel = viewmodel,
+            viewmodelA,
+            navController = navController
+        )
+    }
 
-
+    // Configura el Scaffold que contiene la estructura de la pantalla
     Scaffold(
         modifier = Modifier.background(colorResource(id = R.color.electricBlue)),
-        topBar = { MyTopBar(
-            meals,
-            true,
-            viewmodel,
-            showOutLineText,
-            cocktailViewmodel,
-            login,
-            "Api",
-            navController,
-            slide,
-            viewmodelA,
-            showDialog
-        ) },
-        bottomBar = { MyBottomBar(order, navController, LgViewModel, viewmodelA) }
-
+        topBar = {
+            // Configuración de la barra superior personalizada
+            MyTopBar(
+                showMenu = true,
+                viewmodel = viewmodel,
+                showOutLineText = showOutLineText,
+                cocktailViewmodel = cocktailViewmodel,
+                login = login,
+                mealName = "Api",
+                navController = navController,
+                slide = slide,
+                viewmodelA = viewmodelA,
+                showDialog = showDialog
+            )
+        },
+        bottomBar = {
+            // Configuración de la barra inferior personalizada
+            MyBottomBar(order, navController, LgViewModel, viewmodelA)
+        }
     ) { innerPadding ->
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(colorResource(id = R.color.electricBlue))
-                    .padding(innerPadding),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                if(progrees){
-                    Box(
-                        Modifier
-                            .fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            CircularProgressIndicator(color = colorResource(id = R.color.paynesGray))
-                            Spacer(modifier = Modifier.padding(3.dp))
-                            Text(
-                                text = "Cargando" + viewmodelA.getAnimatedDots(
-                                    progrees
-                                ), color = colorResource(id = R.color.paynesGray)
-                            )
-                        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(colorResource(id = R.color.electricBlue))
+                .padding(innerPadding),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            // Si está en progreso, muestra un indicador de carga
+            if (progrees) {
+                Box(
+                    Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        CircularProgressIndicator(color = colorResource(id = R.color.paynesGray))
+                        Spacer(modifier = Modifier.padding(3.dp))
+                        Text(
+                            text = "Cargando" + viewmodelA.getAnimatedDots(progrees),
+                            color = colorResource(id = R.color.paynesGray)
+                        )
                     }
-                }else{
+                }
+            } else {
+                // Muestra el contenido central de la pantalla
                 ScreenCenter(
                     navController = navController,
                     viewmodelA = viewmodelA,
                     LgViewModel = LgViewModel,
                     showCenter = 3
                 )
-                Box(modifier = Modifier.padding(start = 30.dp, end = 30.dp)){
+                Box(modifier = Modifier.padding(start = 30.dp, end = 30.dp)) {
+                    // Muestra los nombres de los cócteles obtenidos desde la API
                     cocktailViewmodel.ShowCocktailsName(cocktail = cocktails, navController = navController)
                 }
-                if(showOutLineText){
+                // Si showOutLineText es verdadero, muestra el campo de búsqueda
+                if (showOutLineText) {
                     BusquedaNombre(
                         navController = navController,
                         viewmodel = viewmodel,
@@ -118,21 +147,5 @@ fun ListaCocktailsApi(navController: NavController, viewmodel: MealViewmodel, co
                 }
             }
         }
-
-        /*
-        innerPadding ->
-        MyContent(
-            innerPadding = innerPadding,
-            viewmodel = viewmodel,
-            viewmodelA = viewmodelA,
-            LgViewModel = LgViewModel,
-            navController = navController,
-            showOutLinedText = showOutLineText,
-            showListMeals = true,
-            meals = meals,
-            showViewCenter = 2
-        )
-
-         */
     }
 }

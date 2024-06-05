@@ -41,24 +41,29 @@ import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.androidsmall1.jotiOne
 import kotlinx.coroutines.delay
 
+/**
+ * Función composable que muestra una tarjeta de cóctel.
+ * Esta tarjeta incluye el nombre, la imagen, los ingredientes y las instrucciones de un cóctel.
+ * También incluye un indicador de carga animado mientras se están obteniendo los datos.
+ * Además, proporciona acciones para traducir las instrucciones, guardar el cóctel y navegar hacia atrás.
+ *
+ * @param navController NavController para manejar la navegación.
+ * @param viewmodel CocktailViewmodel para obtener y gestionar los datos del cóctel.
+ * @param context Contexto de la actividad actual para mostrar mensajes Toast.
+ * @param viewmodelA ViewmodelAplication para gestionar el estado relacionado con la UI.
+ * @param LgViewModel LogViewmodel para gestionar el estado de inicio de sesión y acciones relacionadas.
+ */
 @Composable
 fun CardCocktails(navController: NavController, viewmodel: CocktailViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel) {
+    // Observando varias variables de estado de los viewmodels.
     val drink = viewmodel.cocktail
-
-
-    val actionTranslate = viewmodel.actionTranslate
-    //val actionTranslate by viewmodelA.actionTranslate.observeAsState(true)
+    val actionTranslate by viewmodelA.actionTranslate.observeAsState(true)
     val state = viewmodelA.state.value
-    //val slide = viewmodelA.slide
     val slide by viewmodelA.slide.observeAsState(false)
     val login = LgViewModel.login
     val progrees by viewmodel.progress.observeAsState(true)
 
-
-
-    //val mealState = viewmodel.mealsData
-
-
+    // Columna principal que contiene el contenido de la tarjeta de cóctel.
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -66,18 +71,25 @@ fun CardCocktails(navController: NavController, viewmodel: CocktailViewmodel, co
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
+        // Muestra el nombre del cóctel.
         Text(
-            text = drink.strDrink ?: "", modifier = Modifier
+            text = drink.strDrink ?: "",
+            modifier = Modifier
                 .fillMaxWidth()
-                .padding(5.dp), fontFamily = jotiOne, fontSize = 24.sp, color = colorResource(
-                id = R.color.silver
-            ), textAlign = TextAlign.Center
+                .padding(5.dp),
+            fontFamily = jotiOne,
+            fontSize = 24.sp,
+            color = colorResource(id = R.color.silver),
+            textAlign = TextAlign.Center
         )
+
+        // Tarjeta que contiene la imagen y los detalles del cóctel.
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(
                 modifier = Modifier
                     .background(colorResource(id = R.color.paynesGray))
             ) {
+                // Muestra un indicador de carga si los datos están siendo obtenidos.
                 if(progrees){
                     Box(
                         Modifier
@@ -91,13 +103,13 @@ fun CardCocktails(navController: NavController, viewmodel: CocktailViewmodel, co
                             CircularProgressIndicator(color = colorResource(id = R.color.silver))
                             Spacer(modifier = Modifier.padding(3.dp))
                             Text(
-                                text = "Cargando" + viewmodelA.getAnimatedDots(
-                                    progrees
-                                ), color = colorResource(id = R.color.silver)
+                                text = "Cargando" + viewmodelA.getAnimatedDots(progrees),
+                                color = colorResource(id = R.color.silver)
                             )
                         }
                     }
-                }else{
+                } else {
+                    // Muestra la imagen del cóctel cuando los datos están listos.
                     AsyncImage(
                         model = drink.strDrinkThumb,
                         contentDescription = null,
@@ -108,7 +120,7 @@ fun CardCocktails(navController: NavController, viewmodel: CocktailViewmodel, co
                     )
                 }
 
-
+                // Lista que muestra los ingredientes y las instrucciones del cóctel.
                 LazyColumn(
                     modifier = Modifier
                         .padding(20.dp)
@@ -116,7 +128,7 @@ fun CardCocktails(navController: NavController, viewmodel: CocktailViewmodel, co
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     item {
-
+                        // Componente personalizado para traducir el texto si es necesario.
                         ActionTransalate(
                             actionTranslate = actionTranslate,
                             text = "Ingredients:" + "\n" + drink.strList?.joinToString() + "\n" + ":Instructions:" + "\n" + drink.strInstructions,
@@ -128,23 +140,22 @@ fun CardCocktails(navController: NavController, viewmodel: CocktailViewmodel, co
                 }
 
             }
-
         }
     }
 
-
+    // Columna que contiene iconos de acciones adicionales.
     Column {
+        // Icono que permite cambiar el estado de la vista deslizante.
         Icon(painter = painterResource(id = R.drawable.density),
             contentDescription = null,
-            tint = colorResource(
-                id = R.color.silver
-            ),
+            tint = colorResource(id = R.color.silver),
             modifier = Modifier.clickable {
                 viewmodelA.changeSlide(slide)
             }
                 .padding(start = 5.dp, top = 8.dp)
         )
 
+        // Visibilidad animada para mostrar las opciones adicionales cuando `slide` es verdadero.
         AnimatedVisibility(
             visible = slide,
             enter = slideInHorizontally(),
@@ -155,46 +166,44 @@ fun CardCocktails(navController: NavController, viewmodel: CocktailViewmodel, co
                     .padding(3.dp)
                     .background(colorResource(id = R.color.silver))
             ) {
-                Text(text = "Traducir", modifier = Modifier
-                    .padding(2.dp)
-                    .clickable {
-                        viewmodel.changeActionTranslate(!actionTranslate)
-                        viewmodelA.changeSlide(slide)
-                    },
+                // Opción para traducir el texto.
+                Text(text = "Traducir",
+                    modifier = Modifier
+                        .padding(2.dp)
+                        .clickable {
+                            viewmodelA.changeActionTranslate(!actionTranslate)
+                            viewmodelA.changeSlide(slide)
+                        },
                     color = colorResource(id = R.color.paynesGray)
                 )
+                // Opción para guardar el cóctel si el usuario está logueado.
                 if(login){
-                    Text(text = "Guardar", modifier = Modifier
-                        .padding(2.dp)
-                        .clickable {
-                            viewmodel.saveNewCocktail("Cocktails", context, {navController.navigate("ok")}) {
-                                Toast
-                                    .makeText(
-                                        context,
-                                        "Cocktail guardado correctamente",
-                                        Toast.LENGTH_SHORT
-                                    )
-                                    .show()
-                                viewmodelA.clean()
-                                navController.navigate("cocktail")
-                            }
-                        },
+                    Text(text = "Guardar",
+                        modifier = Modifier
+                            .padding(2.dp)
+                            .clickable {
+                                viewmodel.saveNewCocktail("Cocktails", context, {navController.navigate("ok")}) {
+                                    Toast
+                                        .makeText(
+                                            context,
+                                            "Cocktail guardado correctamente",
+                                            Toast.LENGTH_SHORT
+                                        )
+                                        .show()
+                                    viewmodelA.clean()
+                                    navController.navigate("cocktail")
+                                }
+                            },
                         color = colorResource(id = R.color.paynesGray)
                     )
-                    /*
-                    Text(text = "Borrar", modifier = Modifier
-                        .padding(2.dp)
-                        .clickable { },
-                        color = colorResource(id = R.color.paynesGray)
-                    )
-
-                         */
                 }
+                // Opción para volver atrás.
                 Text(
-                    text = "Atras", modifier = Modifier
+                    text = "Atras",
+                    modifier = Modifier
                         .padding(2.dp)
                         .clickable {
-                            viewmodelA.changeSlide(slide)
+                            viewmodelA.clean()
                             navController.popBackStack()
                         },
                     color = colorResource(id = R.color.paynesGray)
@@ -202,5 +211,4 @@ fun CardCocktails(navController: NavController, viewmodel: CocktailViewmodel, co
             }
         }
     }
-
 }

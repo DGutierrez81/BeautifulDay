@@ -52,8 +52,8 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel, Idoc: String, colec: String){
-    val actionTranslate = viewmodel.actionTranslate
-    //val actionTranslate by viewmodelA.actionTranslate.observeAsState(true)
+    //val actionTranslate = viewmodel.actionTranslate
+    val actionTranslate by viewmodelA.actionTranslate.observeAsState(true)
     val state = viewmodelA.state.value
     //val slide = viewmodelA.slide
     val slide by viewmodelA.slide.observeAsState(false)
@@ -195,7 +195,7 @@ fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel,
                 Text(text = "Traducir", modifier = Modifier
                     .padding(2.dp)
                     .clickable {
-                        viewmodel.changeActionTranslate(!actionTranslate)
+                        viewmodelA.changeActionTranslate(!actionTranslate)
                         viewmodelA.changeSlide(slide)
                     },
                     color = colorResource(id = R.color.paynesGray)

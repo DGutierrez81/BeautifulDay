@@ -1,8 +1,11 @@
 package com.project.beautifulday.Meal.ui.States
 
-import com.project.beautifulday.Meal.ui.States.CategoriesState
-
-
+/**
+ * Representa el estado de una lista de categorías.
+ *
+ * @property categories La lista de categorías.
+ */
 data class ListCategoriesState(
     val categories: List<CategoriesState>? = emptyList()
 )
+

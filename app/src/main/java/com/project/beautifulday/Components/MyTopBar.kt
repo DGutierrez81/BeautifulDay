@@ -20,17 +20,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.project.beautifulday.Meal.ui.States.MealState
 import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.R
-import com.project.beautifulday.ViewModels.CocktailViewmodel
 import com.project.beautifulday.androidsmall1.jotiOne
+import com.project.beautifulday.ViewModels.CocktailViewmodel
 
 
 @Composable
 fun MyTopBar(
-    meals: List<MealState>,
     showMenu: Boolean,
     viewmodel: MealViewmodel,
     showOutLineText: Boolean,
@@ -96,12 +94,6 @@ fun MyTopBar(
                                         viewmodelA.changeSlide(slide)
                                         viewmodelA.chageShowDialog(showDialog)
                                     }
-
-                                    Mytext(text = "Ingredientes") {
-                                        viewmodel.getListIngredient()
-                                        navController.navigate("cardIngredient")
-                                    }
-
                                 }
                             }
                         }
@@ -193,13 +185,6 @@ fun MyTopBar(
 
                         }
                     }
-
-                    /*
-                    Spacer(modifier = Modifier.padding(20.dp))
-
-                    Mytext(text = "Registro Multimedia") { navController.navigate("registroM") }
-
-                     */
                 }
 
             }

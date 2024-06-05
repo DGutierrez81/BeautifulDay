@@ -31,54 +31,82 @@ import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.R
 import com.project.beautifulday.ViewModels.CocktailViewmodel
-import kotlinx.coroutines.delay
 
 
+/**
+ * Composable para mostrar una lista de comidas del usuario.
+ *
+ * Esta función recibe varios parámetros necesarios para mostrar y controlar las comidas del usuario.
+ *
+ * @param navController NavController para manejar la navegación en la aplicación.
+ * @param viewmodel ViewModel relacionado con la información de las comidas.
+ * @param context ComponentActivity para acceder al contexto de la aplicación.
+ * @param viewmodelA ViewModel de la aplicación para manejar ciertas acciones y estados de la aplicación.
+ * @param LgViewModel ViewModel para el inicio de sesión.
+ * @param cocktailViewmodel ViewModel relacionado con información de cócteles.
+ */
 @Composable
-fun ListMealUser(navController: NavController, viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel, cocktailViewmodel: CocktailViewmodel){
+fun ListMealUser(
+    navController: NavController,
+    viewmodel: MealViewmodel,
+    viewmodelA: ViewmodelAplication,
+    LgViewModel: LogViewmodel,
+    cocktailViewmodel: CocktailViewmodel
+){
+    // Observa y obtiene los datos de la comida actual
     val mealData by viewmodel.mealData.collectAsState()
+    // Observa y obtiene la lista de comidas del usuario
     val meals by viewmodel.mealsData.collectAsState()
+    // Determina si se debe mostrar el texto de búsqueda
     val showOutLineText = viewmodel.showOutLineText
-    //val slide = viewmodelA.slide
+    // Observa y obtiene el estado actual del deslizamiento
     val slide by viewmodelA.slide.observeAsState(false)
+    // Observa y obtiene el estado actual de mostrar el diálogo
     val showDialog = viewmodelA.showDialog
+    // Observa y obtiene el estado actual de inicio de sesión
     val login = LgViewModel.login
+    // Observa y obtiene el estado actual del progreso
     val progrees by viewmodel.progress.observeAsState(true)
 
+    // Realiza acciones al lanzar el efecto
     LaunchedEffect(Unit){
         viewmodel.fetchMeal()
     }
 
+    // Muestra el diálogo de categorías si se activa
+    if(showDialog) {
+        DialogCategory(
+            onDismiss = { viewmodelA.chageShowDialog(showDialog) },
+            lista = meals,
+            viewmodel = viewmodel,
+            viewmodelA,
+            navController = navController
+        )
+    }
 
-
-    if(showDialog) DialogCategory(
-        onDismiss = { viewmodelA.chageShowDialog(showDialog) },
-        lista = meals,
-        viewmodel = viewmodel,
-        viewmodelA,
-        navController = navController
-    )
-
+    // Diseño de la pantalla con Scaffold de Jetpack Compose
     Scaffold(
         topBar = {
-                 MyTopBar(
-                     meals = meals,
-                     showMenu = true,
-                     viewmodel = viewmodel,
-                     showOutLineText = showOutLineText,
-                     cocktailViewmodel,
-                     login = login,
-                     mealName = "Favoritos",
-                     navController = navController,
-                     slide = slide,
-                     viewmodelA = viewmodelA,
-                     showDialog = showDialog
-                 )
+            // Muestra la barra de navegación superior personalizada
+            MyTopBar(
+                showMenu = true,
+                viewmodel = viewmodel,
+                showOutLineText = showOutLineText,
+                cocktailViewmodel =cocktailViewmodel,
+                login = login,
+                mealName = "Favoritos",
+                navController = navController,
+                slide = slide,
+                viewmodelA = viewmodelA,
+                showDialog = showDialog
+            )
         },
         bottomBar = {
+            // Muestra la barra de navegación inferior personalizada
             MyBottomBar(order = 3, navController = navController, LgViewModel = LgViewModel, viewmodelA)
         }
-    ) {innerPadding ->
+    ) { innerPadding ->
+        // Contenido principal del Scaffold
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -86,7 +114,8 @@ fun ListMealUser(navController: NavController, viewmodel: MealViewmodel, context
                 .padding(innerPadding),
             contentAlignment = Alignment.TopCenter
         ) {
-            if(progrees){
+            // Muestra el indicador de progreso si la carga está en curso
+            if(progrees) {
                 Box(
                     Modifier
                         .fillMaxSize(),
@@ -104,16 +133,19 @@ fun ListMealUser(navController: NavController, viewmodel: MealViewmodel, context
                         )
                     }
                 }
-            }else{
+            } else {
+                // Muestra el contenido principal cuando la carga ha finalizado
                 ScreenCenter(
                     navController = navController,
                     viewmodelA = viewmodelA,
                     LgViewModel = LgViewModel,
                     showCenter = 2
                 )
+                // Muestra la lista de comidas del usuario
                 Box(modifier = Modifier.padding(start = 30.dp, end = 30.dp)){
                     viewmodel.ShowMealsNameUser(mealData = mealData, navController, "Meals")
                 }
+                // Muestra el componente de búsqueda por nombre si está activado
                 if(showOutLineText){
                     BusquedaNombre(
                         navController = navController,
@@ -124,7 +156,6 @@ fun ListMealUser(navController: NavController, viewmodel: MealViewmodel, context
                     )
                 }
             }
-
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.project.beautifulday.Meal.ui
 
-import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,7 +11,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -31,49 +29,79 @@ import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.R
 import com.project.beautifulday.ViewModels.CocktailViewmodel
-import kotlinx.coroutines.delay
 
 
+
+/**
+ * Composable para mostrar la pantalla de nombres de comidas.
+ *
+ * Esta función recibe varios parámetros necesarios para mostrar y controlar los nombres de las comidas.
+ *
+ * @param navController NavController para manejar la navegación en la aplicación.
+ * @param viewmodel ViewModel relacionado con la información de las comidas.
+ * @param viewmodelA ViewModel de la aplicación para manejar ciertas acciones y estados de la aplicación.
+ * @param LgViewModel ViewModel para el inicio de sesión.
+ * @param cocktailViewmodel ViewModel relacionado con información de cócteles.
+ */
 @Composable
-fun MealNameScreen(navController: NavController, viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel, cocktailViewmodel: CocktailViewmodel){
+fun MealNameScreen(
+    navController: NavController,
+    viewmodel: MealViewmodel,
+    viewmodelA: ViewmodelAplication,
+    LgViewModel: LogViewmodel,
+    cocktailViewmodel: CocktailViewmodel
+){
+    // Observa y obtiene la lista de comidas
     val meals by viewmodel.mealsData.collectAsState()
+    // Determina si se debe mostrar el texto de búsqueda
     val showOutLineText = viewmodel.showOutLineText
-    //val slide = viewmodelA.slide
+    // Observa y obtiene el estado actual del deslizamiento
     val slide by viewmodelA.slide.observeAsState(false)
+    // Observa y obtiene el estado actual de mostrar el diálogo
     val showDialog = viewmodelA.showDialog
+    // Observa y obtiene el estado actual de inicio de sesión
     val login = LgViewModel.login
+    // Determina el orden de la barra de navegación inferior según el estado de inicio de sesión
     var order = 2
     if(login) order = 3
+    // Observa y obtiene el estado actual del progreso
     val progrees by viewmodel.progress.observeAsState(true)
 
-    if(showDialog) DialogCategory(
-        onDismiss = { viewmodelA.chageShowDialog(showDialog) },
-        lista = meals,
-        viewmodel = viewmodel,
-        viewmodelA,
-        navController = navController
-    )
+    // Muestra el diálogo de categorías si está activado
+    if(showDialog) {
+        DialogCategory(
+            onDismiss = { viewmodelA.chageShowDialog(showDialog) },
+            lista = meals,
+            viewmodel = viewmodel,
+            viewmodelA,
+            navController = navController
+        )
+    }
 
-
-
+    // Diseño de la pantalla con Scaffold de Jetpack Compose
     Scaffold(
         modifier = Modifier.background(colorResource(id = R.color.electricBlue)),
-        topBar = { MyTopBar(
-            meals,
-            true,
-            viewmodel,
-            showOutLineText,
-            cocktailViewmodel,
-            login,
-            "Api",
-            navController,
-            slide,
-            viewmodelA,
-            showDialog
-        ) },
-        bottomBar = { MyBottomBar(order, navController, LgViewModel, viewmodelA) }
-
+        topBar = {
+            // Muestra la barra de navegación superior personalizada
+            MyTopBar(
+                true,
+                viewmodel,
+                showOutLineText,
+                cocktailViewmodel= cocktailViewmodel,
+                login,
+                "Api",
+                navController,
+                slide,
+                viewmodelA,
+                showDialog
+            )
+        },
+        bottomBar = {
+            // Muestra la barra de navegación inferior personalizada
+            MyBottomBar(order, navController, LgViewModel, viewmodelA)
+        }
     ) { innerPadding ->
+        // Contenido principal del Scaffold
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -81,7 +109,7 @@ fun MealNameScreen(navController: NavController, viewmodel: MealViewmodel, conte
                 .padding(innerPadding),
             contentAlignment = Alignment.TopCenter
         ) {
-
+            // Muestra el indicador de progreso si la carga está en curso
             if(progrees){
                 Box(
                     Modifier
@@ -101,15 +129,18 @@ fun MealNameScreen(navController: NavController, viewmodel: MealViewmodel, conte
                     }
                 }
             }else{
+                // Muestra el contenido principal cuando la carga ha finalizado
                 ScreenCenter(
                     navController = navController,
                     viewmodelA = viewmodelA,
                     LgViewModel = LgViewModel,
                     showCenter = 2
                 )
+                // Muestra la lista de nombres de comidas
                 Box(modifier = Modifier.padding(start = 30.dp, end = 30.dp)){
                     viewmodel.ShowMealsName(meals = meals, navController)
                 }
+                // Muestra el componente de búsqueda por nombre si está activado
                 if(showOutLineText){
                     BusquedaNombre(
                         navController = navController,
@@ -121,121 +152,8 @@ fun MealNameScreen(navController: NavController, viewmodel: MealViewmodel, conte
                 }
             }
         }
-        /*
-        innerPadding ->
-        MyContent(
-            innerPadding = innerPadding,
-            viewmodel = viewmodel,
-            viewmodelA = viewmodelA,
-            LgViewModel = LgViewModel,
-            navController = navController,
-            showOutLinedText = showOutLineText,
-            showListMeals = true,
-            meals = meals,
-            showViewCenter = 2
-        )
 
-         */
     }
 }
 
 
-/*
-@Composable
-fun MyContentMeal2(
-    innerPadding: PaddingValues,
-    viewmodel: MealViewmodel,
-    navController: NavController,
-    showOutLinedText: Boolean,
-    meals: List<MealState>
-){
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(colorResource(id = R.color.electricBlue))
-            .padding(innerPadding),
-        contentAlignment = Alignment.TopCenter
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .background(colorResource(id = R.color.electricBlue)),
-                contentAlignment = Alignment.TopEnd
-            ){
-                Icon(painter = painterResource(id = R.drawable.inicio2_nube),
-                    contentDescription = null,
-                    modifier = Modifier.padding(top = 50.dp, end = 50.dp),
-                    tint = colorResource(id = R.color.white)
-                )
-            }
-            Text(
-                text = "Beautiful",
-                fontSize = 32.sp,
-                fontFamily = jotiOne,
-                color = colorResource(id = R.color.selectiveYellow),
-                modifier = Modifier.padding(top = 50.dp)
-            )
-            Box(modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.BottomCenter){
-                Column {
-                    ViewCenter(false, navController, viewmodel)
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(colorResource(id = R.color.selectiveYellow)),
-                        contentAlignment = Alignment.TopCenter
-                    ) {
-                        androidx.compose.material.Text(
-                            text = "DAY",
-                            fontFamily = jotiOne,
-                            fontSize = 32.sp,
-                            color = colorResource(id = R.color.electricBlue),
-                            modifier = Modifier.padding(20.dp)
-                        )
-                    }
-                }
-            }
-        }
-        Box(modifier = Modifier.padding(start = 30.dp, end = 30.dp)){
-            viewmodel.ShowMealsName(meals = meals)
-        }
-
-        if(showOutLinedText){
-            Box(modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center){
-                Row(
-                    horizontalArrangement = Arrangement.SpaceAround,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    OutlinedTextField(value = viewmodel.mealName, onValueChange = { viewmodel.changeMealName(it)},
-                        label = { Text(text = "Busqueda por nombre") },
-                        modifier = Modifier
-                            .padding(5.dp)
-                            .background(color = Color.Transparent),
-                        shape = RoundedCornerShape(100.dp),
-                        colors = TextFieldDefaults.colors(
-                            unfocusedIndicatorColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            focusedContainerColor = Color.White
-                        )
-                    )
-                    AsyncImage(model = R.drawable.logo,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .width(50.dp)
-                            .height(50.dp)
-                            .clickable {
-                                viewmodel.getMealName(viewmodel.mealName)
-                                navController.navigate("mealNameScreen")
-                                viewmodel.changeshowOutLineText(showOutLinedText)
-                                viewmodel.changeMealName("")
-                            })
-                }
-            }
-        }
-    }
-}
-
-
- */

@@ -1,27 +1,17 @@
 package com.project.beautifulday.Meal.ui
 
-import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.project.beautifulday.Components.BusquedaNombre
 import com.project.beautifulday.Components.DialogCategory
@@ -33,28 +23,78 @@ import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.R
 import com.project.beautifulday.ViewModels.CocktailViewmodel
-import com.project.beautifulday.androidsmall1.jotiOne
 
 
+
+/**
+ * Composable para mostrar la pantalla de una comida.
+ *
+ * Esta función recibe varios parámetros necesarios para mostrar y controlar la información de una comida.
+ *
+ * @param navController NavController para manejar la navegación en la aplicación.
+ * @param viewmodel ViewModel relacionado con la información de la comida.
+ * @param viewmodelA ViewModel de la aplicación para manejar ciertas acciones y estados de la aplicación.
+ * @param LgViewModel ViewModel para el inicio de sesión.
+ * @param cocktailViewmodel ViewModel relacionado con información de cócteles.
+ */
 @Composable
-fun MealScreen(navController: NavController, viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel, cocktailViewmodel: CocktailViewmodel){
+fun MealScreen(
+    navController: NavController,
+    viewmodel: MealViewmodel,
+    viewmodelA: ViewmodelAplication,
+    LgViewModel: LogViewmodel,
+    cocktailViewmodel: CocktailViewmodel
+){
 
+    // Observa y obtiene la información de la comida
     val meal by viewmodel.mealsData.collectAsState()
+    // Determina si se debe mostrar el texto de búsqueda
     val showOutLineText = viewmodel.showOutLineText
-    //val slide = viewmodelA.slide
+    // Observa y obtiene el estado actual del deslizamiento
     val slide by viewmodelA.slide.observeAsState(false)
+    // Observa y obtiene el estado actual de mostrar el diálogo
     val showDialog = viewmodelA.showDialog
+    // Observa y obtiene el estado actual de inicio de sesión
     val login = LgViewModel.login
+    // Determina el orden de la barra de navegación inferior según el estado de inicio de sesión
     var order = 2
     if(login) order = 3
 
-    if(showDialog) DialogCategory(onDismiss = { viewmodelA.chageShowDialog(showDialog) }, lista = meal, viewmodel, viewmodelA, navController)
+    // Muestra el diálogo de categorías si está activado
+    if(showDialog) {
+        DialogCategory(
+            onDismiss = { viewmodelA.chageShowDialog(showDialog) },
+            lista = meal,
+            viewmodel,
+            viewmodelA,
+            navController = navController
+        )
+    }
 
+    // Diseño de la pantalla con Scaffold de Jetpack Compose
     Scaffold(
         modifier = Modifier.background(colorResource(id = R.color.electricBlue)),
-        topBar = { MyTopBar(meal, true, viewmodel, showOutLineText, cocktailViewmodel, login, "Comida", navController, slide, viewmodelA, showDialog) },
-        bottomBar = { MyBottomBar(order, navController, LgViewModel, viewmodelA) }
+        topBar = {
+            // Muestra la barra de navegación superior personalizada
+            MyTopBar(
+                true,
+                viewmodel,
+                showOutLineText,
+                cocktailViewmodel = cocktailViewmodel,
+                login,
+                "Comida",
+                navController,
+                slide,
+                viewmodelA,
+                showDialog
+            )
+        },
+        bottomBar = {
+            // Muestra la barra de navegación inferior personalizada
+            MyBottomBar(order, navController, LgViewModel, viewmodelA)
+        }
     ) { innerPadding ->
+        // Contenido principal del Scaffold
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -62,6 +102,7 @@ fun MealScreen(navController: NavController, viewmodel: MealViewmodel, context: 
                 .padding(innerPadding),
             contentAlignment = Alignment.TopCenter
         ) {
+            // Muestra la pantalla de centro
             ScreenCenter(
                 navController = navController,
                 viewmodelA = viewmodelA,
@@ -69,6 +110,7 @@ fun MealScreen(navController: NavController, viewmodel: MealViewmodel, context: 
                 showCenter = 2
             )
 
+            // Muestra el componente de búsqueda por nombre si está activado
             if(showOutLineText){
                 BusquedaNombre(
                     navController = navController,
@@ -79,206 +121,5 @@ fun MealScreen(navController: NavController, viewmodel: MealViewmodel, context: 
                 )
             }
         }
-}
-
-@Composable
-fun MyTopBarMeal(showOutLineText: Boolean, viewmodel: MealViewmodel, showMenu: Boolean) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(colorResource(id = R.color.electricBlue))
-    ) {
-
-        if (showMenu) {
-            LazyRow(
-                modifier = Modifier.padding(top = 20.dp, start = 20.dp, end = 20.dp)
-            ) {
-                item {
-                    Text(text = "Busqueda por nombre",
-                        fontFamily = jotiOne,
-                        color = colorResource(id = R.color.paynesGray),
-                        modifier = Modifier.clickable {
-                            viewmodel.changeshowOutLineText(
-                                showOutLineText
-                            )
-                        })
-                    Spacer(modifier = Modifier.padding(20.dp))
-                    Text(
-                        text = "Random",
-                        fontFamily = jotiOne,
-                        color = colorResource(id = R.color.paynesGray)
-                    )
-                    Spacer(modifier = Modifier.padding(20.dp))
-                    Text(
-                        text = "Categorias",
-                        fontFamily = jotiOne,
-                        color = colorResource(id = R.color.paynesGray)
-                    )
-                    Spacer(modifier = Modifier.padding(20.dp))
-                    Text(
-                        text = "Ver recetas socios",
-                        fontFamily = jotiOne,
-                        color = colorResource(id = R.color.paynesGray)
-                    )
-                    Spacer(modifier = Modifier.padding(20.dp))
-                    Text(
-                        text = "Crear receta",
-                        fontFamily = jotiOne,
-                        color = colorResource(id = R.color.paynesGray)
-                    )
-                }
-            }
-        }
-
-        Icon(
-            painter = painterResource(id = R.drawable.inicio2_sol),
-            contentDescription = null,
-            modifier = Modifier.padding(start = 50.dp),
-            tint = Color.Yellow
-        )
     }
 }
-}
-
-
-/*
-@Composable
-fun MyContentMeal(
-    innerPadding: PaddingValues,
-    viewmodel: MealViewmodel,
-    navController: NavController,
-    showOutLinedText: Boolean
-){
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(colorResource(id = R.color.electricBlue))
-            .padding(innerPadding),
-        contentAlignment = Alignment.TopCenter
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .background(colorResource(id = R.color.electricBlue)),
-                contentAlignment = Alignment.TopEnd
-            ){
-                Icon(painter = painterResource(id = R.drawable.inicio2_nube),
-                    contentDescription = null,
-                    modifier = Modifier.padding(top = 50.dp, end = 50.dp),
-                    tint = colorResource(id = R.color.white)
-                )
-            }
-            Text(
-                text = "Beautiful",
-                fontSize = 32.sp,
-                fontFamily = jotiOne,
-                color = colorResource(id = R.color.selectiveYellow),
-                modifier = Modifier.padding(top = 50.dp)
-            )
-            Box(modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.BottomCenter){
-                Column {
-                    Box(modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.BottomCenter){
-                        AsyncImage(
-                            model = R.drawable.olla2, contentDescription = "olla",
-                            modifier = Modifier
-                                .height(200.dp)
-                                .width(200.dp)
-                                .padding(bottom = 10.dp),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(colorResource(id = R.color.selectiveYellow)),
-                        contentAlignment = Alignment.TopCenter
-                    ) {
-                        androidx.compose.material.Text(
-                            text = "DAY",
-                            fontFamily = jotiOne,
-                            fontSize = 32.sp,
-                            color = colorResource(id = R.color.electricBlue),
-                            modifier = Modifier.padding(20.dp)
-                        )
-                    }
-                }
-            }
-        }
-        if(showOutLinedText){
-            Box(modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center){
-                Row(
-                    horizontalArrangement = Arrangement.SpaceAround,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    OutlinedTextField(value = viewmodel.mealName, onValueChange = { viewmodel.changeMealName(it)},
-                        label = { Text(text = "Busqueda por nombre") },
-                        modifier = Modifier
-                            .padding(5.dp)
-                            .background(color = Color.Transparent),
-                        shape = RoundedCornerShape(100.dp),
-                        colors = TextFieldDefaults.colors(
-                            unfocusedIndicatorColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            focusedContainerColor = Color.White
-                        )
-                    )
-                    AsyncImage(model = R.drawable.logo,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .width(50.dp)
-                            .height(50.dp)
-                            .clickable {
-                                viewmodel.getMealName(viewmodel.mealName)
-                                navController.navigate("mealNameScreen")
-                                viewmodel.changeshowOutLineText(showOutLinedText)
-                                viewmodel.changeMealName("")
-                            })
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun MyBottomBarMeal(){
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(colorResource(id = R.color.selectiveYellow))
-    ) {
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 50.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.inicio2_key),
-                    contentDescription = null,
-                    tint = colorResource(id = R.color.silver)
-                )
-                Icon(
-                    painter = painterResource(id = R.drawable.inicio2_plus),
-                    contentDescription = null,
-                    tint = colorResource(id = R.color.silver)
-                )
-                AsyncImage(model = R.drawable.glass,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .height(40.dp)
-                        .width(40.dp))
-            }
-        }
-    }
-}
- */

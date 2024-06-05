@@ -12,12 +12,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -51,14 +49,12 @@ import com.project.beautifulday.Firebase.FirestoreService
 import com.project.beautifulday.Meal.MealUseCases.UseCaseListArea
 import com.project.beautifulday.Meal.MealUseCases.UseCaseListCategories
 import com.project.beautifulday.Meal.MealUseCases.UseCaseListCategory
-import com.project.beautifulday.Meal.MealUseCases.UseCaseListIngredient
 import com.project.beautifulday.Meal.MealUseCases.UseCaseMealArea
 import com.project.beautifulday.Meal.MealUseCases.UseCaseMealId
 import com.project.beautifulday.Meal.MealUseCases.UseCaseMealName
 import com.project.beautifulday.Meal.MealUseCases.UseCaseRandom
 import com.project.beautifulday.Meal.MealUseCases.UseListCategoy
 import com.project.beautifulday.Meal.ui.States.CategoriesState
-import com.project.beautifulday.Meal.ui.States.IngredientState
 import com.project.beautifulday.Meal.ui.States.MealState
 import com.project.beautifulday.Meal.ui.States.MealUser
 import com.project.beautifulday.R
@@ -75,8 +71,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MealViewmodel@Inject constructor(private val useCaseMealName: UseCaseMealName,
                                        private val useCaseRandom: UseCaseRandom, private val useListCategoy: UseListCategoy,
-                                       private val useCaseListArea: UseCaseListArea, private val useCaseListIngredient: UseCaseListIngredient,
-                                       private val useCaseMealId: UseCaseMealId, private val useCaseListCategory: UseCaseListCategory,
+                                       private val useCaseListArea: UseCaseListArea, private val useCaseMealId: UseCaseMealId, private val useCaseListCategory: UseCaseListCategory,
                                        private val useCaseListCateries: UseCaseListCategories, private val authService: AuthService, private val firestore: FirestoreService,
                                         private val useCaseMealArea: UseCaseMealArea
 ): ViewModel() {
@@ -86,30 +81,15 @@ class MealViewmodel@Inject constructor(private val useCaseMealName: UseCaseMealN
 
     private val _categoryData = MutableStateFlow<List<CategoriesState>>(emptyList())
     val categoyData: StateFlow<List<CategoriesState>> = _categoryData
-
-    private val _ingredientData = MutableStateFlow<List<IngredientState>>(emptyList())
-    val ingredientData: StateFlow<List<IngredientState>> = _ingredientData
-
     var mealList by mutableStateOf(mutableListOf<MealState>())
         private set
 
     var meal by mutableStateOf(MealUser())
         private set
-
-    private val _mealState = mutableStateOf(MealState())
-    val mealState: MutableState<MealState> = _mealState
-    /*
-    var mealState by mutableStateOf(MealState())
-        private set
-
-     */
     var mealName by mutableStateOf("")
         private set
 
     var showOutLineText by mutableStateOf(false)
-        private set
-
-    var showViewCenter by mutableStateOf(0)
         private set
 
     var ingredients by mutableStateOf<MutableList<String>>(mutableListOf())
@@ -205,23 +185,6 @@ class MealViewmodel@Inject constructor(private val useCaseMealName: UseCaseMealN
                 strIngredients = meal.strIngredients?: mutableListOf(),
                 strMeasures = meal.strMeasures?: mutableListOf())
         }
-        /*
-        LazyColumn(){
-            itemsIndexed(meals){index, item ->
-                saveMeal(idMeal = meal?.idMeal ?: "",
-                    strMeal = meal?.strMeal ?: "",
-                    strCategory = meal?.strCategory ?: "",
-                    strArea = meal?.strArea ?: "",
-                    strInstructions = meal?.strInstructions ?: "",
-                    strMealThumb = meal?.strMealThumb ?: "",
-                    strTags = meal?.strTags ?: "",
-                    strYoutube = meal?.strYoutube ?: "",
-                    strIngredients = meal.strIngredients,
-                    strMeasures = meal.strMeasures)
-            }
-        }
-
-         */
     }
 
     fun getListCategory(){
@@ -248,11 +211,6 @@ class MealViewmodel@Inject constructor(private val useCaseMealName: UseCaseMealN
         }
     }
 
-    fun getListIngredient(){
-        viewModelScope.launch {
-            _ingredientData.value = useCaseListIngredient().meals?: mutableListOf()
-        }
-    }
 
     fun getMealById(id: String){
         _progress.value = true
@@ -445,31 +403,6 @@ class MealViewmodel@Inject constructor(private val useCaseMealName: UseCaseMealN
 
     }
 
-
-    fun saveMealCreater(
-        idMeal: String,
-        strMeal: String,
-        strCategory: String,
-        strArea: String,
-        strInstructions: String,
-        strMealThumb: String,
-        strTags: String,
-        strYoutube: String,
-        strIngredients: MutableList<String>,
-        strMeasures: MutableList<String>
-    ){
-        ingredients.clear()
-        measures.clear()
-
-        val email = authService.email()
-
-        strIngredients.forEach{if(it != "") ingredients.add(it)}
-        strMeasures.forEach { if(it != "") measures.add(it) }
-
-        meal = MealUser(idMeal, strMeal, strCategory, strArea, strInstructions, strMealThumb, strTags, strYoutube, ingredients, measures, email.toString())
-
-    }
-
     fun saveNewMeals(colec: String, context: ComponentActivity, onOk:() -> Unit,onSuccess: () -> Unit) {
         _progressCreated.value = true
         val email = authService.email()
@@ -571,10 +504,6 @@ class MealViewmodel@Inject constructor(private val useCaseMealName: UseCaseMealN
         showOutLineText = !result
     }
 
-    fun changeViewCenter(result: Int){
-        showViewCenter = result
-    }
-
     fun changeActionTranslate(value: Boolean){
         actionTranslate = value
     }
@@ -587,15 +516,9 @@ class MealViewmodel@Inject constructor(private val useCaseMealName: UseCaseMealN
         showVotes = result
     }
 
-    fun changeProgress(result: Boolean) {
-        _progress.value = result
-    }
-
     fun cleanVotes(){
         puntuacion = 0.0
         votes = 0
         currentRating = 0.0
     }
-
-
 }

@@ -43,22 +43,30 @@ import com.project.beautifulday.androidsmall1.jotiOne
 
 
 
+/**
+ * Función composable que muestra una tarjeta de comida.
+ * Esta tarjeta incluye el nombre, la imagen, los ingredientes y las instrucciones de una comida.
+ * También incluye un indicador de carga animado mientras se están obteniendo los datos.
+ * Además, proporciona acciones para traducir las instrucciones, guardar la comida, ver un video y navegar hacia atrás.
+ *
+ * @param navController NavController para manejar la navegación.
+ * @param viewmodel MealViewmodel para obtener y gestionar los datos de la comida.
+ * @param context Contexto de la actividad actual para mostrar mensajes Toast.
+ * @param viewmodelA ViewmodelAplication para gestionar el estado relacionado con la UI.
+ * @param LgViewModel LogViewmodel para gestionar el estado de inicio de sesión y acciones relacionadas.
+ */
 @Composable
 fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel) {
+    // Observando varias variables de estado de los viewmodels.
     val meal = viewmodel.meal
-
-
-    val actionTranslate = viewmodel.actionTranslate
-    //val actionTranslate by viewmodelA.actionTranslate.observeAsState(true)
+    val actionTranslate by viewmodelA.actionTranslate.observeAsState(true)
     val state = viewmodelA.state.value
-    //val slide = viewmodelA.slide
     val slide by viewmodelA.slide.observeAsState(false)
     val login = LgViewModel.login
     val progrees by viewmodel.progress.observeAsState(true)
     val mealState = viewmodel.mealsData
 
-
-
+    // Columna principal que contiene el contenido de la tarjeta de comida.
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -66,20 +74,27 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
+        // Muestra el nombre de la comida.
         Text(
-            text = meal.strMeal ?: "", modifier = Modifier
+            text = meal.strMeal ?: "",
+            modifier = Modifier
                 .fillMaxWidth()
-                .padding(5.dp), fontFamily = jotiOne, fontSize = 24.sp, color = colorResource(
-                id = R.color.silver
-            ), textAlign = TextAlign.Center
+                .padding(5.dp),
+            fontFamily = jotiOne,
+            fontSize = 24.sp,
+            color = colorResource(id = R.color.silver),
+            textAlign = TextAlign.Center
         )
+
+        // Tarjeta que contiene la imagen y los detalles de la comida.
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(
                 modifier = Modifier
                     .background(colorResource(id = R.color.paynesGray))
             ) {
 
-                if(progrees){
+                // Muestra un indicador de carga si los datos están siendo obtenidos.
+                if(progrees) {
                     Box(
                         Modifier
                             .fillMaxWidth()
@@ -92,13 +107,13 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
                             CircularProgressIndicator(color = colorResource(id = R.color.silver))
                             Spacer(modifier = Modifier.padding(3.dp))
                             Text(
-                                text = "Cargando" + viewmodelA.getAnimatedDots(
-                                    progrees
-                                ), color = colorResource(id = R.color.silver)
+                                text = "Cargando" + viewmodelA.getAnimatedDots(progrees),
+                                color = colorResource(id = R.color.silver)
                             )
                         }
                     }
-                }else{
+                } else {
+                    // Muestra la imagen de la comida cuando los datos están listos.
                     AsyncImage(
                         model = meal.strMealThumb,
                         contentDescription = null,
@@ -109,7 +124,7 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
                     )
                 }
 
-
+                // Lista que muestra los ingredientes y las instrucciones de la comida.
                 LazyColumn(
                     modifier = Modifier
                         .padding(20.dp)
@@ -117,7 +132,7 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     item {
-
+                        // Componente personalizado para traducir el texto si es necesario.
                         ActionTransalate(
                             actionTranslate = actionTranslate,
                             text = "Ingredients:" + "\n" + meal.strIngredients?.joinToString() + "\n" + ":Instructions:" + "\n" + meal.strInstructions,
@@ -127,19 +142,17 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
                         )
                     }
                 }
-
             }
-
         }
     }
 
-
+    // Columna que contiene iconos de acciones adicionales.
     Column {
-        Icon(painter = painterResource(id = R.drawable.density),
+        // Icono que permite cambiar el estado de la vista deslizante.
+        Icon(
+            painter = painterResource(id = R.drawable.density),
             contentDescription = null,
-            tint = colorResource(
-                id = R.color.silver
-            ),
+            tint = colorResource(id = R.color.silver),
             modifier = Modifier
                 .clickable {
                     viewmodelA.changeSlide(slide)
@@ -147,6 +160,7 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
                 .padding(start = 5.dp, top = 8.dp)
         )
 
+        // Visibilidad animada para mostrar las opciones adicionales cuando `slide` es verdadero.
         AnimatedVisibility(
             visible = slide,
             enter = slideInHorizontally(),
@@ -157,52 +171,66 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
                     .padding(3.dp)
                     .background(colorResource(id = R.color.silver))
             ) {
-                Text(text = "Traducir", modifier = Modifier
-                    .padding(2.dp)
-                    .clickable {
-                        viewmodel.changeActionTranslate(!actionTranslate)
-                        viewmodelA.changeSlide(slide)
-                    },
-                    color = colorResource(id = R.color.paynesGray))
-                if(login){
-                    Text(text = "Guardar", modifier = Modifier
-                        .padding(2.dp)
-                        .clickable {
-                            viewmodel.saveNewMeals("Meals", context, {navController.navigate("ok")}) {
-                                Toast
-                                    .makeText(
-                                        context,
-                                        "Comida guardada correctamente",
-                                        Toast.LENGTH_SHORT
-                                    )
-                                    .show()
-                                viewmodelA.changeSlide(slide)
-                                viewmodelA.clean()
-                                navController.navigate("meal")
-                            }
-                        },
-                        color = colorResource(id = R.color.paynesGray))
-
-                    Text(text = "Ver video", modifier = Modifier
-                        .padding(2.dp)
-                        .clickable {
-                            context.startActivity(
-                                Intent(
-                                    Intent.ACTION_VIEW,
-                                    Uri.parse(meal.strYoutube)
-                                )
-                            )
-                            viewmodelA.changeSlide(slide)
-                        },
-                        color = colorResource(id = R.color.paynesGray))
-
-
-                }
+                // Opción para traducir el texto.
                 Text(
-                    text = "Atras", modifier = Modifier
+                    text = "Traducir",
+                    modifier = Modifier
+                        .padding(2.dp)
+                        .clickable {
+                            viewmodelA.changeActionTranslate(!actionTranslate)
+                            viewmodelA.changeSlide(slide)
+                        },
+                    color = colorResource(id = R.color.paynesGray)
+                )
+
+                // Opción para guardar la comida si el usuario está logueado.
+                if(login) {
+                    Text(
+                        text = "Guardar",
+                        modifier = Modifier
+                            .padding(2.dp)
+                            .clickable {
+                                viewmodel.saveNewMeals("Meals", context, {navController.navigate("ok")}) {
+                                    Toast
+                                        .makeText(
+                                            context,
+                                            "Comida guardada correctamente",
+                                            Toast.LENGTH_SHORT
+                                        )
+                                        .show()
+                                    viewmodelA.clean()
+                                    navController.navigate("meal")
+                                }
+                            },
+                        color = colorResource(id = R.color.paynesGray)
+                    )
+
+                    // Opción para ver el video de la receta en YouTube.
+                    Text(
+                        text = "Ver video",
+                        modifier = Modifier
+                            .padding(2.dp)
+                            .clickable {
+                                context.startActivity(
+                                    Intent(
+                                        Intent.ACTION_VIEW,
+                                        Uri.parse(meal.strYoutube)
+                                    )
+                                )
+                                viewmodelA.changeSlide(slide)
+                            },
+                        color = colorResource(id = R.color.paynesGray)
+                    )
+                }
+
+                // Opción para volver atrás.
+                Text(
+                    text = "Atras",
+                    modifier = Modifier
                         .padding(2.dp)
                         .clickable {
                             viewmodelA.changeSlide(slide)
+                            viewmodelA.clean()
                             navController.popBackStack()
                         },
                     color = colorResource(id = R.color.paynesGray)
@@ -210,166 +238,4 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
             }
         }
     }
-
 }
-
-/*
-@Composable
-fun ActionTransalate(actionTranslate: Boolean, text: String, viewmodelA: ViewmodelAplication, context: ComponentActivity, state: Traduction){
-    if (actionTranslate) {
-
-        Text(
-            text = (text),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(5.dp),
-            color = colorResource(id = R.color.silver),
-            textAlign = TextAlign.Center
-        )
-
-        viewmodelA.onTextToBeTranslatedChange(text)
-        viewmodelA.onTranslateButtonClick(
-            text = state.textToBeTranslate,
-            context = context
-        )
-    } else {
-        state.translatedText.let { translatedText ->
-            val processedText = translatedText.toList().joinToString(separator = "") { if (it == ':') "\n" else it.toString() }
-            Text(
-                text = processedText,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(5.dp),
-                color = colorResource(id = R.color.silver),
-                textAlign = TextAlign.Center
-            )
-        }
-    }
-}
-
- */
-
-/*
-LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = colorResource(id = R.color.paynesGray)),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ){
-        itemsIndexed(mealState){index, item ->
-            Text(
-                text = item.strMeal ?: "", modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(5.dp), fontFamily = jotiOne, fontSize = 24.sp, color = colorResource(
-                    id = R.color.silver
-                ), textAlign = TextAlign.Center
-            )
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Column(
-                    modifier = Modifier
-                        .background(colorResource(id = R.color.paynesGray))
-                ) {
-
-                    AsyncImage(
-                        model = item.strMealThumb,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(300.dp),
-                        contentScale = ContentScale.Crop
-                    )
-                    LazyColumn(
-                        modifier = Modifier
-                            .padding(20.dp)
-                            .height(200.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        item {
-
-                            ActionTransalate(
-                                actionTranslate = actionTranslate,
-                                text = "Ingredientes:" + "\n" + item.strIngredients?.joinToString() + "\n" + ":Instructions:" + "\n" + item.strInstructions,
-                                viewmodelA = viewmodelA,
-                                context = context,
-                                state = state
-                            )
-                        }
-                    }
-
-                }
-
-            }
-        }
- */
-
-
-
-
-
-
-
-/*
-                       //Text(text = (meal.strIngredients.joinToString() + "/n" + meal.strInstructions), color = colorResource(id = R.color.silver), fontFamily = jotiOne)
-                       if (actionTranslate) {
-
-                           Text(
-                               text = ("Ingredients:"),
-                               modifier = Modifier
-                                   .fillMaxWidth()
-                                   .padding(5.dp),
-                               color = colorResource(id = R.color.silver),
-                               fontFamily = jotiOne,
-                               textAlign = TextAlign.Center
-                           )
-
-                           viewmodelA.onTextToBeTranslatedChange(
-                               ("Ingredients:")
-                           )
-                           viewmodelA.onTranslateButtonClick(
-                               text = state.textToBeTranslate,
-                               context = context
-                           )
-                       } else {
-                           state.translatedText.let {
-                               Text(
-                                   text = it,
-                                   modifier = Modifier
-                                       .fillMaxWidth()
-                                       .padding(5.dp),
-                                   color = colorResource(id = R.color.silver),
-                                   textAlign = TextAlign.Center
-                               )
-                           }
-                       }
-                       if (actionTranslate) {
-
-                           Text(
-                               text = (meal.strIngredients.joinToString()),
-                               modifier = Modifier
-                                   .fillMaxWidth()
-                                   .padding(5.dp),
-                               color = colorResource(id = R.color.silver),
-                               fontFamily = jotiOne,
-                               textAlign = TextAlign.Center
-                           )
-
-                           viewmodelA.onTextToBeTranslatedChange(
-                               ("Ingredients:" + "\n" + meal.strIngredients.joinToString() + "\n" + "Instructions:" + "\n" + meal.strInstructions)
-                           )
-                           viewmodelA.onTranslateButtonClick(
-                               text = state.textToBeTranslate,
-                               context = context
-                           )
-                       } else {
-                           state.translatedText.let {
-                               Text(
-                                   text = it,
-                                   modifier = Modifier
-                                       .fillMaxWidth()
-                                       .padding(5.dp),
-                                   color = colorResource(id = R.color.silver),
-                                   textAlign = TextAlign.Center
-                               )
-                           }
-                       }
-                       */

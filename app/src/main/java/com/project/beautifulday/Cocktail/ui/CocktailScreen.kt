@@ -25,18 +25,38 @@ import com.project.beautifulday.ViewModels.LogViewmodel
 import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 
+/**
+ * Pantalla principal para la visualización de cocktails.
+ *
+ * @param navController Controlador de navegación para manejar las transiciones entre pantallas.
+ * @param viewmodel Instancia del [MealViewmodel] para realizar acciones relacionadas con las comidas.
+ * @param viewmodelA Instancia del [ViewmodelAplication] para realizar acciones relacionadas con la aplicación.
+ * @param LgViewModel Instancia del [LogViewmodel] para realizar acciones relacionadas con el inicio de sesión.
+ * @param cocktailViewmodel Instancia del [CocktailViewmodel] para realizar acciones relacionadas con los cócteles.
+ */
 @Composable
-fun CocktailScreen(navController: NavController, viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel, cocktailViewmodel: CocktailViewmodel) {
-
+fun CocktailScreen(
+    navController: NavController,
+    viewmodel: MealViewmodel,
+    viewmodelA: ViewmodelAplication,
+    LgViewModel: LogViewmodel,
+    cocktailViewmodel: CocktailViewmodel
+) {
+    // Observa los datos de comidas del ViewModel
     val meal by viewmodel.mealsData.collectAsState()
+    // Observa el estado de showOutLineText del ViewModel
     val showOutLineText = viewmodel.showOutLineText
-    //val slide = viewmodelA.slide
+    // Observa el estado del slide del ViewmodelAplication
     val slide by viewmodelA.slide.observeAsState(false)
+    // Observa el estado del showDialog del ViewmodelAplication
     val showDialog = viewmodelA.showDialog
+    // Observa el estado de login del LogViewmodel
     val login = LgViewModel.login
+    // Variable para determinar el orden de los elementos en la pantalla
     var order = 4
     if (login) order = 5
 
+    // Si showDialog es verdadero, muestra el diálogo de categoría
     if (showDialog) DialogCategory(
         onDismiss = { viewmodelA.chageShowDialog(showDialog) },
         lista = meal,
@@ -45,48 +65,56 @@ fun CocktailScreen(navController: NavController, viewmodel: MealViewmodel, conte
         navController
     )
 
+    // Configura el Scaffold que contiene la estructura de la pantalla
     Scaffold(
         modifier = Modifier.background(colorResource(id = R.color.electricBlue)),
         topBar = {
+            // Configuración de la barra superior personalizada
             MyTopBar(
-                meal,
-                true,
-                viewmodel,
-                showOutLineText,
-                cocktailViewmodel,
-                login,
-                "Cocktail",
-                navController,
-                slide,
-                viewmodelA,
-                showDialog
+                showMenu = true, // Indica que es la barra superior
+                viewmodel = viewmodel, // ViewModel de comidas
+                showOutLineText = showOutLineText, // Estado de showOutLineText
+                cocktailViewmodel = cocktailViewmodel,
+                login = login, // Estado de login
+                mealName = "Cocktail", // Título de la pantalla
+                navController = navController, // Controlador de navegación
+                slide = slide, // Estado de slide
+                viewmodelA = viewmodelA, // ViewModel de aplicación
+                showDialog = showDialog // Estado de showDialog
             )
         },
-        bottomBar = { MyBottomBar(order, navController, LgViewModel, viewmodelA) }
+        bottomBar = {
+            // Configuración de la barra inferior personalizada
+            MyBottomBar(order, navController, LgViewModel, viewmodelA)
+        }
     ) { innerPadding ->
+        // Caja que contiene el contenido principal de la pantalla
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .background(colorResource(id = R.color.electricBlue))
-                .padding(innerPadding),
-            contentAlignment = Alignment.TopCenter
+                .fillMaxWidth() // Ocupa todo el ancho disponible
+                .background(colorResource(id = R.color.electricBlue)) // Fondo azul eléctrico
+                .padding(innerPadding), // Padding interno
+            contentAlignment = Alignment.TopCenter // Alineación del contenido al centro superior
         ) {
+            // Contenido central de la pantalla
             ScreenCenter(
-                navController = navController,
-                viewmodelA = viewmodelA,
-                LgViewModel = LgViewModel,
-                showCenter = 3
+                navController = navController, // Controlador de navegación
+                viewmodelA = viewmodelA, // ViewModel de aplicación
+                LgViewModel = LgViewModel, // ViewModel de login
+                showCenter = 3 // Indica el contenido a mostrar en el centro
             )
 
+            // Si showOutLineText es verdadero, muestra el campo de búsqueda
             if (showOutLineText) {
                 BusquedaNombre(
-                    navController = navController,
-                    viewmodel = viewmodel,
-                    viewmodelA = viewmodelA,
-                    showOutLineText = showOutLineText,
-                    cocktailViewmodel = cocktailViewmodel
+                    navController = navController, // Controlador de navegación
+                    viewmodel = viewmodel, // ViewModel de comidas
+                    viewmodelA = viewmodelA, // ViewModel de aplicación
+                    showOutLineText = showOutLineText, // Estado de showOutLineText
+                    cocktailViewmodel = cocktailViewmodel // ViewModel de cocktails
                 )
             }
         }
     }
 }
+
