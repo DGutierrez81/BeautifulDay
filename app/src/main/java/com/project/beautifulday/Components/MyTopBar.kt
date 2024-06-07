@@ -112,7 +112,11 @@ fun MyTopBar(
 
                             Spacer(modifier = Modifier.padding(20.dp))
 
-                            Mytext(text = "Donde comer") {   }
+                            Mytext(text = "Crear local") { navController.navigate("createNewLocal") }
+
+                            Spacer(modifier = Modifier.padding(20.dp))
+
+                            Mytext(text = "Donde comer") { navController.navigate("listLocal")  }
 
                         }
                     }else {
@@ -181,7 +185,11 @@ fun MyTopBar(
 
                             Spacer(modifier = Modifier.padding(20.dp))
 
-                            Mytext(text = "Donde beber") { }
+                            Mytext(text = "Crear local") { navController.navigate("createNewLocal") }
+
+                            Spacer(modifier = Modifier.padding(20.dp))
+
+                            Mytext(text = "Donde beber") { navController.navigate("listLocal")  }
 
                         }
                     }

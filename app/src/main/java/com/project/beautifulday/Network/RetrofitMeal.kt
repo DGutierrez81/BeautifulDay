@@ -51,6 +51,3 @@ object RetrofitMeal {
     }
 }
 
-
-
-//CocktailService

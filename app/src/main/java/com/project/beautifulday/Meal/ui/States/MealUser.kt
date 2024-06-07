@@ -1,5 +1,7 @@
 package com.project.beautifulday.Meal.ui.States
 
+import java.util.UUID
+
 /**
  * Representa el estado de una comida creada por un usuario.
  *
@@ -20,7 +22,7 @@ package com.project.beautifulday.Meal.ui.States
  * @property votes El número de votos recibidos por la comida.
  */
 data class MealUser(
-    val idMeal: String? = "",
+    val idMeal: String? = UUID.randomUUID().toString(),
     val strMeal: String? = "",
     val strCategory: String? = "",
     val strArea: String? = "",
@@ -30,6 +32,7 @@ data class MealUser(
     val strYoutube: String? = "",
     val strIngredients: MutableList<String>? = mutableListOf(),
     val strMeasures: MutableList<String>? = mutableListOf(),
+    val listVotes: MutableList<String>? = mutableListOf(),
     val emailUser: String? = "",
     val nameUser: String? = "",
     val idDocument: String? = "",

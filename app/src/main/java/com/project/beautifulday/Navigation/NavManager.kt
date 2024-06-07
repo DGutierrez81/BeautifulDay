@@ -17,6 +17,7 @@ import com.project.beautifulday.Cocktail.ui.CardCocktails
 import com.project.beautifulday.Components.RegistroM
 import com.project.beautifulday.LogSig.LogIn
 import com.project.beautifulday.Components.Camera
+import com.project.beautifulday.Components.CreateLocal
 import com.project.beautifulday.Meal.ui.CardMealUser
 import com.project.beautifulday.Meal.ui.ListCategory
 import com.project.beautifulday.Meal.ui.ListMealUser
@@ -29,9 +30,12 @@ import com.project.beautifulday.ViewModels.LogViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.LogSig.RegisterUser
 import com.project.beautifulday.Components.CreateRegister
+import com.project.beautifulday.Components.MyGoogleMaps
 import com.project.beautifulday.Components.OkTask
 import com.project.beautifulday.Meal.ui.CardMeals
 import com.project.beautifulday.Components.Video
+import com.project.beautifulday.Meal.ui.CardLocalM
+import com.project.beautifulday.Meal.ui.ListLocal
 import com.project.beautifulday.ViewModels.CocktailViewmodel
 
 @Composable
@@ -105,7 +109,6 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
                 viewmodel = viewmodel,
                 context = context,
                 viewmodelA = viewmodelA,
-                LgViewModel = LgViewModel,
                 Idoc = idDoc,
                 colec = colec
             )
@@ -120,9 +123,17 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
                 cocktailViewmodel = cocktailViewmodel
             )
         }
-        
-        composable("camera"){
-            Camera(navController = navController, viewmodelA = viewmodelA, context = context)
+
+        composable(
+            "camera/{email}?numb={numb}",
+            arguments = listOf(
+                navArgument("email") { type = NavType.StringType },
+                navArgument("numb") { type = NavType.StringType; defaultValue = "" }
+            )
+        ) {
+            val email = it.arguments?.getString("email") ?: ""
+            val numb = it.arguments?.getString("numb") ?: ""
+            Camera(navController = navController, viewmodelA = viewmodelA, context = context, email = email, numb = numb)
         }
 
         composable("listMealUserCreater"){
@@ -171,7 +182,6 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
                 viewmodel = cocktailViewmodel,
                 context = context,
                 viewmodelA = viewmodelA,
-                LgViewModel = LgViewModel,
                 Idoc = idDoc,
                 colec = colec
             )
@@ -187,13 +197,18 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
             )
         }
 
-        composable("registroM"){
+
+        composable("registroM/{email}",
+            arguments= listOf(navArgument("email"){type = NavType.StringType})){
+            val email = it.arguments?.getString("email") ?: ""
             RegistroM(
                 navController = navController,
                 viewmodel = viewmodelA,
-                context = context
+                context = context,
+                email = email
             )
         }
+
         composable("ok"){
             OkTask(
                 viewmodel = viewmodel,
@@ -201,6 +216,49 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
                 viewmodelA = viewmodelA,
                 LgViewModel = LgViewModel,
                 cocktailViewmodel = cocktailViewmodel
+            )
+        }
+        
+        composable("createNewLocal"){
+            CreateLocal(
+                navController = navController,
+                viewmodel = viewmodel,
+                viewmodelA = viewmodelA,
+                context = context,
+                cocktailViewmodel = cocktailViewmodel
+            )
+        }
+
+        composable("listLocal"){
+            ListLocal(
+                navController = navController,
+                viewmodel = viewmodel,
+                viewmodelA = viewmodelA,
+                LgViewModel = LgViewModel,
+                cocktailViewmodel = cocktailViewmodel
+            )
+        }
+        
+        composable("myGoogleMaps"){
+            MyGoogleMaps(viewModel = viewmodelA, context = context)
+        }
+
+        composable("cardLocalM/{idDrink}?colec={colec}",
+            arguments = listOf(
+                navArgument("idDrink") { type = NavType.StringType },
+                navArgument("colec") { type = NavType.StringType; defaultValue = "" }
+            )
+        ) {
+            val idDoc = it.arguments?.getString("idDrink") ?: ""
+            val colec = it.arguments?.getString("colec") ?: ""
+
+
+            CardLocalM(
+                navController = navController,
+                context = context,
+                viewmodelA = viewmodelA,
+                Idoc = idDoc,
+                colec = colec
             )
         }
 

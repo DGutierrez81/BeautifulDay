@@ -45,6 +45,7 @@ import com.project.beautifulday.Cocktail.ui.States.drinkState
 import com.project.beautifulday.Components.RatingBarImage
 import com.project.beautifulday.Firebase.AuthService
 import com.project.beautifulday.Firebase.FirestoreService
+import com.project.beautifulday.Local
 import com.project.beautifulday.R
 import com.project.beautifulday.androidsmall1.jotiOne
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -74,9 +75,6 @@ class CocktailViewmodel@Inject constructor(private val nameUseCase: NameUseCase,
         private set
 
     var nameCocktail by mutableStateOf("")
-        private set
-
-    var actionTranslate by mutableStateOf(true)
         private set
 
     var cocktailList by mutableStateOf(mutableListOf<drinkState>())
@@ -194,6 +192,7 @@ class CocktailViewmodel@Inject constructor(private val nameUseCase: NameUseCase,
     }
 
 
+
     @Composable
     fun ShowCocktailNameUser(cocktailData: List<CocktailUser>, navController: NavController, colec: String){
         LazyColumn(
@@ -245,7 +244,6 @@ class CocktailViewmodel@Inject constructor(private val nameUseCase: NameUseCase,
                             .clip(RoundedCornerShape(100.dp))
                             .clickable {
                                 navController.navigate("cardCocktailUser/${cocktail.idDocument}?colec=$colec")
-                                actionTranslate = true
                             }
                     )
                     Text(
@@ -333,7 +331,6 @@ class CocktailViewmodel@Inject constructor(private val nameUseCase: NameUseCase,
                                 )
                                 getCocktailById(cocktail?.idDrink ?: "")
                                 navController.navigate("cardCocktails")
-                                actionTranslate = true
                             }
                     )
                     Text(
@@ -385,14 +382,43 @@ class CocktailViewmodel@Inject constructor(private val nameUseCase: NameUseCase,
         //strMeasures.forEach { if(it != "") measures.add(it) }
 
         cocktail = CocktailUser(
-            email,
-            idDrink,
-            strDrink,
-            strInstructions,
-            strDrinkThumb,
-            ingredients,
-            strMedia,
-            nameUser
+            emailUser = email,
+            idDrink = idDrink,
+            strDrink = strDrink,
+            strInstructions = strInstructions,
+            strDrinkThumb = strDrinkThumb,
+            strList = ingredients,
+            strmedia = strMedia,
+            nameUser = nameUser,
+
+        )
+    }
+
+    fun SaveCocktailCreater(
+        strDrink: String,
+        strInstructions: String,
+        strDrinkThumb: String,
+        strList: MutableList<String>,
+        strMedia: String?,
+        nameUser: String?
+    ) {
+
+        val email = authService.email()
+
+        ingredients.clear()
+        //measures.clear()
+
+        strList.forEach { if (it != "") ingredients.add(it) }
+        //strMeasures.forEach { if(it != "") measures.add(it) }
+
+        cocktail = CocktailUser(
+            emailUser = email,
+            strDrink = strDrink,
+            strInstructions = strInstructions,
+            strDrinkThumb = strDrinkThumb,
+            strList = ingredients,
+            strmedia = strMedia,
+            nameUser = nameUser
         )
     }
 
@@ -446,10 +472,17 @@ class CocktailViewmodel@Inject constructor(private val nameUseCase: NameUseCase,
         cleanVotes()
     }
 
-    fun changeValueVotes(value: Double, text: String){
+    fun changeValueVotes(value: Double, text: String, email: String){
         when(text){
             "puntuacion" -> cocktail = cocktail.copy(puntuacion = value + cocktail.puntuacion!! )
             "votes" -> cocktail = cocktail.copy(votes = cocktail.votes!! + value.toInt())
+            "listVotes" -> {
+                val updatedListVotes = cocktail.listVotes?.toMutableList() ?: mutableListOf()
+                if (!updatedListVotes.contains(email)) {
+                    updatedListVotes.add(email)
+                    cocktail = cocktail.copy(listVotes = updatedListVotes)
+                }
+            }
         }
     }
 
@@ -471,10 +504,6 @@ class CocktailViewmodel@Inject constructor(private val nameUseCase: NameUseCase,
         listVotes = listVotes + newRating
     }
 
-
-    fun changeActionTranslate(value: Boolean){
-        actionTranslate = value
-    }
 
     fun changeNameCocktail(result: String){
         nameCocktail = result

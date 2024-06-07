@@ -399,7 +399,32 @@ class MealViewmodel@Inject constructor(private val useCaseMealName: UseCaseMealN
         strIngredients.forEach{if(it != "") ingredients.add(it)}
         strMeasures.forEach { if(it != "") measures.add(it) }
 
-        meal = MealUser(idMeal, strMeal, strCategory, strArea, strInstructions, strMealThumb, strTags, strYoutube, ingredients, measures, email.toString(), nameUser)
+        meal = MealUser(idMeal = idMeal, strMeal = strMeal, strCategory = strCategory, strArea = strArea, strInstructions = strInstructions, strMealThumb = strMealThumb, strTags = strTags, strYoutube = strYoutube, strIngredients = ingredients,strMeasures = measures, emailUser = email.toString(), nameUser = nameUser)
+
+    }
+
+
+    fun saveMealCreater(
+        strMeal: String,
+        strCategory: String,
+        strArea: String,
+        strInstructions: String,
+        strMealThumb: String,
+        strTags: String,
+        strYoutube: String,
+        strIngredients: MutableList<String>,
+        strMeasures: MutableList<String>,
+        nameUser: String? = "",
+    ){
+        ingredients.clear()
+        measures.clear()
+
+        val email = authService.email()
+
+        strIngredients.forEach{if(it != "") ingredients.add(it)}
+        strMeasures.forEach { if(it != "") measures.add(it) }
+
+        meal = MealUser(strMeal = strMeal, strCategory = strCategory, strArea = strArea, strInstructions =  strInstructions, strMealThumb = strMealThumb, strTags = strTags, strYoutube = strYoutube, strIngredients = ingredients, strMeasures = measures, emailUser= email.toString(), nameUser = nameUser)
 
     }
 
@@ -471,10 +496,17 @@ class MealViewmodel@Inject constructor(private val useCaseMealName: UseCaseMealN
 
 
 
-    fun changeValueVotes(value: Double, text: String){
-        when(text){
-            "puntuacion" -> meal = meal.copy(points = value + meal.points!! )
+    fun changeValueVotes(value: Double, text: String, email: String) {
+        when (text) {
+            "puntuacion" -> meal = meal.copy(points = value + meal.points!!)
             "votes" -> meal = meal.copy(votes = meal.votes!! + value.toInt())
+            "listVotes" -> {
+                val updatedListVotes = meal.listVotes?.toMutableList() ?: mutableListOf()
+                if (!updatedListVotes.contains(email)) {
+                    updatedListVotes.add(email)
+                    meal = meal.copy(listVotes = updatedListVotes)
+                }
+            }
         }
     }
 

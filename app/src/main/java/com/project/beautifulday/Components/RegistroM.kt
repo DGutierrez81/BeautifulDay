@@ -2,9 +2,11 @@ package com.project.beautifulday.Components
 
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -22,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.navigation.NavController
@@ -30,7 +33,7 @@ import com.project.beautifulday.R
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 
 @Composable
-fun RegistroM(navController: NavController, viewmodel: ViewmodelAplication, context: ComponentActivity){
+fun RegistroM(navController: NavController, viewmodel: ViewmodelAplication, context: ComponentActivity, email: String){
     val uiState by viewmodel.uiState.collectAsState()
     var selectedImageName by rememberSaveable {
         mutableStateOf<String?>(null)
@@ -40,25 +43,30 @@ fun RegistroM(navController: NavController, viewmodel: ViewmodelAplication, cont
     }
 
     LaunchedEffect(Unit){
-        viewmodel.getAllImages()
+        viewmodel.getAllImages(email)
     }
 
 
-    LazyVerticalGrid(columns = GridCells.Adaptive(minSize = 150.dp)){
+    LazyVerticalGrid(columns = GridCells.Adaptive(minSize = 150.dp),
+        modifier = Modifier.background(color = colorResource(id = R.color.electricBlue))){
         items(uiState.images){ image ->
             Column(
-                modifier = Modifier.clickable { selectedImageName = image.toUri().lastPathSegment.toString() }
+                modifier = Modifier
+                    .clickable { selectedImageName = image.toUri().lastPathSegment.toString() }
+                    .background(color = colorResource(id = R.color.selectiveYellow))
+                    .padding(5.dp)
             ) {
                 Card(
-                    modifier = Modifier.border(BorderStroke(3.dp, color = colorResource(id = R.color.electricBlue)))
+                    modifier = Modifier
+                        .border(BorderStroke(3.dp, color = colorResource(id = R.color.silver)))
+                        .padding(2.dp)
                 ) {
                     AsyncImage(
                         model = image,
                         contentDescription = "images"
                     )
                 }
-                Text(text = image.toUri().toString())
-                Text(text = image.toUri().lastPathSegment.toString(), color = Color.Red)
+                Text(text = image.toUri().lastPathSegment.toString(), color = colorResource(id = R.color.paynesGray), textAlign = TextAlign.Center)
 
             }
         }

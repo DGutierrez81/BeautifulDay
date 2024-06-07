@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -29,7 +30,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -45,22 +45,19 @@ import com.project.beautifulday.Components.RatingBar
 import com.project.beautifulday.Components.RatingBarImage
 import com.project.beautifulday.R
 import com.project.beautifulday.ViewModels.CocktailViewmodel
-import com.project.beautifulday.ViewModels.LogViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.androidsmall1.jotiOne
-import kotlinx.coroutines.delay
+
 
 @Composable
-fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel, Idoc: String, colec: String){
-    //val actionTranslate = viewmodel.actionTranslate
+fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, Idoc: String, colec: String){
+
     val actionTranslate by viewmodelA.actionTranslate.observeAsState(true)
     val state = viewmodelA.state.value
-    //val slide = viewmodelA.slide
     val slide by viewmodelA.slide.observeAsState(false)
     val showAlert = viewmodelA.showAlert
-    val login = LgViewModel.login
     val showVotes = viewmodel.showVotes
-    var currentRating = viewmodel.currentRating
+    val currentRating = viewmodel.currentRating
     val progrees by viewmodel.progress.observeAsState(true)
 
 
@@ -130,7 +127,7 @@ fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel,
                 Row(
                     modifier = Modifier.fillMaxWidth()
                 ){
-                    val average = viewmodel.calculateAverage(cocktail?.votes ?: 0, cocktail?.puntuacion ?: 0.0)
+                    val average = viewmodel.calculateAverage(cocktail.votes ?: 0, cocktail.puntuacion ?: 0.0)
                     if (colec == "CreateCocktails") {
                         Box(modifier = Modifier.width(120.dp), contentAlignment = Alignment.Center) {
                             RatingBarImage(rating = average)
@@ -225,8 +222,24 @@ fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel,
                     Text(text = "Votar", modifier = Modifier
                         .padding(2.dp)
                         .clickable {
-                            viewmodelA.changeSlide(slide)
-                            viewmodel.changeShowVotes(!showVotes)
+                            var flag = true
+                            cocktail.listVotes?.forEach { emailList ->
+                                if (emailList == email) {
+                                    viewmodelA.changeSlide(slide)
+                                    flag = false
+                                    Toast
+                                        .makeText(
+                                            context,
+                                            "Solo puede votar una vez",
+                                            Toast.LENGTH_SHORT
+                                        )
+                                        .show()
+                                }
+                            }
+                            if (flag) {
+                                viewmodelA.changeSlide(slide)
+                                viewmodel.changeShowVotes(!showVotes)
+                            }
                         },
                         color = colorResource(id = R.color.paynesGray)
                     )
@@ -255,7 +268,7 @@ fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel,
         Dialog(onDismissRequest = { viewmodel.changeShowVotes(false) }) {
             Box(modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.White),
+                .background(color = colorResource(id = R.color.paynesGray)),
                 contentAlignment = Alignment.Center) {
                 Column {
                     RatingBar(
@@ -273,17 +286,19 @@ fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel,
                     Column {
 
                         OutlinedButton(onClick = {
-                            viewmodel.changeValueVotes(currentRating, "puntuacion")
-                            viewmodel.changeValueVotes( 1.0, "votes")
+                            viewmodel.changeValueVotes(currentRating, "puntuacion", "")
+                            viewmodel.changeValueVotes( 1.0, "votes", "")
+                            viewmodel.changeValueVotes(0.0, "listVotes", email)
                             viewmodel.updateStars(Idoc){navController.popBackStack()}
                             viewmodel.cleanVotes()
                             viewmodel.changeShowVotes(false)
                         }, modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 8.dp),
-                            border = BorderStroke(2.dp, colorResource(id = R.color.electricBlue))
+                            border = BorderStroke(2.dp, colorResource(id = R.color.paynesGray)),
+                            colors = ButtonDefaults.buttonColors(colorResource(id = R.color.silver))
                         ) {
-                            Text(text = "Votar", color = colorResource(id = R.color.electricBlue))
+                            Text(text = "Votar", color = colorResource(id = R.color.paynesGray))
                         }
                     }
                 }

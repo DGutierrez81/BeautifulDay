@@ -1,5 +1,6 @@
 package com.project.beautifulday.Components
 
+import android.Manifest
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
@@ -14,11 +15,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Text
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -29,29 +33,45 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.project.beautifulday.ViewModels.MealViewmodel
-import com.project.beautifulday.ViewModels.ViewmodelAplication
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
 import com.project.beautifulday.R
 import com.project.beautifulday.ViewModels.CocktailViewmodel
+import com.project.beautifulday.ViewModels.MealViewmodel
+import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.androidsmall1.jotiOne
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun CreateRegister(navController: NavController, viewmodel: MealViewmodel, viewmodelA: ViewmodelAplication, context: ComponentActivity, cocktailViewmodel: CocktailViewmodel){
+fun CreateLocal(navController: NavController, viewmodel: MealViewmodel, viewmodelA: ViewmodelAplication, context: ComponentActivity, cocktailViewmodel: CocktailViewmodel){
 
     val name = viewmodelA.name
-    val descripcion = viewmodelA.descripcion
+    val comentario = viewmodelA.descripcion
     val foto = viewmodelA.uriFoto
-    val video = viewmodelA.uriVideo
-    val ingrediente = viewmodelA.ingrediente
+    val web = viewmodelA.web
+    val pais = viewmodelA.pais
+    val ciudad = viewmodelA.ciudad
     val focusRequester = viewmodelA.focusRequest
     val screen = viewmodelA.screen
     val showCreateAlert = viewmodelA.showCreateAlert
     val intentGalleryLancher = viewmodelA.intentGalleryLaucher()
-    val intentGalleryLancheVideo = viewmodelA.intentGalleryLaucherVideo()
     val focusManager = LocalFocusManager.current
-    LaunchedEffect(key1 = true){
+    val savedLocation by viewmodelA.savedLocation.collectAsState()
+    val location by viewmodelA.location.collectAsState()
+
+    val locationPermissionState = rememberPermissionState(
+        Manifest.permission.ACCESS_FINE_LOCATION
+    )
+
+    LaunchedEffect(key1 = true) {
         viewmodelA.fetchUser()
+        if (locationPermissionState.hasPermission) {
+            viewmodelA.requestLocation(context)
+        } else {
+            locationPermissionState.launchPermissionRequest()
+        }
     }
+
     val user = viewmodelA.user
 
 
@@ -77,37 +97,6 @@ fun CreateRegister(navController: NavController, viewmodel: MealViewmodel, viewm
                     textAlign = TextAlign.Center
                 )
 
-                //Spacer(modifier = Modifier.padding(5.dp))
-
-                /*
-
-                OutlinedTextField(
-                    value = id, onValueChange = { viewmodelA.changeId(it, context) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 36.dp)
-                        .focusRequester(focusRequester),
-                    shape = RoundedCornerShape(22),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.White,
-                        unfocusedContainerColor = Color.White,
-                        disabledContainerColor = Color.White,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                    ),
-                    label = { Text(text = "Id") },
-                    maxLines = 1,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next
-                    )
-                )
-
-                 */
-
-
-               // Spacer(modifier = Modifier.padding(2.dp))
-
                 MyOutlinedTectField(
                     value = name,
                     onValueChange = viewmodelA::changeName, //Equivalente a {newName -> viewmodelA.changeName(newName)}
@@ -119,7 +108,7 @@ fun CreateRegister(navController: NavController, viewmodel: MealViewmodel, viewm
                 Spacer(modifier = Modifier.padding(2.dp))
 
                 MyOutlinedTectField(
-                    value = descripcion,
+                    value = comentario,
                     onValueChange = viewmodelA::changeDescripcion,
                     focusRequester = focusRequester,
                     label = "Descripción",
@@ -130,13 +119,32 @@ fun CreateRegister(navController: NavController, viewmodel: MealViewmodel, viewm
                 Spacer(modifier = Modifier.padding(2.dp))
 
                 MyOutlinedTectField(
-                    value = ingrediente,
-                    onValueChange = viewmodelA::changeIngrediente,
+                    value = web,
+                    onValueChange = viewmodelA::changeWeb,
                     focusRequester = focusRequester,
-                    label = "Ingredientes",
+                    label = "Web",
                     keyboardActions = {focusManager.moveFocus(FocusDirection.Down)}
                 )
 
+                Spacer(modifier = Modifier.padding(2.dp))
+
+                MyOutlinedTectField(
+                    value = pais,
+                    onValueChange = viewmodelA::changePais, //Equivalente a {newName -> viewmodelA.changeName(newName)}
+                    focusRequester = focusRequester,
+                    label = "Pais",
+                    keyboardActions = {focusManager.moveFocus(FocusDirection.Down)}
+                )
+
+                Spacer(modifier = Modifier.padding(2.dp))
+
+                MyOutlinedTectField(
+                    value = ciudad,
+                    onValueChange = viewmodelA::changeCiudad, //Equivalente a {newName -> viewmodelA.changeName(newName)}
+                    focusRequester = focusRequester,
+                    label = "Ciudad",
+                    keyboardActions = {focusManager.moveFocus(FocusDirection.Down)}
+                )
 
                 Spacer(modifier = Modifier.padding(2.dp))
 
@@ -158,19 +166,18 @@ fun CreateRegister(navController: NavController, viewmodel: MealViewmodel, viewm
 
                 Spacer(modifier = Modifier.padding(2.dp))
 
-                Column {
-                    MyOutlinedTectField(
-                        value = video,
-                        onValueChange = viewmodelA::changeUriVideo,
-                        focusRequester = focusRequester,
-                        label = "Video",
-                        keyboardActions = {focusManager.moveFocus(FocusDirection.Down)}
-                    )
-                    Row {
-                        Text(text = "Buscar en galeria", modifier = Modifier
-                            .clickable { intentGalleryLancheVideo.launch("*/*") }
-                            .padding(start = 36.dp))
-                        Icon(imageVector = Icons.Default.Search, contentDescription = null)
+                Box(modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center){
+                    OutlinedButton(onClick = {
+                        location?.let {
+                            viewmodelA.saveLocation(it)
+                            Toast.makeText(context, "Ubicación guardada", Toast.LENGTH_SHORT).show()
+                        } ?: run {
+                            Toast.makeText(context, "Ubicación no disponible", Toast.LENGTH_SHORT).show()
+                        }
+                    }) {
+                        Text(text = "Obtener ubicación")
+
                     }
                 }
 
@@ -186,7 +193,7 @@ fun CreateRegister(navController: NavController, viewmodel: MealViewmodel, viewm
                 horizontalAlignment = Alignment.CenterHorizontally) {
                 Spacer(modifier = Modifier.weight(1f))
 
-                androidx.compose.material.Text(
+                Text(
                     text = "DAY",
                     fontFamily = jotiOne,
                     fontSize = 32.sp,
@@ -206,26 +213,25 @@ fun CreateRegister(navController: NavController, viewmodel: MealViewmodel, viewm
                     Text(text = "Hacer foto y video", modifier = Modifier
                         .padding(10.dp)
                         .clickable {
-                            if (screen == "meal") {
-                                navController.navigate("camera/${user.email}?numb=1")
-                            } else {
-                                navController.navigate("camera/${user.email}?numb=1")
-                            }
+                            val numb = 2
+                            navController.navigate("camera/${user.email}?numb=2")
                         },
-                        color = colorResource(id = R.color.paynesGray))
+                        color = colorResource(id = R.color.paynesGray)
+                    )
                     Text(text = "Enviar datos", modifier = Modifier
                         .padding(10.dp)
                         .clickable {
-                            createAlert(
-                                navController,
-                                viewmodelA,
-                                viewmodel,
-                                cocktailViewmodel,
-                                user.userName?: "",
-                                context
+                            createAlertLocal(
+                                navController = navController,
+                                viewmodelA = viewmodelA,
+                                viewmodel = viewmodel,
+                                cocktailViewmodel = cocktailViewmodel,
+                                user = user.userName ?: "",
+                                context = context
                             )
                         },
-                        color = colorResource(id = R.color.paynesGray))
+                        color = colorResource(id = R.color.paynesGray)
+                    )
                 }
             }
         }
@@ -237,59 +243,21 @@ fun CreateRegister(navController: NavController, viewmodel: MealViewmodel, viewm
             tittle = "Aviso",
             text = "Tiene registros sin rellenar\n¿Desea seguir?",
             onDismiss = { viewmodelA.changeCreateAlerte(!showCreateAlert) }) {
-            if(screen == "meal"){
-                viewmodel.saveMealCreater(
-                    name,
-                    "",
-                    "",
-                    descripcion,
-                    foto,
-                    "",
-                    video,
-                    ingrediente
-                        .split(",", " ")
-                        .toMutableList(),
-                    mutableListOf(),
-                    user.userName
-                )
-                viewmodel.saveNewMeals("CreateMeals", context, {navController.navigate("ok")}) {
-                    Toast
-                        .makeText(
-                            context,
-                            "Receta guardada correctamente",
-                            Toast.LENGTH_SHORT
-                        )
-                        .show()
-                    viewmodelA.clean()
-                    navController.navigate("meal")
-                    viewmodelA.changeCreateAlerte(false)
-
-                }
-            }else{
-                cocktailViewmodel.SaveCocktailCreater(
-                    strDrink = name,
-                    strInstructions = descripcion,
-                    strDrinkThumb = foto,
-                    strList = ingrediente
-                        .split(",", " ")
-                        .toMutableList(),
-                    strMedia = video,
-                    nameUser = user.userName
-                )
-
-                cocktailViewmodel.saveNewCocktail("CreateCocktails", context, {navController.navigate("ok")}) {
-                    Toast
-                        .makeText(
-                            context,
-                            "Cocktail guardado correctamente",
-                            Toast.LENGTH_SHORT
-                        )
-                        .show()
-                    viewmodelA.clean()
-                    navController.navigate("cocktail")
-                    viewmodelA.changeCreateAlerte(false)
-
-                }
+            viewmodelA.newLocal(name, foto, comentario = comentario, pais = pais, ciudad = ciudad,"https://$web", savedLocation)
+            viewmodelA.saveNewLocal(
+                colec = "Locales $screen",
+                context = context,
+                { navController.navigate("ok") }) {
+                Toast
+                    .makeText(
+                        context,
+                        "Local guardado correctamente",
+                        Toast.LENGTH_SHORT
+                    )
+                    .show()
+                viewmodelA.clean()
+                navController.navigate(screen)
+                viewmodelA.changeCreateAlerte(false)
             }
         }
     }

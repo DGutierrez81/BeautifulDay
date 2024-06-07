@@ -9,6 +9,7 @@ import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.project.beautifulday.Cocktail.ui.States.CocktailUser
+import com.project.beautifulday.Local
 import com.project.beautifulday.Meal.ui.States.MealUser
 import com.project.beautifulday.User
 import kotlinx.coroutines.Dispatchers
@@ -76,6 +77,27 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
         }
     }
 
+    suspend fun fetchLocal(email: String?, colec: String): List<Local> {
+        return withContext(Dispatchers.IO) {
+            val documents = mutableListOf<Local>()
+            try {
+                val querySnapshot = fireStore.collection(colec)
+                    .get()
+                    .await()
+
+                for (document in querySnapshot.documents) {
+                    val myDocument = document.toObject(Local::class.java)?.copy(idDocument = document.id)
+                    if (myDocument != null) {
+                        documents.add(myDocument)
+                    }
+                }
+            } catch (e: Exception) {
+                Log.d("ERROR", "NO SE PUEDE ACCEDER AL REGISTRO: ${e.message}")
+            }
+            documents
+        }
+    }
+
     suspend fun fetchMealCreater(): List<MealUser> {
         return withContext(Dispatchers.IO) {
             val documents = mutableListOf<MealUser>()
@@ -118,6 +140,8 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
         }
     }
 
+
+
     suspend fun fetchUser(email: String?): User {
         // Verifica si el email es nulo o vacío
         require(!email.isNullOrEmpty()) { "Email must not be null or empty" }
@@ -155,32 +179,6 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
         }
     }
 
-
-
-
-/*
-    fun fetchMeal(email: String?): MutableList<MealUser>{
-        val documents = mutableListOf<MealUser>()
-        fireStore.collection("Meals")
-            .whereEqualTo("emailUser", email.toString())
-            .addSnapshotListener{ querySnapshot, error ->
-                if(error != null) {
-                    Log.d("ERROR", "NO SE PUEDE")
-                    return@addSnapshotListener
-                }
-                if(querySnapshot != null) {
-                    for(document in querySnapshot){
-                        val myDocument =
-                            document.toObject(MealUser::class.java).copy(idDocument = document.id)
-                        documents.add(myDocument)
-                    }
-                }
-            }
-        return documents
-    }
-
- */
-
     suspend fun getMealById(documento: String, colec: String): MealUser? {
         return withContext(Dispatchers.IO) {
             try {
@@ -211,37 +209,20 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
         }
     }
 
-    /*
-    fun getMealById(documento: String): MealUser{
-        var mealUser = MealUser()
-        fireStore.collection("Meals")
-            .document(documento)
-            .addSnapshotListener { querySnapshot, error ->
-                if(error != null) {
-                    return@addSnapshotListener
-                }
-                if(querySnapshot != null){
-                    val meal = querySnapshot.toObject(MealUser::class.java)
-                    mealUser = mealUser.copy(
-                        idMeal = meal?.idMeal,
-                        strMeal = meal?.strMeal,
-                        strCategory = meal?.strCategory,
-                        strArea = meal?.strArea,
-                        strInstructions = meal?.strInstructions,
-                        strMealThumb = meal?.strMealThumb,
-                        strTags = meal?.strTags,
-                        strYoutube = meal?.strYoutube,
-                        strIngredients = meal?.strIngredients,
-                        strMeasures = meal?.strMeasures,
-                        emailUser = meal?.emailUser,
-                        idDocument = meal?.idDocument
-                    )
-                }
+    suspend fun getLocalById(documento: String, colec: String): Local? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val documentSnapshot = fireStore.collection(colec)
+                    .document(documento)
+                    .get()
+                    .await()
+                documentSnapshot.toObject(Local::class.java)
+            } catch (e: Exception) {
+                Log.d("ERROR", "Error al obtener el documento: ${e.message}")
+                null
             }
-        return mealUser
+        }
     }
-
-     */
 
     fun saveNewMeal(colec: String, id: String, idMeal: String?, meal: MealUser, email: String?, context: ComponentActivity): Task<Boolean> {
         val result = TaskCompletionSource<Boolean>()
@@ -285,6 +266,8 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
     }
 
 
+
+
     fun saveNewCocktail(colec: String, id: String, idDrink: String?, cocktail: CocktailUser, email: String?,context: ComponentActivity): Task<Boolean> {
         val result = TaskCompletionSource<Boolean>()
 
@@ -298,7 +281,48 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
             .whereEqualTo(id, idDrink)
             .get()
             .addOnSuccessListener { querySnapshot ->
-                val existingMeals = querySnapshot.documents.mapNotNull { it.toObject(MealUser::class.java) }
+                val existingMeals = querySnapshot.documents.mapNotNull { it.toObject(CocktailUser::class.java) }
+                val emailExists = existingMeals.any { it.emailUser == email }
+
+                if (emailExists) {
+                    result.setResult(false)
+                    Toast.makeText(context, "Registro existente con el mismo email e ID de cocktail", Toast.LENGTH_SHORT).show()
+                    Log.d("ERROR", "EL REGISTRO YA EXISTE")
+                } else {
+                    fireStore.collection(colec)
+                        .add(cocktail)
+                        .addOnSuccessListener {
+                            result.setResult(true)
+                            Log.d("GUARDAR OK", "EL REGISTRO SE GUARDO CORRECTAMENTE")
+                        }
+                        .addOnFailureListener {
+                            result.setResult(false)
+                            Log.d("ERROR AL GUARDAR", "ERROR AL GUARDAR EL REGISTRO")
+                        }
+                }
+            }
+            .addOnFailureListener {
+                result.setResult(false)
+                Log.d("ERROR AL VERIFICAR", "ERROR AL VERIFICAR SI EL REGISTRO EXISTE")
+            }
+
+        return result.task
+    }
+
+    fun saveNewLocal(colec: String, id: String, idLocal: String?, local: Local, email: String?, context: ComponentActivity): Task<Boolean> {
+        val result = TaskCompletionSource<Boolean>()
+
+        if (idLocal == null || email.isNullOrEmpty()) {
+            result.setResult(false)
+            Log.d("ERROR", "idLocal o email es nulo/vacío")
+            return result.task
+        }
+
+        fireStore.collection(colec)
+            .whereEqualTo(id, idLocal)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val existingMeals = querySnapshot.documents.mapNotNull { it.toObject(Local::class.java) }
                 val emailExists = existingMeals.any { it.emailUser == email }
 
                 if (emailExists) {
@@ -307,7 +331,7 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
                     Log.d("ERROR", "EL REGISTRO YA EXISTE")
                 } else {
                     fireStore.collection(colec)
-                        .add(cocktail)
+                        .add(local)
                         .addOnSuccessListener {
                             result.setResult(true)
                             Log.d("GUARDAR OK", "EL REGISTRO SE GUARDO CORRECTAMENTE")
@@ -331,7 +355,8 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
 
         val plusVotes = hashMapOf(
             "points" to meal.points,
-            "votes" to meal.votes
+            "votes" to meal.votes,
+            "listVotes" to meal.listVotes
         )
         fireStore.collection(colec).document(iDoc)
             .update(plusVotes as Map<String, Any>)
@@ -353,7 +378,30 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
 
         val plusVotes = hashMapOf(
             "puntuacion" to drink.puntuacion,
-            "votes" to drink.votes
+            "votes" to drink.votes,
+            "listVotes" to drink.listVotes
+        )
+        fireStore.collection(colec).document(iDoc)
+            .update(plusVotes as Map<String, Any>)
+            .addOnSuccessListener {
+                result.setResult(true)
+                Log.d("Actualizacion OK", "Se ha actualizado correctamente")
+            }
+            .addOnFailureListener {
+                result.setResult(false)
+                Log.d("Error al actualizar", "No se ha podido realizar la actualización.")
+            }
+
+        return result.task
+    }
+
+    fun updateStarsLocalM(colec: String, iDoc: String, local: Local): Task<Boolean> {
+        val result = TaskCompletionSource<Boolean>()
+
+        val plusVotes = hashMapOf(
+            "points" to local.puntuacion,
+            "votes" to local.votes,
+            "listVotes" to local.listVotes
         )
         fireStore.collection(colec).document(iDoc)
             .update(plusVotes as Map<String, Any>)
@@ -385,35 +433,6 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
             }
         return result.task
     }
-
-
-
-
-    /*
-    suspend fun updateStars(iDoc: String, meal: MealUser): MealUser {
-        return withContext(Dispatchers.IO) {
-            val document = MealUser()
-            try {
-                val plusVotes = hashMapOf(
-                    "points" to meal.points,
-                    "votes" to meal.votes
-                )
-                fireStore.collection("Meals").document(iDoc)
-                    .update(plusVotes as Map<String, Any>)
-                    .await()  // Espera el resultado de la actualización
-
-                Log.d("Actualizacion OK", "Se ha actualizado correctamente")
-            } catch (e: Exception) {
-                Log.d("Error al actualizar", "No se ha podido realizar la actualización.", e)
-            }
-            document
-        }
-    }
-
-     */
-
-
-
 
 }
 

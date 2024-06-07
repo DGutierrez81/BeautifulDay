@@ -9,7 +9,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,8 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -41,7 +38,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -59,50 +55,44 @@ import com.project.beautifulday.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Camera(navController: NavController, viewmodelA: ViewmodelAplication, context: ComponentActivity){
+fun Camera(navController: NavController, viewmodelA: ViewmodelAplication, context: ComponentActivity, email: String, numb: String){
 
 
     var uri: Uri? by rememberSaveable{ mutableStateOf(null) }
-    //val uri: Uri? by viewmodel.uri.collectAsState(null)
-    //var showDialog = viewmodelA.showDialog
     var showDialog: Boolean by remember{ mutableStateOf(false) }
     var showDialog2: Boolean by remember{ mutableStateOf(false) }
-    //var showDialog2 = viewmodelA.showDialog2
-    //var resultUri: Uri? by remember { mutableStateOf(null)}
-    var resultUri = viewmodelA.resultUri
+    val resultUri = viewmodelA.resultUri
+    val uriFoto = viewmodelA.uriFoto
+    val uriVideo = viewmodelA.uriVideo
     val loading: Boolean by viewmodelA.isLoading.collectAsState()
     val namePhoto = viewmodelA.namePhoto
     val focusRequester = viewmodelA.focusRequest
     val focusManager = LocalFocusManager.current
 
+
     val metada = viewmodelA.metada
 
-    val intentCameraLaucher = viewmodelA.intentCameraLaucher(uri, focusManager)
+    val intentCameraLaucher = viewmodelA.intentCameraLaucher(uri, focusManager, email)
 
-    val intentCameraLaucherVideo = viewmodelA.intentCameraLaucherVideo(result = uri, focusManager = focusManager)
-
-    val intentGalleryLancher = viewmodelA.intentGalleryLaucher()
-
-
+    val intentCameraLaucherVideo = viewmodelA.intentCameraLaucherVideo(result = uri, focusManager = focusManager, email)
 
 
     if(showDialog){
         Dialog(onDismissRequest = { showDialog2 = false }) {
-            Card(shape = RoundedCornerShape(12), modifier = Modifier.background(color = colorResource(
-                id = R.color.electricBlue
-            ))) {
+            Card(shape = RoundedCornerShape(12), modifier = Modifier.background(color = Color.Transparent)) {
                 Column(modifier = Modifier
-                    .padding(24.dp)
-                    .background(color = colorResource(id = R.color.electricBlue))) {
+                    //.padding(24.dp)
+                    .background(color = colorResource(id = R.color.paynesGray))) {
                     OutlinedButton(onClick = {
                         uri = viewmodelA.generateUri(context, namePhoto, "jpg")
                         intentCameraLaucher.launch(uri)
                         showDialog = false
                     }, modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp)
-                        .align(Alignment.CenterHorizontally)
-                        .background(color = colorResource(id =R.color.electricBlue)),
+                        //.padding(horizontal = 8.dp)
+                        .align(Alignment.CenterHorizontally),
+                        //.background(color = colorResource(id = R.color.electricBlue)),
+                        colors = ButtonDefaults.buttonColors(colorResource(id = R.color.silver)),
                         border = BorderStroke(2.dp, colorResource(id = R.color.paynesGray))
                     ) {
                         Text(text = "Foto", color = colorResource(id = R.color.paynesGray))
@@ -114,9 +104,10 @@ fun Camera(navController: NavController, viewmodelA: ViewmodelAplication, contex
                         showDialog = false
                     }, modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp)
-                        .align(Alignment.CenterHorizontally)
-                        .background(color = colorResource(id =R.color.electricBlue)),
+                        //.padding(horizontal = 8.dp)
+                        .align(Alignment.CenterHorizontally),
+                        //.background(color = colorResource(id = R.color.paynesGray)),
+                        colors = ButtonDefaults.buttonColors(colorResource(id = R.color.silver)),
                         border = BorderStroke(2.dp, colorResource(id = R.color.paynesGray))
                     ) {
                         Text(text = "Video", color = colorResource(id = R.color.paynesGray))
@@ -144,24 +135,22 @@ fun Camera(navController: NavController, viewmodelA: ViewmodelAplication, contex
                     spotColor = colorResource(id = R.color.silver),
                     shape = RoundedCornerShape(20.dp)
                 )){
-            if(resultUri != null){
+            if(uriFoto == resultUri.toString()){
                 AsyncImage(model = resultUri, contentDescription = "image selected by user", contentScale = ContentScale.Crop)
                 //viewmodelA.changeUriVideo(resultUri.toString())
+            }
+            if(uriVideo == resultUri.toString()){
+
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+                    Icon(
+                        painterResource(id = R.drawable.video_camera_back),
+                        contentDescription = null,
+                        modifier = Modifier.size(100.dp),
+                        tint = colorResource(id = R.color.paynesGray)
+                    )
+                }
 
             }
-
-            /*
-            if(metada.equals(("video/mp4"))){
-                Icon(
-                    painterResource(id = R.drawable.ic_image),
-                    contentDescription = null,
-                    modifier = Modifier.size(100.dp),
-                    tint = colorResource(id = R.color.paynesGray)
-                )
-            }
-
-             */
-
 
             if(loading){
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
@@ -196,6 +185,7 @@ fun Camera(navController: NavController, viewmodelA: ViewmodelAplication, contex
                 FloatingActionButton(onClick = {
                     showDialog = true
                     viewmodelA.choose(metada)
+                    viewmodelA.changeIsLoading(false)
                 },
                     containerColor = colorResource(R.color.paynesGray),
                     contentColor = colorResource(id = R.color.electricBlue)
@@ -227,7 +217,7 @@ fun Camera(navController: NavController, viewmodelA: ViewmodelAplication, contex
             shape = RoundedCornerShape(22)
         )
         Spacer(modifier = Modifier.weight(1f))
-        OutlinedButton(onClick = { navController.navigate("registroM") },
+        OutlinedButton(onClick = { navController.navigate("registroM/$email") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 36.dp)
@@ -242,7 +232,11 @@ fun Camera(navController: NavController, viewmodelA: ViewmodelAplication, contex
             Text(text = "Lista de fotos", color = colorResource(id = R.color.paynesGray))
         }
         Spacer(modifier = Modifier.weight(1f))
-        OutlinedButton(onClick = { navController.navigate("createNewMeal") },
+        OutlinedButton(onClick = {
+            if(numb == "1"){
+                navController.navigate("createNewMeal")
+            }else navController.navigate("createNewLocal")
+                                 },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 36.dp)

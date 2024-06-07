@@ -41,31 +41,19 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.google.android.gms.maps.model.LatLng
 import com.project.beautifulday.Components.ActionTransalate
 import com.project.beautifulday.Components.CreateDialog
 import com.project.beautifulday.Components.RatingBar
 import com.project.beautifulday.Components.RatingBarImage
+import com.project.beautifulday.R
 import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
-import com.project.beautifulday.R
 import com.project.beautifulday.androidsmall1.jotiOne
 
-
-/**
- * Composable para mostrar la tarjeta de detalles de una comida para el usuario.
- * Esta función recibe varios parámetros necesarios para mostrar la información de la comida y controlar las interacciones del usuario.
- *
- * @param navController NavController para manejar la navegación en la aplicación.
- * @param viewmodel Instancia del ViewModel relacionado con la información de la comida.
- * @param context ComponentActivity para acceder al contexto de la aplicación.
- * @param viewmodelA ViewModel de la aplicación para manejar ciertas acciones y estados de la aplicación.
- * @param Idoc ID del documento de la comida.
- * @param colec Nombre de la colección que contiene la comida.
- */
 @Composable
-fun CardMealUser(
+fun CardLocalM(
     navController: NavController,
-    viewmodel: MealViewmodel,
     context: ComponentActivity,
     viewmodelA: ViewmodelAplication,
     Idoc: String,
@@ -80,21 +68,22 @@ fun CardMealUser(
     // Observa y obtiene el estado actual de mostrar la alerta
     val showAlert = viewmodelA.showAlert
     // Observa y obtiene el estado actual de mostrar los votos
-    val showVotes = viewmodel.showVotes
+    val showVotes = viewmodelA.showVotes
     // Obtiene la calificación actual
-    val currentRating = viewmodel.currentRating
+    val currentRating = viewmodelA.currentRating
     // Observa y obtiene el estado actual del progreso
-    val progress by viewmodel.progress.observeAsState(true)
+    val progress by viewmodelA.progrees.observeAsState(true)
+    val screen = viewmodelA.screen
 
 
     // Realiza acciones al lanzar el efecto
     LaunchedEffect(key1 = true) {
-        viewmodel.getMealUserById(Idoc, colec)
+        viewmodelA.getLocalById(Idoc, colec)
         viewmodelA.getEmail()
     }
 
     // Obtiene los datos de la comida y el correo electrónico del usuario
-    val meal = viewmodel.meal
+    val local = viewmodelA.local
     val email = viewmodelA.email
 
     // Diseño de la tarjeta de la comida
@@ -106,7 +95,7 @@ fun CardMealUser(
     ) {
         // Título de la comida
         Text(
-            text = meal.strMeal ?: "",
+            text = local.nombreLocal ?: "",
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(5.dp),
@@ -135,7 +124,7 @@ fun CardMealUser(
                             CircularProgressIndicator(color = colorResource(id = R.color.silver))
                             Spacer(modifier = Modifier.padding(3.dp))
                             Text(
-                                text = "Cargando" + viewmodelA.getAnimatedDots(progress),
+                                text = "Guardando" + viewmodelA.getAnimatedDots(progress),
                                 color = colorResource(id = R.color.silver)
                             )
                         }
@@ -143,7 +132,7 @@ fun CardMealUser(
                 } else {
                     // Muestra la imagen de la comida si la carga ha finalizado
                     AsyncImage(
-                        model = meal.strMealThumb,
+                        model = local.fotoLocal,
                         contentDescription = null,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -156,7 +145,7 @@ fun CardMealUser(
                 Row(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    val average = viewmodel.calculateAverage(meal.votes ?: 0, meal.points ?: 0.0)
+                    val average = viewmodelA.calculateAverage(local.votes ?: 0, local.puntuacion ?: 0.0)
                     if (colec == "CreateMeals") {
                         Box(
                             modifier = Modifier.width(120.dp),
@@ -165,7 +154,7 @@ fun CardMealUser(
                             RatingBarImage(rating = average)
                         }
                         Text(
-                            text = meal.votes.toString() + " votos",
+                            text = local.votes.toString() + " votos",
                             color = colorResource(id = R.color.silver),
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.End
@@ -183,7 +172,7 @@ fun CardMealUser(
                     item {
                         ActionTransalate(
                             actionTranslate = actionTranslate,
-                            text = "Ingredients:" + "\n" + meal.strIngredients?.joinToString() + "\n" + ":Instructions:" + "\n" + meal.strInstructions,
+                            text = "Comments:" + "\n" + local.comentario,
                             viewmodelA = viewmodelA,
                             context = context,
                             state = state
@@ -192,9 +181,9 @@ fun CardMealUser(
                 }
 
                 // Muestra el nombre del usuario que subió la receta
-                if (colec == "CreateMeals") {
+                if (colec == "Locales $screen") {
                     Text(
-                        text = "Receta subida por\n${meal.nameUser}",
+                        text = "Receta subida por\n${local.emailUser}",
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
                         color = colorResource(id = R.color.silver)
@@ -240,29 +229,43 @@ fun CardMealUser(
                         },
                     color = colorResource(id = R.color.paynesGray)
                 )
+
                 Text(
-                    text = "Ver video",
+                    text = "Ver ubicación",
                     modifier = Modifier
                         .padding(2.dp)
                         .clickable {
-                            if (colec == "CreateMeals") {
-                                viewmodelA.changeUriVideo(meal.strYoutube ?: "")
-                                navController.navigate("video")
-                            } else {
-                                context.startActivity(
-                                    Intent(
-                                        Intent.ACTION_VIEW,
-                                        Uri.parse(meal.strYoutube)
-                                    )
-                                )
+                            local.latitud?.let { latitud ->
+                                local.longitud?.let { longitud ->
+                                    viewmodelA.changeLocalizacion(LatLng(latitud, longitud))
+                                }
                             }
+                            navController.navigate("myGoogleMaps")
                             viewmodelA.changeSlide(slide)
                         },
                     color = colorResource(id = R.color.paynesGray)
                 )
 
+                if(local.web != "https://"){
+                    Text(
+                        text = "Ver web",
+                        modifier = Modifier
+                            .padding(2.dp)
+                            .clickable {
+                                context.startActivity(
+                                    Intent(
+                                        Intent.ACTION_VIEW,
+                                        Uri.parse(local.web)
+                                    )
+                                )
+                                viewmodelA.changeSlide(slide)
+                            },
+                        color = colorResource(id = R.color.paynesGray)
+                    )
+                }
+
                 // Opción de borrar la receta, solo visible si el usuario es el mismo que la subió
-                if (email.equals(meal.emailUser)) {
+                if (email.equals(local.emailUser)) {
                     Text(
                         text = "Borrar",
                         modifier = Modifier
@@ -281,7 +284,7 @@ fun CardMealUser(
                             .padding(2.dp)
                             .clickable {
                                 var flag = true
-                                meal.listVotes?.forEach { emailList ->
+                                local.listVotes?.forEach { emailList ->
                                     if (emailList == email) {
                                         viewmodelA.changeSlide(slide)
                                         flag = false
@@ -290,7 +293,7 @@ fun CardMealUser(
                                 }
                                 if (flag) {
                                     viewmodelA.changeSlide(slide)
-                                    viewmodel.changeShowVotes(!showVotes)
+                                    viewmodelA.changeShowVotes(!showVotes)
                                 }
                             },
                         color = colorResource(id = R.color.paynesGray)
@@ -318,14 +321,14 @@ fun CardMealUser(
         tittle = "Aviso",
         text = "¿Desea borrar el registro?",
         onDismiss = { viewmodelA.changeAlert(!showAlert) }) {
-        viewmodelA.deleteRegister(Idoc, colec) { navController.navigate("meal") }
+        viewmodelA.deleteRegister(Idoc, colec) { navController.navigate(screen) }
         viewmodelA.changeSlide(slide)
         viewmodelA.changeAlert(!showAlert)
     }
 
     // Diálogo para votar la receta
     if (showVotes) {
-        Dialog(onDismissRequest = { viewmodel.changeShowVotes(false) }) {
+        Dialog(onDismissRequest = { viewmodelA.changeShowVotes(false) }) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -337,24 +340,24 @@ fun CardMealUser(
                     RatingBar(
                         rating = currentRating,
                         onRatingChanged = { newRating ->
-                            viewmodel.changeCurrentRating(newRating)
-                            viewmodel.updateListVotes(newRating)
+                            viewmodelA.changeCurrentRating(newRating)
+                            viewmodelA.updateListVotes(newRating)
                         }
                     )
 
                     // Calcular la media de todos los votos
-                    viewmodel.calculateAverageRating()
+                    viewmodelA.calculateAverageRating()
 
                     // Botón para votar
                     Column {
                         OutlinedButton(
                             onClick = {
-                                viewmodel.changeValueVotes(currentRating, "puntuacion","")
-                                viewmodel.changeValueVotes(1.0, "votes","")
-                                viewmodel.changeValueVotes(0.0, "listVotes", email)
-                                viewmodel.updateStars(Idoc) { navController.popBackStack() }
-                                viewmodel.cleanVotes()
-                                viewmodel.changeShowVotes(false)
+                                viewmodelA.changeValueVotes(currentRating, "puntuacion","")
+                                viewmodelA.changeValueVotes(1.0, "votes","")
+                                viewmodelA.changeValueVotes(0.0, "listVotes", email)
+                                viewmodelA.updateStars(Idoc) { navController.popBackStack() }
+                                viewmodelA.cleanVotes()
+                                viewmodelA.changeShowVotes(false)
                             }, modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 8.dp),
@@ -369,5 +372,3 @@ fun CardMealUser(
         }
     }
 }
-
-

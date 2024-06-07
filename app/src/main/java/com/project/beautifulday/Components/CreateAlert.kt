@@ -10,13 +10,12 @@ import com.project.beautifulday.ViewModels.ViewmodelAplication
 
 fun createAlert(navController: NavController, viewmodelA: ViewmodelAplication, viewmodel: MealViewmodel, cocktailViewmodel: CocktailViewmodel, user: String, context: ComponentActivity){
     val name = viewmodelA.name
-    val id = viewmodelA.id
     val descripcion = viewmodelA.descripcion
     var foto = viewmodelA.uriFoto
     val video = viewmodelA.uriVideo
     val screen = viewmodelA.screen
     val ingrediente = viewmodelA.ingrediente
-    val lista = mutableListOf(name, id, descripcion, foto, video, ingrediente)
+    val lista = mutableListOf(name, descripcion, foto, video, ingrediente)
     var confi = false
 
 
@@ -27,14 +26,14 @@ fun createAlert(navController: NavController, viewmodelA: ViewmodelAplication, v
         for(i in lista){
             if(i == "") {
                 viewmodelA.changeCreateAlerte(true)
+                confi = false
                 break
             } else confi = true
         }
 
         if(confi){
             if(screen == "meal"){
-                viewmodel.saveMeal(
-                    id,
+                viewmodel.saveMealCreater(
                     name,
                     "",
                     "",
@@ -62,8 +61,7 @@ fun createAlert(navController: NavController, viewmodelA: ViewmodelAplication, v
 
                 }
             }else{
-                cocktailViewmodel.SaveCocktail(
-                    id,
+                cocktailViewmodel.SaveCocktailCreater(
                     name,
                     descripcion,
                     foto,

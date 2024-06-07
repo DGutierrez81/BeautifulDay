@@ -1,6 +1,11 @@
 package com.project.beautifulday.Firebase
 
+import android.content.ContentResolver
+import android.content.Context
+import android.graphics.Bitmap
+import android.media.MediaMetadataRetriever
 import android.net.Uri
+
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageMetadata
@@ -22,10 +27,10 @@ class StorageService@Inject constructor(private val storage: FirebaseStorage) {
         reference.putFile(uri)
     }
 
-    suspend fun uploadAndDownloadImage(uri: Uri): Uri {
+    suspend fun uploadAndDownloadImage(uri: Uri, email: String): Uri {
         return suspendCancellableCoroutine<Uri> { cancellableContinuation ->
             val reference: StorageReference =
-                storage.reference.child("picture/${uri.lastPathSegment}")
+                storage.reference.child("picture/$email/${uri.lastPathSegment}")
             reference.putFile(uri).addOnSuccessListener {
                 downloadImage(it, cancellableContinuation)
             }.addOnFailureListener {
@@ -42,9 +47,6 @@ class StorageService@Inject constructor(private val storage: FirebaseStorage) {
             .addOnSuccessListener { uri -> cancellableContinuation.resume(uri) }
             .addOnFailureListener { cancellableContinuation.resumeWithException(it) }
     }
-
-
-
 
     suspend fun removeImage(imageName: String): Boolean {
         return try {
@@ -89,28 +91,12 @@ class StorageService@Inject constructor(private val storage: FirebaseStorage) {
 
 
 
-    suspend fun getAllImages(): List<Uri>{
-        val reference: StorageReference = storage.reference.child("picture/")
+    suspend fun getAllImages(dir: String): List<Uri>{
+        val reference: StorageReference = storage.reference.child("picture/$dir")
 
         val result: List<Uri> = reference.listAll().await().items.map{it.downloadUrl.await()}
         return result
     }
-
-    suspend fun uploadVideoAndGetDownloadUrl(uri: Uri): Uri {
-        return suspendCancellableCoroutine { continuation ->
-            val reference: StorageReference = storage.reference.child("videos/${uri.lastPathSegment}")
-            reference.putFile(uri).addOnSuccessListener { taskSnapshot ->
-                taskSnapshot.storage.downloadUrl.addOnSuccessListener { downloadUri ->
-                    continuation.resume(downloadUri)
-                }.addOnFailureListener { exception ->
-                    continuation.resumeWithException(exception)
-                }
-            }.addOnFailureListener { exception ->
-                continuation.resumeWithException(exception)
-            }
-        }
-    }
-
 
 
 }
