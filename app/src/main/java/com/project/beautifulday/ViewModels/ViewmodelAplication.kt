@@ -3,9 +3,7 @@ package com.project.beautifulday.ViewModels
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
-import android.graphics.Bitmap
 import android.location.Location
-import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
@@ -13,7 +11,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,20 +31,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
@@ -68,7 +59,6 @@ import com.google.mlkit.nl.translate.Translation
 import com.google.mlkit.nl.translate.Translator
 import com.google.mlkit.nl.translate.TranslatorOptions
 import com.google.relay.compose.ColumnScopeInstanceImpl.weight
-import com.project.beautifulday.Cocktail.ui.States.CocktailUser
 import com.project.beautifulday.Components.RatingBarImage
 import com.project.beautifulday.Firebase.AuthService
 import com.project.beautifulday.Firebase.FirestoreService
@@ -85,7 +75,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.text.SimpleDateFormat
@@ -439,8 +428,6 @@ class ViewmodelAplication @Inject constructor(
     }
 
 
-
-
     // Método para eliminar un registro en Firestore
     fun deleteRegister(documento: String, colec: String, onSuccess: () -> Unit) {
         viewModelScope.launch {
@@ -464,11 +451,12 @@ class ViewmodelAplication @Inject constructor(
         comentario: String,
         pais: String,
         ciudad: String,
+        nameUser: String,
         web: String,
         ubicacion: LatLng?
     ){
         val email = authService.email()
-        local = Local(nombreLocal = nombre, emailUser= email,fotoLocal = fotoLocal,  comentario = comentario, pais = pais, ciudad = ciudad, web = web, latitud = ubicacion!!.latitude, longitud = ubicacion.longitude)
+        local = Local(nombreLocal = nombre, emailUser= email,fotoLocal = fotoLocal,  comentario = comentario, pais = pais, ciudad = ciudad, web = web, nameUser = nameUser, latitud = ubicacion!!.latitude, longitud = ubicacion.longitude)
     }
 
 
@@ -497,7 +485,7 @@ class ViewmodelAplication @Inject constructor(
             } else {
                 // Manejo del caso cuando result es false
                 _progrees.value = false
-                android.util.Log.d(
+                Log.d(
                     "ERROR",
                     "Hubo un error al guardar el registro o el registro ya existe"
                 )
@@ -508,10 +496,9 @@ class ViewmodelAplication @Inject constructor(
 
     fun fetchLocal(colec: String){
         _progrees.value = true
-        val email = authService.email()
 
         viewModelScope.launch {
-            _localData.value = firestore.fetchLocal(email, colec)
+            _localData.value = firestore.fetchLocal(colec)
             delay(3000)
             _progrees.value = false
         }
@@ -595,7 +582,7 @@ class ViewmodelAplication @Inject constructor(
                     Spacer(modifier = Modifier.height(1.dp))
                     val average = calculateAverage(local.votes ?: 0, local.puntuacion ?: 0.0)
 
-                    if (colec == "Locales") {
+                    if (colec == "Locales $screen") {
                         Box(
                             modifier = Modifier.width(120.dp),
                             contentAlignment = Alignment.Center
@@ -659,11 +646,6 @@ class ViewmodelAplication @Inject constructor(
         ciudad = result
     }
 
-    fun changeId(result: String, context: ComponentActivity) {
-        if (result in validIds || result == "") {
-            id = result
-        } else Toast.makeText(context, "Solo números enteros", Toast.LENGTH_SHORT).show()
-    }
 
     fun changeDescripcion(desc: String) {
         descripcion = desc
@@ -704,10 +686,10 @@ class ViewmodelAplication @Inject constructor(
         }
     }
 
-    fun updateStars(iDoc: String, onSuccess: () -> Unit){
+    fun updateStars(colec: String, iDoc: String, onSuccess: () -> Unit){
         viewModelScope.launch {
             val result = withContext(Dispatchers.IO) {
-                Tasks.await(firestore.updateStarsLocalM("locales", iDoc, local))
+                Tasks.await(firestore.updateStarsLocalM(colec, iDoc, local))
             }
             if (result) {
                 onSuccess()

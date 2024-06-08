@@ -19,28 +19,57 @@ import com.project.beautifulday.R
 import com.project.beautifulday.androidsmall1.jotiOne
 
 
+/**
+ * Composable para mostrar un cuadro de diálogo de alerta personalizado.
+ *
+ * @param titulo Título del cuadro de diálogo.
+ * @param contenido Contenido del cuadro de diálogo.
+ * @param onDismiss Función de callback para cerrar el cuadro de diálogo.
+ */
 @Composable
-fun Alert(titulo: String, contenido: String, onDismiss: () -> Unit){
-    AlertDialog(onDismissRequest = { onDismiss() },
-        title = { Text(text = titulo, modifier = Modifier.fillMaxWidth() ,textAlign = TextAlign.Center,fontFamily = jotiOne, fontSize = 24.sp, color = colorResource(
-            id = R.color.silver
-        )
-        ) },
-        text = { Text(text = contenido, modifier = Modifier.fillMaxWidth() ,textAlign = TextAlign.Center, fontFamily = jotiOne, fontSize = 24.sp, color = colorResource(
-            id = R.color.silver
-        )
-        ) },
-        confirmButton = { },
-        icon = { AsyncImage(model = R.drawable.logo, contentDescription = null) },
-        dismissButton = {
-            TextButton(onClick = { onDismiss() }, colors = ButtonDefaults.buttonColors(contentColor = colorResource(
-                id = R.color.silver
+fun Alert(
+    titulo: String,
+    contenido: String,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = { onDismiss() },
+        title = {
+            Text(
+                text = titulo,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                fontFamily = jotiOne,
+                fontSize = 24.sp,
+                color = colorResource(id = R.color.silver)
             )
-            )) {
+        },
+        text = {
+            Text(
+                text = contenido,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                fontFamily = jotiOne,
+                fontSize = 24.sp,
+                color = colorResource(id = R.color.silver)
+            )
+        },
+        confirmButton = { },
+        icon = {
+            AsyncImage(model = R.drawable.logo, contentDescription = null)
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { onDismiss() },
+                colors = ButtonDefaults.buttonColors(
+                    contentColor = colorResource(id = R.color.silver)
+                )
+            ) {
                 Text(text = "Salir")
             }
-                        },
+        },
         shape = RoundedCornerShape(50.dp),
         containerColor = colorResource(id = R.color.paynesGray),
-        modifier = Modifier.background(Color.Transparent))
+        modifier = Modifier.background(Color.Transparent)
+    )
 }

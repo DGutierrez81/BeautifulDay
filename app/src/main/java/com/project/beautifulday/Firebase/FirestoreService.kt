@@ -3,26 +3,23 @@ package com.project.beautifulday.Firebase
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.lifecycle.viewModelScope
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.project.beautifulday.Cocktail.ui.States.CocktailUser
 import com.project.beautifulday.Local
 import com.project.beautifulday.Meal.ui.States.MealUser
 import com.project.beautifulday.User
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
-class FirestoreService@Inject constructor(private val fireStore: FirebaseFirestore){
-     fun createUser(user: User){
+class FirestoreService@Inject constructor(private val fireStore: FirebaseFirestore) {
 
+    // Función para crear un nuevo usuario en Firestore
+    fun createUser(user: User) {
         fireStore.collection("Users")
             .add(user)
             .addOnSuccessListener {
@@ -33,6 +30,7 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
             }
     }
 
+    // Función para obtener una lista de comidas asociadas a un correo electrónico
     suspend fun fetchMeal(email: String?): List<MealUser> {
         return withContext(Dispatchers.IO) {
             val documents = mutableListOf<MealUser>()
@@ -43,7 +41,8 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
                     .await()
 
                 for (document in querySnapshot.documents) {
-                    val myDocument = document.toObject(MealUser::class.java)?.copy(idDocument = document.id)
+                    val myDocument =
+                        document.toObject(MealUser::class.java)?.copy(idDocument = document.id)
                     if (myDocument != null) {
                         documents.add(myDocument)
                     }
@@ -55,6 +54,7 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
         }
     }
 
+    // Función para obtener una lista de cócteles asociados a un correo electrónico
     suspend fun fetchCocktail(email: String?): List<CocktailUser> {
         return withContext(Dispatchers.IO) {
             val documents = mutableListOf<CocktailUser>()
@@ -65,7 +65,8 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
                     .await()
 
                 for (document in querySnapshot.documents) {
-                    val myDocument = document.toObject(CocktailUser::class.java)?.copy(idDocument = document.id)
+                    val myDocument =
+                        document.toObject(CocktailUser::class.java)?.copy(idDocument = document.id)
                     if (myDocument != null) {
                         documents.add(myDocument)
                     }
@@ -77,7 +78,8 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
         }
     }
 
-    suspend fun fetchLocal(email: String?, colec: String): List<Local> {
+    // Función para obtener una lista de locales desde una colección específica
+    suspend fun fetchLocal(colec: String): List<Local> {
         return withContext(Dispatchers.IO) {
             val documents = mutableListOf<Local>()
             try {
@@ -86,7 +88,8 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
                     .await()
 
                 for (document in querySnapshot.documents) {
-                    val myDocument = document.toObject(Local::class.java)?.copy(idDocument = document.id)
+                    val myDocument =
+                        document.toObject(Local::class.java)?.copy(idDocument = document.id)
                     if (myDocument != null) {
                         documents.add(myDocument)
                     }
@@ -98,16 +101,18 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
         }
     }
 
-    suspend fun fetchMealCreater(): List<MealUser> {
+    // Función para obtener una lista de comidas desde una colección específica
+    suspend fun fetchMealCreater(colec: String): List<MealUser> {
         return withContext(Dispatchers.IO) {
             val documents = mutableListOf<MealUser>()
             try {
-                val querySnapshot = fireStore.collection("CreateMeals")
+                val querySnapshot = fireStore.collection(colec)
                     .get()
                     .await()
 
                 for (document in querySnapshot.documents) {
-                    val myDocument = document.toObject(MealUser::class.java)?.copy(idDocument = document.id)
+                    val myDocument =
+                        document.toObject(MealUser::class.java)?.copy(idDocument = document.id)
                     if (myDocument != null) {
                         documents.add(myDocument)
                     }
@@ -119,16 +124,23 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
         }
     }
 
-    suspend fun fetchCocktailCreater(): List<CocktailUser> {
+    /**
+     * Función para obtener una lista de cócteles desde una colección específica.
+     *
+     * @param colec Colección en Firestore desde donde se obtienen los cócteles.
+     * @return Lista de [CocktailUser] obtenida de Firestore.
+     */
+    suspend fun fetchCocktailCreater(colec: String): List<CocktailUser> {
         return withContext(Dispatchers.IO) {
             val documents = mutableListOf<CocktailUser>()
             try {
-                val querySnapshot = fireStore.collection("CreateCocktails")
+                val querySnapshot = fireStore.collection(colec)
                     .get()
                     .await()
 
                 for (document in querySnapshot.documents) {
-                    val myDocument = document.toObject(CocktailUser::class.java)?.copy(idDocument = document.id)
+                    val myDocument =
+                        document.toObject(CocktailUser::class.java)?.copy(idDocument = document.id)
                     if (myDocument != null) {
                         documents.add(myDocument)
                     }
@@ -140,8 +152,14 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
         }
     }
 
-
-
+    /**
+     * Función para obtener un usuario desde Firestore basado en su correo electrónico.
+     *
+     * @param email Correo electrónico del usuario que se va a buscar.
+     * @return Objeto [User] obtenido de Firestore.
+     * @throws IllegalArgumentException Si el email es nulo o vacío.
+     * @throws Exception Si ocurre un error al realizar la consulta a Firestore o si el usuario no se encuentra.
+     */
     suspend fun fetchUser(email: String?): User {
         // Verifica si el email es nulo o vacío
         require(!email.isNullOrEmpty()) { "Email must not be null or empty" }
@@ -179,6 +197,14 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
         }
     }
 
+
+    /**
+     * Función para obtener una comida por su ID desde Firestore.
+     *
+     * @param documento ID del documento que se va a obtener.
+     * @param colec Colección en Firestore donde se encuentra el documento.
+     * @return Objeto [MealUser] correspondiente al ID especificado, o null si no se encuentra.
+     */
     suspend fun getMealById(documento: String, colec: String): MealUser? {
         return withContext(Dispatchers.IO) {
             try {
@@ -194,6 +220,13 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
         }
     }
 
+    /**
+     * Función para obtener un cóctel por su ID desde Firestore.
+     *
+     * @param documento ID del documento que se va a obtener.
+     * @param colec Colección en Firestore donde se encuentra el documento.
+     * @return Objeto [CocktailUser] correspondiente al ID especificado, o null si no se encuentra.
+     */
     suspend fun getCocktailById(documento: String, colec: String): CocktailUser? {
         return withContext(Dispatchers.IO) {
             try {
@@ -209,6 +242,13 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
         }
     }
 
+    /**
+     * Función para obtener un local por su ID desde Firestore.
+     *
+     * @param documento ID del documento que se va a obtener.
+     * @param colec Colección en Firestore donde se encuentra el documento.
+     * @return Objeto [Local] correspondiente al ID especificado, o null si no se encuentra.
+     */
     suspend fun getLocalById(documento: String, colec: String): Local? {
         return withContext(Dispatchers.IO) {
             try {
@@ -224,7 +264,25 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
         }
     }
 
-    fun saveNewMeal(colec: String, id: String, idMeal: String?, meal: MealUser, email: String?, context: ComponentActivity): Task<Boolean> {
+    /**
+     * Función para guardar una nueva comida en Firestore.
+     *
+     * @param colec Colección en Firestore donde se almacenará la comida.
+     * @param id Nombre del campo que se va a verificar para evitar duplicados.
+     * @param idMeal ID de la comida que se va a guardar.
+     * @param meal Objeto [MealUser] que representa la comida a guardar.
+     * @param email Correo electrónico asociado a la comida.
+     * @param context Contexto de la actividad desde donde se llama a la función.
+     * @return [Task<Boolean>] que indica si la operación de guardado fue exitosa o no.
+     */
+    fun saveNewMeal(
+        colec: String,
+        id: String,
+        idMeal: String?,
+        meal: MealUser,
+        email: String?,
+        context: ComponentActivity
+    ): Task<Boolean> {
         val result = TaskCompletionSource<Boolean>()
 
         if (idMeal == null || email.isNullOrEmpty()) {
@@ -237,12 +295,17 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
             .whereEqualTo(id, idMeal)
             .get()
             .addOnSuccessListener { querySnapshot ->
-                val existingMeals = querySnapshot.documents.mapNotNull { it.toObject(MealUser::class.java) }
+                val existingMeals =
+                    querySnapshot.documents.mapNotNull { it.toObject(MealUser::class.java) }
                 val emailExists = existingMeals.any { it.emailUser == email }
 
                 if (emailExists) {
                     result.setResult(false)
-                    Toast.makeText(context, "Registro existente con el mismo email e ID de comida", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        "Registro existente con el mismo email e ID de comida",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     Log.d("ERROR", "EL REGISTRO YA EXISTE")
                 } else {
                     fireStore.collection(colec)
@@ -266,14 +329,30 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
     }
 
 
-
-
-    fun saveNewCocktail(colec: String, id: String, idDrink: String?, cocktail: CocktailUser, email: String?,context: ComponentActivity): Task<Boolean> {
+    /**
+     * Guarda un nuevo cóctel en Firestore.
+     *
+     * @param colec Colección en Firestore donde se almacenará el cóctel.
+     * @param id Nombre del campo utilizado para la verificación de duplicados.
+     * @param idDrink ID del cóctel que se va a guardar.
+     * @param cocktail Objeto [CocktailUser] que representa el cóctel a guardar.
+     * @param email Correo electrónico asociado al cóctel.
+     * @param context Contexto de la actividad desde donde se llama a la función.
+     * @return [Task<Boolean>] que indica si la operación de guardado fue exitosa o no.
+     */
+    fun saveNewCocktail(
+        colec: String,
+        id: String,
+        idDrink: String?,
+        cocktail: CocktailUser,
+        email: String?,
+        context: ComponentActivity
+    ): Task<Boolean> {
         val result = TaskCompletionSource<Boolean>()
 
         if (idDrink == null || email.isNullOrEmpty()) {
             result.setResult(false)
-            Log.d("ERROR", "idMeal o email es nulo/vacío")
+            Log.d("ERROR", "idDrink o email es nulo/vacío")
             return result.task
         }
 
@@ -281,12 +360,17 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
             .whereEqualTo(id, idDrink)
             .get()
             .addOnSuccessListener { querySnapshot ->
-                val existingMeals = querySnapshot.documents.mapNotNull { it.toObject(CocktailUser::class.java) }
+                val existingMeals =
+                    querySnapshot.documents.mapNotNull { it.toObject(CocktailUser::class.java) }
                 val emailExists = existingMeals.any { it.emailUser == email }
 
                 if (emailExists) {
                     result.setResult(false)
-                    Toast.makeText(context, "Registro existente con el mismo email e ID de cocktail", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        "Registro existente con el mismo email e ID de cocktail",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     Log.d("ERROR", "EL REGISTRO YA EXISTE")
                 } else {
                     fireStore.collection(colec)
@@ -309,7 +393,25 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
         return result.task
     }
 
-    fun saveNewLocal(colec: String, id: String, idLocal: String?, local: Local, email: String?, context: ComponentActivity): Task<Boolean> {
+    /**
+     * Guarda un nuevo local en Firestore.
+     *
+     * @param colec Colección en Firestore donde se almacenará el local.
+     * @param id Nombre del campo utilizado para la verificación de duplicados.
+     * @param idLocal ID del local que se va a guardar.
+     * @param local Objeto [Local] que representa el local a guardar.
+     * @param email Correo electrónico asociado al local.
+     * @param context Contexto de la actividad desde donde se llama a la función.
+     * @return [Task<Boolean>] que indica si la operación de guardado fue exitosa o no.
+     */
+    fun saveNewLocal(
+        colec: String,
+        id: String,
+        idLocal: String?,
+        local: Local,
+        email: String?,
+        context: ComponentActivity
+    ): Task<Boolean> {
         val result = TaskCompletionSource<Boolean>()
 
         if (idLocal == null || email.isNullOrEmpty()) {
@@ -322,12 +424,17 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
             .whereEqualTo(id, idLocal)
             .get()
             .addOnSuccessListener { querySnapshot ->
-                val existingMeals = querySnapshot.documents.mapNotNull { it.toObject(Local::class.java) }
+                val existingMeals =
+                    querySnapshot.documents.mapNotNull { it.toObject(Local::class.java) }
                 val emailExists = existingMeals.any { it.emailUser == email }
 
                 if (emailExists) {
                     result.setResult(false)
-                    Toast.makeText(context, "Registro existente con el mismo email e ID de comida", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        "Registro existente con el mismo email e ID de comida",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     Log.d("ERROR", "EL REGISTRO YA EXISTE")
                 } else {
                     fireStore.collection(colec)
@@ -350,6 +457,14 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
         return result.task
     }
 
+    /**
+     * Actualiza las estrellas de una comida en Firestore.
+     *
+     * @param colec Colección en Firestore donde se encuentra la comida.
+     * @param iDoc ID del documento que contiene la comida.
+     * @param meal Objeto [MealUser] que representa la comida a actualizar.
+     * @return [Task<Boolean>] que indica si la operación de actualización fue exitosa o no.
+     */
     fun updateStarsMeal(colec: String, iDoc: String, meal: MealUser): Task<Boolean> {
         val result = TaskCompletionSource<Boolean>()
 
@@ -372,7 +487,14 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
         return result.task
     }
 
-
+    /**
+     * Actualiza las estrellas de un cóctel en Firestore.
+     *
+     * @param colec Colección en Firestore donde se encuentra el cóctel.
+     * @param iDoc ID del documento que contiene el cóctel.
+     * @param drink Objeto [CocktailUser] que representa el cóctel a actualizar.
+     * @return [Task<Boolean>] que indica si la operación de actualización fue exitosa o no.
+     */
     fun updateStarsCocktail(colec: String, iDoc: String, drink: CocktailUser): Task<Boolean> {
         val result = TaskCompletionSource<Boolean>()
 
@@ -395,11 +517,22 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
         return result.task
     }
 
-    fun updateStarsLocalM(colec: String, iDoc: String, local: Local): Task<Boolean> {
+    /**
+     * Actualiza las estrellas de un local en Firestore.
+     *
+     * @param colec Colección en Firestore donde se encuentra el local.
+     * @param iDoc ID del documento que contiene el local.
+     * @param local Objeto [Local] que representa el local a actualizar.
+     * @return [Task<Boolean>] que indica si la operación de actualización fue exitosa o no.
+     */
+    fun updateStarsLocalM(
+        colec: String, iDoc: String,
+        local: Local
+    ): Task<Boolean> {
         val result = TaskCompletionSource<Boolean>()
 
         val plusVotes = hashMapOf(
-            "points" to local.puntuacion,
+            "puntuacion" to local.puntuacion,
             "votes" to local.votes,
             "listVotes" to local.listVotes
         )
@@ -417,7 +550,14 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
         return result.task
     }
 
-    fun deleteRegister(colec: String, documento: String): Task<Boolean>{
+    /**
+     * Elimina un registro de Firestore.
+     *
+     * @param colec Colección en Firestore de donde se eliminará el registro.
+     * @param documento ID del documento que se va a eliminar.
+     * @return [Task<Boolean>] que indica si la operación de eliminación fue exitosa o no.
+     */
+    fun deleteRegister(colec: String, documento: String): Task<Boolean> {
         val result = TaskCompletionSource<Boolean>()
 
         fireStore.collection(colec)
@@ -427,12 +567,10 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
                 result.setResult(true)
                 Log.d("Exito al borrar", "Cocktail borrado con éxito")
             }
-            .addOnFailureListener{
+            .addOnFailureListener {
                 result.setResult(false)
                 Log.d("Error al borrar", "No se pudo borrar el cocktail.")
             }
         return result.task
     }
-
 }
-

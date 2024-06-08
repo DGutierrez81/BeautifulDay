@@ -9,41 +9,67 @@ import androidx.navigation.NavController
 import com.project.beautifulday.Components.Alert
 import com.project.beautifulday.Components.MyBottomBar
 import com.project.beautifulday.Components.MyContent
-import com.project.beautifulday.Meal.ui.States.MealState
+import com.project.beautifulday.Components.MyTopBar
 import com.project.beautifulday.ViewModels.CocktailViewmodel
 import com.project.beautifulday.ViewModels.LogViewmodel
 import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 
+/**
+ * Composable function for the user registration screen.
+ *
+ * @param navController NavController to handle navigation within the app.
+ * @param loginVM ViewModel for handling login logic.
+ * @param viewmodel ViewModel for managing meal data.
+ * @param viewmodelA ViewModel for managing application-wide data.
+ * @param cocktailViewmodel ViewModel for managing cocktail data.
+ */
 @Composable
-fun RegisterUser(navController: NavController, loginVM: LogViewmodel, viewmodel: MealViewmodel, viewmodelA: ViewmodelAplication, cocktailViewmodel: CocktailViewmodel){
+fun RegisterUser(
+    navController: NavController,
+    loginVM: LogViewmodel,
+    viewmodel: MealViewmodel,
+    viewmodelA: ViewmodelAplication,
+    cocktailViewmodel: CocktailViewmodel
+) {
+    // Collecting state values from the ViewModels
     val meals by viewmodel.mealsData.collectAsState()
-    //val slide = viewmodelA.slide
     val slide by viewmodelA.slide.observeAsState(false)
     val showDialog = viewmodelA.showDialog
     val showAlert = loginVM.showAlert.value
 
-    if(showAlert){
-        Alert(onDismiss = { loginVM.showAlert(showAlert) }, titulo = "Aviso", contenido = "Error al ingresar los datos")
+    // Show an alert dialog if showAlert is true
+    if (showAlert) {
+        Alert(
+            onDismiss = { loginVM.showAlert(showAlert) },
+            titulo = "Aviso",
+            contenido = "Error al ingresar los datos"
+        )
     }
+
+    // Scaffold for the user registration screen layout
     Scaffold(
         topBar = {
+            // Customized top bar
             MyTopBar(
-            meals = meals,
-            showMenu = false,
-            viewmodel = viewmodel,
-            showOutLineText = false,
+                showMenu = false,
+                viewmodel = viewmodel,
+                showOutLineText = false,
                 cocktailViewmodel,
-            login = false,
-            mealName = "",
-            navController = navController,
-            slide = slide,
-            viewmodelA = viewmodelA,
-            showDialog = showDialog
-        )
+                login = false,
+                mealName = "",
+                navController = navController,
+                slide = slide,
+                viewmodelA = viewmodelA,
+                showDialog = showDialog
+            )
         },
-        bottomBar = { MyBottomBar(order = 7, navController, loginVM, viewmodelA) }
-    ) {innerPadding ->
+        bottomBar = {
+            // Customized bottom bar
+            MyBottomBar(order = 7, navController, loginVM, viewmodelA)
+        }
+    ) { innerPadding ->
+        // Main content of the user registration screen
         MyContent(
             innerPadding = innerPadding,
             navController = navController,
@@ -56,24 +82,6 @@ fun RegisterUser(navController: NavController, loginVM: LogViewmodel, viewmodel:
             showViewCenter = 5
         )
     }
-
-
-
 }
 
-@Composable
-fun MyTopBar(
-    meals: List<MealState>,
-    showMenu: Boolean,
-    viewmodel: MealViewmodel,
-    showOutLineText: Boolean,
-    cocktailViewmodel: CocktailViewmodel,
-    login: Boolean,
-    mealName: String,
-    navController: NavController,
-    slide: Boolean,
-    viewmodelA: ViewmodelAplication,
-    showDialog: Boolean
-) {
 
-}

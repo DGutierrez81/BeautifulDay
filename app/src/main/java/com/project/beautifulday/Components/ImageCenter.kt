@@ -56,12 +56,21 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/**
+ * Muestra una imagen centrada con el contenido alineado en la parte inferior.
+ *
+ * @param model El modelo de la imagen.
+ * @param s La descripción de contenido de la imagen.
+ */
 @Composable
-fun ImageCenter(model: Any?, s: String){
-    Box(modifier = Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.BottomCenter){
+fun ImageCenter(model: Any?, s: String) {
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.BottomCenter
+    ) {
         AsyncImage(
-            model = model, contentDescription = "Logo",
+            model = model,
+            contentDescription = "Logo",
             modifier = Modifier
                 .height(200.dp)
                 .width(200.dp)
@@ -70,3 +79,4 @@ fun ImageCenter(model: Any?, s: String){
         )
     }
 }
+

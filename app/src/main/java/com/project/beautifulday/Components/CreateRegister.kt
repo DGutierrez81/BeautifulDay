@@ -35,6 +35,15 @@ import com.project.beautifulday.R
 import com.project.beautifulday.ViewModels.CocktailViewmodel
 import com.project.beautifulday.androidsmall1.jotiOne
 
+/**
+ * Composable para crear un nuevo registro.
+ *
+ * @param navController Controlador de navegación.
+ * @param viewmodel ViewModel de Meal.
+ * @param viewmodelA ViewModel de ViewmodelAplication.
+ * @param context Contexto de la actividad.
+ * @param cocktailViewmodel ViewModel de Cocktail.
+ */
 @Composable
 fun CreateRegister(navController: NavController, viewmodel: MealViewmodel, viewmodelA: ViewmodelAplication, context: ComponentActivity, cocktailViewmodel: CocktailViewmodel){
 
@@ -53,8 +62,6 @@ fun CreateRegister(navController: NavController, viewmodel: MealViewmodel, viewm
         viewmodelA.fetchUser()
     }
     val user = viewmodelA.user
-
-
 
     Column {
         Box(modifier = Modifier
@@ -77,40 +84,9 @@ fun CreateRegister(navController: NavController, viewmodel: MealViewmodel, viewm
                     textAlign = TextAlign.Center
                 )
 
-                //Spacer(modifier = Modifier.padding(5.dp))
-
-                /*
-
-                OutlinedTextField(
-                    value = id, onValueChange = { viewmodelA.changeId(it, context) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 36.dp)
-                        .focusRequester(focusRequester),
-                    shape = RoundedCornerShape(22),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.White,
-                        unfocusedContainerColor = Color.White,
-                        disabledContainerColor = Color.White,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                    ),
-                    label = { Text(text = "Id") },
-                    maxLines = 1,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next
-                    )
-                )
-
-                 */
-
-
-               // Spacer(modifier = Modifier.padding(2.dp))
-
                 MyOutlinedTectField(
                     value = name,
-                    onValueChange = viewmodelA::changeName, //Equivalente a {newName -> viewmodelA.changeName(newName)}
+                    onValueChange = viewmodelA::changeName,
                     focusRequester = focusRequester,
                     label = "Nombre",
                     keyboardActions = {focusManager.moveFocus(FocusDirection.Down)}
@@ -237,59 +213,31 @@ fun CreateRegister(navController: NavController, viewmodel: MealViewmodel, viewm
             tittle = "Aviso",
             text = "Tiene registros sin rellenar\n¿Desea seguir?",
             onDismiss = { viewmodelA.changeCreateAlerte(!showCreateAlert) }) {
-            if(screen == "meal"){
-                viewmodel.saveMealCreater(
-                    name,
-                    "",
-                    "",
-                    descripcion,
-                    foto,
-                    "",
-                    video,
-                    ingrediente
-                        .split(",", " ")
-                        .toMutableList(),
-                    mutableListOf(),
-                    user.userName
-                )
-                viewmodel.saveNewMeals("CreateMeals", context, {navController.navigate("ok")}) {
-                    Toast
-                        .makeText(
-                            context,
-                            "Receta guardada correctamente",
-                            Toast.LENGTH_SHORT
-                        )
-                        .show()
-                    viewmodelA.clean()
-                    navController.navigate("meal")
-                    viewmodelA.changeCreateAlerte(false)
-
-                }
-            }else{
-                cocktailViewmodel.SaveCocktailCreater(
-                    strDrink = name,
-                    strInstructions = descripcion,
-                    strDrinkThumb = foto,
-                    strList = ingrediente
-                        .split(",", " ")
-                        .toMutableList(),
-                    strMedia = video,
-                    nameUser = user.userName
-                )
-
-                cocktailViewmodel.saveNewCocktail("CreateCocktails", context, {navController.navigate("ok")}) {
-                    Toast
-                        .makeText(
-                            context,
-                            "Cocktail guardado correctamente",
-                            Toast.LENGTH_SHORT
-                        )
-                        .show()
-                    viewmodelA.clean()
-                    navController.navigate("cocktail")
-                    viewmodelA.changeCreateAlerte(false)
-
-                }
+            viewmodel.saveMealCreater(
+                name,
+                "",
+                "",
+                descripcion,
+                foto,
+                "",
+                video,
+                ingrediente
+                    .split(",", " ")
+                    .toMutableList(),
+                mutableListOf(),
+                user.userName
+            )
+            viewmodel.saveNewMeals("Create $screen", context, {navController.navigate("ok")}) {
+                Toast
+                    .makeText(
+                        context,
+                        "registro guardado correctamente",
+                        Toast.LENGTH_SHORT
+                    )
+                    .show()
+                viewmodelA.clean()
+                navController.navigate(screen)
+                viewmodelA.changeCreateAlerte(false)
             }
         }
     }

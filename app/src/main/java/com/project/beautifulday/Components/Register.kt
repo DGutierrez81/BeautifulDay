@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,17 +33,27 @@ import androidx.navigation.NavController
 import com.project.beautifulday.ViewModels.LogViewmodel
 import com.project.beautifulday.R
 
+/**
+ * Composable que muestra el formulario de registro de usuario.
+ *
+ * @param navController Controlador de navegación para manejar la navegación entre destinos.
+ * @param LgViewmodel ViewModel que contiene la lógica de negocio y los estados relacionados con el registro de usuario.
+ */
 @Composable
 fun Register(navController: NavController, LgViewmodel: LogViewmodel){
 
+    // Gestor de foco para manejar el enfoque de los campos de texto
     val focusManager = LocalFocusManager.current
+    // Visibilidad de la contraseña
     val passwordVisibility = LgViewmodel.passwordVisibility
 
+    // Columna principal que contiene los campos del formulario
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        // Campo de texto para el nombre de usuario
         OutlinedTextField(
             value = LgViewmodel.userName,
             onValueChange = {LgViewmodel.changeUsername(it)},
@@ -66,6 +75,7 @@ fun Register(navController: NavController, LgViewmodel: LogViewmodel){
             )
         )
         Spacer(modifier = Modifier.height(15.dp))
+        // Campo de texto para el correo electrónico
         OutlinedTextField(
             value = LgViewmodel.email,
             onValueChange = { LgViewmodel.changeEmail(it) },
@@ -87,6 +97,7 @@ fun Register(navController: NavController, LgViewmodel: LogViewmodel){
             )
         )
         Spacer(modifier = Modifier.height(15.dp))
+        // Campo de texto para la contraseña
         OutlinedTextField(
             value = LgViewmodel.password,
             onValueChange = { LgViewmodel.changePassword(it) },

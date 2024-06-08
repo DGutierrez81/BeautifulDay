@@ -11,6 +11,7 @@ data class Local(
     val pais: String?="",
     val ciudad: String?="",
     val web: String?= "",
+    val nameUser: String? = "",
     val latitud: Double? = 0.0,
     val longitud: Double? = 0.0,
     val votes: Int? = 0,

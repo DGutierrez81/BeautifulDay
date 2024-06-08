@@ -51,6 +51,16 @@ import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.androidsmall1.jotiOne
 
+/**
+ * Composable que muestra una tarjeta de un local, con opción para realizar diferentes acciones como traducir, ver ubicación, visitar la página web,
+ * votar o eliminar el registro, dependiendo de los permisos del usuario.
+ *
+ * @param navController El controlador de navegación para la navegación entre pantallas.
+ * @param context El contexto de la actividad.
+ * @param viewmodelA El ViewModel de la aplicación.
+ * @param Idoc El ID del local.
+ * @param colec El nombre de la colección en la base de datos donde se encuentra el local.
+ */
 @Composable
 fun CardLocalM(
     navController: NavController,
@@ -74,6 +84,7 @@ fun CardLocalM(
     // Observa y obtiene el estado actual del progreso
     val progress by viewmodelA.progrees.observeAsState(true)
     val screen = viewmodelA.screen
+
 
 
     // Realiza acciones al lanzar el efecto
@@ -146,7 +157,7 @@ fun CardLocalM(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     val average = viewmodelA.calculateAverage(local.votes ?: 0, local.puntuacion ?: 0.0)
-                    if (colec == "CreateMeals") {
+                    if (colec == "Locales $screen") {
                         Box(
                             modifier = Modifier.width(120.dp),
                             contentAlignment = Alignment.Center
@@ -172,7 +183,7 @@ fun CardLocalM(
                     item {
                         ActionTransalate(
                             actionTranslate = actionTranslate,
-                            text = "Comments:" + "\n" + local.comentario,
+                            text = "Country:${local.pais?.uppercase()}\nCity:${local.ciudad}\n Comments:" + "\n" + local.comentario,
                             viewmodelA = viewmodelA,
                             context = context,
                             state = state
@@ -183,7 +194,7 @@ fun CardLocalM(
                 // Muestra el nombre del usuario que subió la receta
                 if (colec == "Locales $screen") {
                     Text(
-                        text = "Receta subida por\n${local.emailUser}",
+                        text = "Local compartido por\n${local.nameUser}",
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
                         color = colorResource(id = R.color.silver)
@@ -271,7 +282,8 @@ fun CardLocalM(
                         modifier = Modifier
                             .padding(2.dp)
                             .clickable {
-                                viewmodelA.changeSlide(slide)
+                                //viewmodelA.changeSlide(slide)
+                                viewmodelA.clean()
                                 viewmodelA.changeAlert(!showAlert)
                             },
                         color = colorResource(id = R.color.paynesGray)
@@ -322,7 +334,6 @@ fun CardLocalM(
         text = "¿Desea borrar el registro?",
         onDismiss = { viewmodelA.changeAlert(!showAlert) }) {
         viewmodelA.deleteRegister(Idoc, colec) { navController.navigate(screen) }
-        viewmodelA.changeSlide(slide)
         viewmodelA.changeAlert(!showAlert)
     }
 
@@ -355,7 +366,7 @@ fun CardLocalM(
                                 viewmodelA.changeValueVotes(currentRating, "puntuacion","")
                                 viewmodelA.changeValueVotes(1.0, "votes","")
                                 viewmodelA.changeValueVotes(0.0, "listVotes", email)
-                                viewmodelA.updateStars(Idoc) { navController.popBackStack() }
+                                viewmodelA.updateStars(colec, Idoc) { navController.popBackStack() }
                                 viewmodelA.cleanVotes()
                                 viewmodelA.changeShowVotes(false)
                             }, modifier = Modifier

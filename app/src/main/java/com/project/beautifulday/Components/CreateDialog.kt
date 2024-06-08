@@ -16,33 +16,42 @@ import coil.compose.AsyncImage
 import com.project.beautifulday.R
 
 
+/**
+ * Crea un diálogo de alerta personalizado que se muestra o se oculta según el estado de [showAlert].
+ *
+ * @param showAlert Indica si se debe mostrar el diálogo de alerta.
+ * @param tittle El título del diálogo de alerta.
+ * @param text El texto del cuerpo del diálogo de alerta.
+ * @param onDismiss La acción a realizar cuando se descarta el diálogo de alerta.
+ * @param onConfirm La acción a realizar cuando se confirma el diálogo de alerta.
+ */
 @Composable
 fun CreateDialog(
     showAlert: Boolean,
     tittle: String,
     text: String,
     onDismiss: () -> Unit,
-    onConfirm: ()-> Unit
-){
-
-    if(showAlert){
+    onConfirm: () -> Unit
+) {
+    if (showAlert) {
         AlertDialog(
             onDismissRequest = { onDismiss() },
-            confirmButton = { TextButton(onClick = { onConfirm() }) {
-                Text(text = "Si")
-            }},
-            icon = { AsyncImage(model = R.drawable.logo, contentDescription = null) },
-            shape = RoundedCornerShape(50.dp),
-            dismissButton = { TextButton(onClick = { onDismiss() }) {
-                Text(text = "No", color = colorResource(id = R.color.silver))
-
-            }
+            confirmButton = {
+                TextButton(onClick = { onConfirm() }) {
+                    Text(text = "Si")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { onDismiss() }) {
+                    Text(text = "No", color = colorResource(id = R.color.silver))
+                }
             },
             title = { Text(text = tittle)},
-            text= { Text(text = text)},
+            text = { Text(text = text)},
+            icon = { AsyncImage(model = R.drawable.logo, contentDescription = null) },
+            shape = RoundedCornerShape(50.dp),
             containerColor = colorResource(id = R.color.paynesGray),
             modifier = Modifier.background(Color.Transparent)
         )
     }
-
 }

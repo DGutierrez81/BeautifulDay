@@ -12,7 +12,6 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,22 +28,43 @@ import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.R
 
+/**
+ * Composable que muestra un mensaje de confirmación cuando se ha completado una tarea de registro.
+ *
+ * @param viewmodel ViewModel asociado a la tarea de registro.
+ * @param context Actividad componente.
+ * @param viewmodelA ViewModel de la aplicación.
+ * @param LgViewModel ViewModel para el inicio de sesión.
+ * @param cocktailViewmodel ViewModel asociado a las tareas de cócteles.
+ */
 @Composable
-fun OkTask(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel, cocktailViewmodel: CocktailViewmodel) {
-    val progrees by viewmodel.progressCreated.observeAsState(true)
-    val progreesC by cocktailViewmodel.progressCreated.observeAsState(true)
+fun OkTask(
+    viewmodel: MealViewmodel,
+    context: ComponentActivity,
+    viewmodelA: ViewmodelAplication,
+    LgViewModel: LogViewmodel,
+    cocktailViewmodel: CocktailViewmodel
+) {
+    // Observa el progreso de la tarea de registro de comidas
+    val progressMeal by viewmodel.progressCreated.observeAsState(true)
+    // Observa el progreso de la tarea de registro de cócteles
+    val progressCocktail by cocktailViewmodel.progressCreated.observeAsState(true)
+
+    // Contenedor principal con alineación en el centro
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(color = colorResource(id = R.color.electricBlue)),
         contentAlignment = Alignment.Center
     ) {
+        // Columna que alinea horizontalmente en el centro y tiene un relleno
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .padding(16.dp)
+            modifier = Modifier.padding(16.dp)
         ) {
-            if (!progrees || !progreesC) {
+            // Verifica si se ha completado alguna de las tareas de registro
+            if (!progressMeal || !progressCocktail) {
+                // Muestra un icono de éxito y un mensaje de confirmación
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(
                         imageVector = Icons.Filled.CheckCircle,
@@ -52,21 +72,26 @@ fun OkTask(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: Vie
                         tint = Color.Green,
                         modifier = Modifier.size(120.dp)
                     )
-                    Text(text="Regitro guardado correctamente", color = colorResource(id = R.color.paynesGray))
+                    Text(
+                        text = "Registro guardado correctamente",
+                        color = colorResource(id = R.color.paynesGray)
+                    )
                 }
             } else {
+                // Muestra un indicador de progreso y un texto de guardado
                 Column {
                     CircularProgressIndicator(
                         color = colorResource(id = R.color.paynesGray),
                         strokeWidth = 6.dp,
-                        modifier = Modifier.scale(2.5f)
+                        modifier = Modifier.scale(2.0f)
                     )
                     Spacer(modifier = Modifier.padding(20.dp))
                     Text(
-                        text = "Cargando" + viewmodelA.getAnimatedDots(
-                            progrees || progreesC
-                        ), color = colorResource(id = R.color.paynesGray),
-                        modifier = Modifier.scale(2.5f)
+                        text = "Guardando" + viewmodelA.getAnimatedDots(
+                            progressMeal || progressCocktail
+                        ),
+                        color = colorResource(id = R.color.paynesGray),
+                        modifier = Modifier.scale(2.0f)
                     )
                 }
             }

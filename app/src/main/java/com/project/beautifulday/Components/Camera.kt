@@ -53,6 +53,15 @@ import coil.compose.AsyncImage
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.R
 
+/**
+ * Composable para la cámara de captura de fotos y vídeos.
+ *
+ * @param navController Controlador de navegación de Compose.
+ * @param viewmodelA ViewModel de la aplicación.
+ * @param context Contexto de la actividad.
+ * @param email Correo electrónico del usuario.
+ * @param numb Número de identificación.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Camera(navController: NavController, viewmodelA: ViewmodelAplication, context: ComponentActivity, email: String, numb: String){
@@ -68,7 +77,6 @@ fun Camera(navController: NavController, viewmodelA: ViewmodelAplication, contex
     val namePhoto = viewmodelA.namePhoto
     val focusRequester = viewmodelA.focusRequest
     val focusManager = LocalFocusManager.current
-
 
     val metada = viewmodelA.metada
 
@@ -217,7 +225,7 @@ fun Camera(navController: NavController, viewmodelA: ViewmodelAplication, contex
             shape = RoundedCornerShape(22)
         )
         Spacer(modifier = Modifier.weight(1f))
-        OutlinedButton(onClick = { navController.navigate("registroM/$email") },
+        OutlinedButton(onClick = { navController.navigate("registroM/$email?numb=$numb") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 36.dp)

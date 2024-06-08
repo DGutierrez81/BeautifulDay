@@ -1,13 +1,10 @@
 package com.project.beautifulday.Components
 
 
-
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,10 +33,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.ui.res.colorResource
 import com.project.beautifulday.R
 
+/**
+ * Composable para la pantalla de inicio de sesión.
+ *
+ * @param navController Controlador de navegación de Jetpack Compose.
+ * @param LgViewmodel ViewModel para el manejo de inicio de sesión.
+ */
 @Composable
 fun Log(navController: NavController, LgViewmodel: LogViewmodel){
 
+    // Administrador de enfoque para manejar el enfoque del teclado
     val focusManager = LocalFocusManager.current
+    // Estado de visibilidad de la contraseña
     val passwordVisibility = LgViewmodel.passwordVisibility
 
     Column(
@@ -47,6 +52,7 @@ fun Log(navController: NavController, LgViewmodel: LogViewmodel){
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        // Campo de texto para el email
         OutlinedTextField(
             value = LgViewmodel.email,
             onValueChange = {LgViewmodel.changeEmail(it)},
@@ -65,6 +71,7 @@ fun Log(navController: NavController, LgViewmodel: LogViewmodel){
             )
         )
         Spacer(modifier = Modifier.height(15.dp))
+        // Campo de texto para la contraseña
         OutlinedTextField(
             value = LgViewmodel.password,
             onValueChange = {LgViewmodel.changePassword(it)},
@@ -76,8 +83,7 @@ fun Log(navController: NavController, LgViewmodel: LogViewmodel){
                 focusManager.clearFocus()}
             ),
             trailingIcon = {
-                           IconButton(onClick = { LgViewmodel.changePasswordVisibility(!passwordVisibility) }) { LgViewmodel.changeIcon()}
-
+                IconButton(onClick = { LgViewmodel.changePasswordVisibility(!passwordVisibility) }) { LgViewmodel.changeIcon()}
             },
             modifier = Modifier.background(Color.White, shape = RoundedCornerShape(100.dp)),
             shape = RoundedCornerShape(100.dp),
@@ -92,4 +98,5 @@ fun Log(navController: NavController, LgViewmodel: LogViewmodel){
         Spacer(modifier = Modifier.height(15.dp))
     }
 }
+
 

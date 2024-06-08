@@ -63,10 +63,11 @@ fun ListCocktailUserCreater(
     val progrees by cocktailViewmodel.progress.observeAsState(true)
     // Observa el estado de login del ViewModel de inicio de sesión
     val login = LgViewModel.login
+    val screen = viewmodelA.screen
 
     // Realiza la carga inicial de los cócteles creados por el usuario
     LaunchedEffect(key1 = true) {
-        cocktailViewmodel.fetchCocktailCreater()
+        cocktailViewmodel.fetchCocktailCreater("Create $screen")
     }
 
     // Si showDialog es verdadero, muestra el diálogo de categoría
@@ -135,7 +136,7 @@ fun ListCocktailUserCreater(
                 )
                 Box(modifier = Modifier.padding(start = 30.dp, end = 30.dp)) {
                     // Muestra los nombres de los cócteles creados por el usuario
-                    cocktailViewmodel.ShowCocktailNameUser(cocktailData = cocktailData, navController, "CreateCocktails")
+                    cocktailViewmodel.ShowCocktailNameUser(cocktailData = cocktailData, navController, "Create $screen")
                 }
                 // Si showOutLineText es verdadero, muestra el campo de búsqueda
                 if (showOutLineText) {

@@ -9,11 +9,12 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-
+// Este módulo proporciona una instancia de FirebaseStorage para la inyección de dependencias.
 @Module
 @InstallIn(SingletonComponent::class)
 object FirebaseStorage {
 
+    // Proporciona una instancia única de FirebaseStorage.
     @Singleton
     @Provides
     fun ProvidesStorge(): FirebaseStorage = Firebase.storage

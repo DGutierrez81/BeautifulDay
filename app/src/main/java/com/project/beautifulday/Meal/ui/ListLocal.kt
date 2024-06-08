@@ -31,6 +31,15 @@ import com.project.beautifulday.ViewModels.LogViewmodel
 import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 
+/**
+ * Composable que muestra una lista de locales. Permite al usuario visualizar los locales almacenados y realizar acciones como búsqueda, navegación y creación de nuevos locales.
+ *
+ * @param navController El controlador de navegación para la navegación entre pantallas.
+ * @param viewmodel El ViewModel de comidas.
+ * @param viewmodelA El ViewModel de la aplicación.
+ * @param LgViewModel El ViewModel de inicio de sesión.
+ * @param cocktailViewmodel El ViewModel de cócteles.
+ */
 @Composable
 fun ListLocal(
     navController: NavController,

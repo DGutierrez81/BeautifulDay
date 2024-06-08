@@ -67,10 +67,11 @@ fun ListMealUserCreater(
     val login = LgViewModel.login
     // Observa y obtiene el estado actual del progreso
     val progrees by viewmodel.progress.observeAsState(true)
+    val screen = viewmodelA.screen
 
     // Realiza acciones al lanzar el efecto
     LaunchedEffect(Unit){
-        viewmodel.fetchMealCreater()
+        viewmodel.fetchMealCreater("Create $screen")
     }
 
     // Muestra el diálogo de categorías si se activa
@@ -143,7 +144,7 @@ fun ListMealUserCreater(
                 )
                 // Muestra la lista de comidas creadas por el usuario
                 Box(modifier = Modifier.padding(start = 30.dp, end = 30.dp)){
-                    viewmodel.ShowMealsNameUser(mealData = mealData, navController, "CreateMeals")
+                    viewmodel.ShowMealsNameUser(mealData = mealData, navController, "Create $screen")
                 }
                 // Muestra el componente de búsqueda por nombre si está activado
                 if(showOutLineText){

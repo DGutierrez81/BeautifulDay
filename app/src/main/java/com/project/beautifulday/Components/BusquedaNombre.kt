@@ -30,6 +30,15 @@ import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.ViewModels.CocktailViewmodel
 
 
+/**
+ * Composable para la barra de búsqueda por nombre de comida o cóctel.
+ *
+ * @param navController Controlador de navegación de Compose.
+ * @param viewmodel ViewModel para las comidas.
+ * @param viewmodelA ViewModel de la aplicación.
+ * @param showOutLineText Indicador para mostrar u ocultar el campo de búsqueda.
+ * @param cocktailViewmodel ViewModel para los cócteles.
+ */
 @Composable
 fun BusquedaNombre(
     navController: NavController,
@@ -37,15 +46,15 @@ fun BusquedaNombre(
     viewmodelA: ViewmodelAplication,
     showOutLineText: Boolean,
     cocktailViewmodel: CocktailViewmodel
-){
+) {
     val screen = viewmodelA.screen
     Box(modifier = Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.Center){
+        contentAlignment = Alignment.Center) {
         Row(
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if(screen == "meal"){
+            if (screen == "meal") {
                 OutlinedTextField(value = viewmodel.mealName, onValueChange = { viewmodel.changeMealName(it)},
                     label = { Text(text = "Busqueda por nombre") },
                     modifier = Modifier
@@ -80,7 +89,7 @@ fun BusquedaNombre(
                             viewmodel.changeMealName("")
                         }
                 )
-            }else{
+            } else {
                 OutlinedTextField(value = cocktailViewmodel.nameCocktail, onValueChange = { cocktailViewmodel.changeNameCocktail(it)},
                     label = { Text(text = "Busqueda por nombre") },
                     modifier = Modifier
@@ -118,7 +127,6 @@ fun BusquedaNombre(
                         }
                 )
             }
-
         }
     }
 }

@@ -17,6 +17,15 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
+/**
+ * Composable que muestra un campo de texto con borde y etiqueta.
+ *
+ * @param value Valor actual del campo de texto.
+ * @param onValueChange Función de cambio de valor del campo de texto.
+ * @param focusRequester Solicitante de enfoque para el campo de texto.
+ * @param label Etiqueta del campo de texto.
+ * @param keyboardActions Acciones de teclado del campo de texto.
+ */
 @Composable
 fun MyOutlinedTectField(
     value: String,
@@ -24,12 +33,10 @@ fun MyOutlinedTectField(
     focusRequester: FocusRequester,
     label: String,
     keyboardActions: () -> Unit
-){
-
-
-
+) {
     OutlinedTextField(
-        value = value, onValueChange = { onValueChange(it) },
+        value = value,
+        onValueChange = { onValueChange(it) },
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 36.dp)
@@ -48,8 +55,8 @@ fun MyOutlinedTectField(
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Next
         ),
-        keyboardActions = KeyboardActions(onNext = {keyboardActions()})
+        keyboardActions = KeyboardActions(onNext = { keyboardActions() })
     )
 }
 
-//KeyboardActions(onNext = {focusManager.moveFocus(FocusDirection.Down)})
+

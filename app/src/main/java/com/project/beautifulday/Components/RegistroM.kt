@@ -32,21 +32,36 @@ import coil.compose.AsyncImage
 import com.project.beautifulday.R
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 
+/**
+ * Composable que muestra la pantalla de registro de imágenes.
+ *
+ * @param navController Controlador de navegación para manejar la navegación entre destinos.
+ * @param viewmodel ViewModel de la aplicación que contiene la lógica de negocio y los estados relacionados con la vista.
+ * @param context Actividad principal para acceder al contexto de la aplicación.
+ * @param email Correo electrónico del usuario.
+ * @param numb Número de teléfono del usuario.
+ */
 @Composable
-fun RegistroM(navController: NavController, viewmodel: ViewmodelAplication, context: ComponentActivity, email: String){
+fun RegistroM(navController: NavController, viewmodel: ViewmodelAplication, context: ComponentActivity, email: String, numb: String){
+    // Estado del UI
     val uiState by viewmodel.uiState.collectAsState()
+    // Usuario
+    val user = viewmodel.user
+    // Nombre de la imagen seleccionada
     var selectedImageName by rememberSaveable {
         mutableStateOf<String?>(null)
     }
+    // Nombre del usuario
     var name by rememberSaveable {
         mutableStateOf("")
     }
 
+    // Cargar las imágenes del usuario
     LaunchedEffect(Unit){
         viewmodel.getAllImages(email)
     }
 
-
+    // Mostrar la lista de imágenes en una cuadrícula
     LazyVerticalGrid(columns = GridCells.Adaptive(minSize = 150.dp),
         modifier = Modifier.background(color = colorResource(id = R.color.electricBlue))){
         items(uiState.images){ image ->
@@ -56,6 +71,7 @@ fun RegistroM(navController: NavController, viewmodel: ViewmodelAplication, cont
                     .background(color = colorResource(id = R.color.selectiveYellow))
                     .padding(5.dp)
             ) {
+                // Tarjeta de imagen
                 Card(
                     modifier = Modifier
                         .border(BorderStroke(3.dp, color = colorResource(id = R.color.silver)))
@@ -66,13 +82,13 @@ fun RegistroM(navController: NavController, viewmodel: ViewmodelAplication, cont
                         contentDescription = "images"
                     )
                 }
+                // Nombre de la imagen
                 Text(text = image.toUri().lastPathSegment.toString(), color = colorResource(id = R.color.paynesGray), textAlign = TextAlign.Center)
-
             }
         }
     }
 
-    // Borrar la imagen seleccionada
+    // Confirmar eliminación de la imagen seleccionada
     selectedImageName?.let { imageName ->
         AlertDialog(
             onDismissRequest = { selectedImageName = null },
@@ -82,7 +98,7 @@ fun RegistroM(navController: NavController, viewmodel: ViewmodelAplication, cont
                     onClick = {
                         // Llama a la función de tu ViewModel para eliminar la imagen
                         viewmodel.deleteImage(imageName, context)
-                        navController.navigate("camera")
+                        navController.navigate("camera/${user.email}?numb=$numb")
                         //selectedImageName = null
                     }
                 ) {

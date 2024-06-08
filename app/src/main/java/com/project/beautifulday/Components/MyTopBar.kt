@@ -27,6 +27,20 @@ import com.project.beautifulday.androidsmall1.jotiOne
 import com.project.beautifulday.ViewModels.CocktailViewmodel
 
 
+/**
+ * Composición de la barra superior de la aplicación.
+ *
+ * @param showMenu Indica si se debe mostrar el menú.
+ * @param viewmodel ViewModel de las comidas.
+ * @param showOutLineText Indica si se debe mostrar el texto de contorno.
+ * @param cocktailViewmodel ViewModel de los cócteles.
+ * @param login Indica si el usuario está autenticado.
+ * @param mealName Nombre de la comida actualmente seleccionada.
+ * @param navController Controlador de navegación.
+ * @param slide Indica si la vista está deslizada.
+ * @param viewmodelA ViewModel de la aplicación.
+ * @param showDialog Indica si se debe mostrar un cuadro de diálogo.
+ */
 @Composable
 fun MyTopBar(
     showMenu: Boolean,

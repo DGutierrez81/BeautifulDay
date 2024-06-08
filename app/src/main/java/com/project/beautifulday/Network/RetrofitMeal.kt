@@ -13,11 +13,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Named
 import javax.inject.Singleton
 
-
+// Este módulo proporciona instancias de Retrofit y servicios de API para Meal y Cocktail.
 @Module
 @InstallIn(SingletonComponent::class)
 object RetrofitMeal {
-    
+
+    // Proporciona una instancia de Retrofit configurada para Meal.
     @Provides
     @Singleton
     @Named("retrofit1")
@@ -28,6 +29,7 @@ object RetrofitMeal {
             .build()
     }
 
+    // Proporciona una instancia de Retrofit configurada para Cocktail.
     @Provides
     @Singleton
     @Named("retrofit2")
@@ -38,12 +40,14 @@ object RetrofitMeal {
             .build()
     }
 
+    // Proporciona una instancia de MealService para interactuar con la API de Meal.
     @Provides
     @Singleton
     fun provideMealApiService(@Named("retrofit1") retrofit: Retrofit): MealService{
         return retrofit.create(MealService::class.java)
     }
 
+    // Proporciona una instancia de CocktailService para interactuar con la API de Cocktail.
     @Provides
     @Singleton
     fun provideCoktailApiService(@Named("retrofit2") retrofit: Retrofit): CocktailService {

@@ -49,9 +49,18 @@ import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.androidsmall1.jotiOne
 
 
+/**
+ * Composable para mostrar los detalles de un cocktail subido por el usuario.
+ *
+ * @param navController Controlador de navegación.
+ * @param viewmodel ViewModel de Cocktail.
+ * @param context Contexto de la actividad.
+ * @param viewmodelA ViewModel de ViewmodelAplication.
+ * @param Idoc Identificador del cocktail.
+ * @param colec Colección de cocktails.
+ */
 @Composable
-fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, Idoc: String, colec: String){
-
+fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, Idoc: String, colec: String) {
     val actionTranslate by viewmodelA.actionTranslate.observeAsState(true)
     val state = viewmodelA.state.value
     val slide by viewmodelA.slide.observeAsState(false)
@@ -59,10 +68,9 @@ fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel,
     val showVotes = viewmodel.showVotes
     val currentRating = viewmodel.currentRating
     val progrees by viewmodel.progress.observeAsState(true)
+    val screen = viewmodelA.screen
 
-
-    LaunchedEffect(key1 = true){
-        //viewmodel.getMealUserById(Idoc, colec)
+    LaunchedEffect(key1 = true) {
         viewmodel.getCocktailUserById(Idoc, colec)
         viewmodelA.getEmail()
     }
@@ -70,16 +78,12 @@ fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel,
     val cocktail = viewmodel.cocktail
     val email = viewmodelA.email
 
-
-
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = colorResource(id = R.color.paynesGray)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Text(
             text = cocktail.strDrink ?: "", modifier = Modifier
                 .fillMaxWidth()
@@ -92,7 +96,7 @@ fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel,
                 modifier = Modifier
                     .background(colorResource(id = R.color.paynesGray))
             ) {
-                if(progrees){
+                if (progrees) {
                     Box(
                         Modifier
                             .fillMaxWidth()
@@ -111,7 +115,7 @@ fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel,
                             )
                         }
                     }
-                }else{
+                } else {
                     AsyncImage(
                         model = cocktail.strDrinkThumb,
                         contentDescription = null,
@@ -122,21 +126,18 @@ fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel,
                     )
                 }
 
-
-
                 Row(
                     modifier = Modifier.fillMaxWidth()
-                ){
+                ) {
                     val average = viewmodel.calculateAverage(cocktail.votes ?: 0, cocktail.puntuacion ?: 0.0)
-                    if (colec == "CreateCocktails") {
+                    if (colec == "Create $screen") {
                         Box(modifier = Modifier.width(120.dp), contentAlignment = Alignment.Center) {
                             RatingBarImage(rating = average)
                         }
-                        Text(text = cocktail.votes.toString() + " votos", color = colorResource(id = R.color.silver), modifier = Modifier.fillMaxWidth(), textAlign =  TextAlign.End)
+                        Text(text = cocktail.votes.toString() + " votos", color = colorResource(id = R.color.silver), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.End)
                     }
-
                 }
-                
+
                 LazyColumn(
                     modifier = Modifier
                         .padding(20.dp)
@@ -144,7 +145,6 @@ fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     item {
-
                         ActionTransalate(
                             actionTranslate = actionTranslate,
                             text = "Ingredientes:" + "\n" + cocktail.strList?.joinToString() + "\n" + ":Instructions:" + "\n" + cocktail.strInstructions,
@@ -154,14 +154,13 @@ fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel,
                         )
                     }
                 }
-                
+
                 Text(text = "Cocktail subido por\n${cocktail.nameUser}", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center, color = colorResource(
                     id = R.color.silver
                 )
                 )
 
             }
-
         }
     }
 
@@ -197,7 +196,7 @@ fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel,
                     },
                     color = colorResource(id = R.color.paynesGray)
                 )
-                if(colec == "CreateCocktails"){
+                if (colec == "Create $screen") {
                     Text(text = "Ver video", modifier = Modifier
                         .padding(2.dp)
                         .clickable {
@@ -209,16 +208,15 @@ fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel,
                     )
 
                 }
-                if(email.equals(cocktail.emailUser)){
+                if (email.equals(cocktail.emailUser)) {
                     Text(text = "Borrar", modifier = Modifier
                         .padding(2.dp)
                         .clickable {
-                            viewmodelA.changeSlide(slide)
                             viewmodelA.changeAlert(!showAlert)
                         },
                         color = colorResource(id = R.color.paynesGray)
                     )
-                }else{
+                } else {
                     Text(text = "Votar", modifier = Modifier
                         .padding(2.dp)
                         .clickable {
@@ -248,7 +246,6 @@ fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel,
                     text = "Atras", modifier = Modifier
                         .padding(2.dp)
                         .clickable {
-                            //viewmodelA.changeSlide(slide)
                             viewmodelA.clean()
                             navController.popBackStack()
                         },
@@ -258,8 +255,8 @@ fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel,
         }
     }
 
-    CreateDialog(showAlert = showAlert  ,tittle = "Aviso", text = "¿Desea borrar el registro?", onDismiss = { viewmodelA.changeAlert(!showAlert) }) {
-        viewmodelA.deleteRegister(Idoc, colec){ navController.navigate("cocktail") }
+    CreateDialog(showAlert = showAlert, tittle = "Aviso", text = "¿Desea borrar el registro?", onDismiss = { viewmodelA.changeAlert(!showAlert) }) {
+        viewmodelA.deleteRegister(Idoc, colec) { navController.navigate("cocktail") }
         viewmodelA.changeSlide(slide)
         viewmodelA.changeAlert(!showAlert)
     }
@@ -279,17 +276,15 @@ fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel,
                         }
                     )
 
-                    // Calcular la media de todos los votos
                     viewmodel.calculateAverageRating()
-
 
                     Column {
 
                         OutlinedButton(onClick = {
                             viewmodel.changeValueVotes(currentRating, "puntuacion", "")
-                            viewmodel.changeValueVotes( 1.0, "votes", "")
+                            viewmodel.changeValueVotes(1.0, "votes", "")
                             viewmodel.changeValueVotes(0.0, "listVotes", email)
-                            viewmodel.updateStars(Idoc){navController.popBackStack()}
+                            viewmodel.updateStars(Idoc) { navController.popBackStack() }
                             viewmodel.cleanVotes()
                             viewmodel.changeShowVotes(false)
                         }, modifier = Modifier
@@ -304,6 +299,5 @@ fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel,
                 }
             }
         }
-
     }
 }

@@ -85,6 +85,7 @@ fun CardMealUser(
     val currentRating = viewmodel.currentRating
     // Observa y obtiene el estado actual del progreso
     val progress by viewmodel.progress.observeAsState(true)
+    val screen = viewmodelA.screen
 
 
     // Realiza acciones al lanzar el efecto
@@ -157,7 +158,7 @@ fun CardMealUser(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     val average = viewmodel.calculateAverage(meal.votes ?: 0, meal.points ?: 0.0)
-                    if (colec == "CreateMeals") {
+                    if (colec == "Create $screen") {
                         Box(
                             modifier = Modifier.width(120.dp),
                             contentAlignment = Alignment.Center
@@ -245,7 +246,7 @@ fun CardMealUser(
                     modifier = Modifier
                         .padding(2.dp)
                         .clickable {
-                            if (colec == "CreateMeals") {
+                            if (colec == "Create $screen") {
                                 viewmodelA.changeUriVideo(meal.strYoutube ?: "")
                                 navController.navigate("video")
                             } else {
@@ -289,7 +290,7 @@ fun CardMealUser(
                                     }
                                 }
                                 if (flag) {
-                                    viewmodelA.changeSlide(slide)
+                                    viewmodelA.clean()
                                     viewmodel.changeShowVotes(!showVotes)
                                 }
                             },
@@ -319,7 +320,6 @@ fun CardMealUser(
         text = "¿Desea borrar el registro?",
         onDismiss = { viewmodelA.changeAlert(!showAlert) }) {
         viewmodelA.deleteRegister(Idoc, colec) { navController.navigate("meal") }
-        viewmodelA.changeSlide(slide)
         viewmodelA.changeAlert(!showAlert)
     }
 

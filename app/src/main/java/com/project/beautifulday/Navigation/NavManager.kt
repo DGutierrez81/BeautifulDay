@@ -38,27 +38,74 @@ import com.project.beautifulday.Meal.ui.CardLocalM
 import com.project.beautifulday.Meal.ui.ListLocal
 import com.project.beautifulday.ViewModels.CocktailViewmodel
 
+/**
+ * Administra la navegación entre diferentes pantallas de la aplicación.
+ *
+ * @param viewmodel Instancia del ViewModel para las comidas.
+ * @param context Actividad actual.
+ * @param viewmodelA Instancia del ViewModel de la aplicación.
+ * @param LgViewModel Instancia del ViewModel para el inicio de sesión.
+ * @param cocktailViewmodel Instancia del ViewModel para los cócteles.
+ */
 @Composable
-fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel, cocktailViewmodel: CocktailViewmodel){
+fun NavManager(
+    viewmodel: MealViewmodel,
+    context: ComponentActivity,
+    viewmodelA: ViewmodelAplication,
+    LgViewModel: LogViewmodel,
+    cocktailViewmodel: CocktailViewmodel
+) {
+    // Recuerda el NavController para manejar la navegación
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "blankView"){
-        composable("blankView"){
+    // Definición de las rutas de navegación
+    NavHost(navController = navController, startDestination = "blankView") {
+        // Pantalla en blanco como destino inicial
+        composable("blankView") {
             BlankView(navController = navController, LgViewModel)
         }
-        composable("principal"){
-            PrincipalScreen(navController = navController, viewmodel = viewmodel, viewmodelA, LgViewModel, cocktailViewmodel)
+        // Pantalla principal
+        composable("principal") {
+            PrincipalScreen(
+                navController = navController,
+                viewmodel = viewmodel,
+                viewmodelA,
+                LgViewModel,
+                cocktailViewmodel
+            )
         }
-        composable("meal"){
-            MealScreen(navController = navController, viewmodel = viewmodel, viewmodelA, LgViewModel, cocktailViewmodel)
+        // Pantalla de comidas
+        composable("meal") {
+            MealScreen(
+                navController = navController,
+                viewmodel = viewmodel,
+                viewmodelA,
+                LgViewModel,
+                cocktailViewmodel
+            )
         }
-        composable("mealNameScreen"){
-            MealNameScreen(navController = navController, viewmodel = viewmodel, viewmodelA, LgViewModel, cocktailViewmodel)
+        // Pantalla de nombre de comida
+        composable("mealNameScreen") {
+            MealNameScreen(
+                navController = navController,
+                viewmodel = viewmodel,
+                viewmodelA,
+                LgViewModel,
+                cocktailViewmodel
+            )
         }
-        composable("myCard"){
-            CardMeals(navController = navController, viewmodel = viewmodel, context = context, viewmodelA, LgViewModel)
+        // Pantalla de tarjetas de comidas
+        composable("myCard") {
+            CardMeals(
+                navController = navController,
+                viewmodel = viewmodel,
+                context = context,
+                viewmodelA,
+                LgViewModel
+            )
         }
-        composable("listCategory"){
+        // Pantalla de lista de categorías
+        composable("listCategory") {
             ListCategory(
                 navController = navController,
                 viewmodel = viewmodel,
@@ -66,7 +113,8 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
                 viewmodelA = viewmodelA
             )
         }
-        composable("login"){
+        // Pantalla de inicio de sesión
+        composable("login") {
             LogIn(
                 navController,
                 LgViewModel,
@@ -75,7 +123,9 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
                 cocktailViewmodel
             )
         }
-        composable("register"){
+
+        // Pantalla de registro de usuario.
+        composable("register") {
             RegisterUser(
                 navController,
                 LgViewModel,
@@ -84,7 +134,9 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
                 cocktailViewmodel
             )
         }
-        composable("listMealUser"){
+
+// Pantalla de lista de comidas del usuario.
+        composable("listMealUser") {
             ListMealUser(
                 navController = navController,
                 viewmodel = viewmodel,
@@ -94,7 +146,9 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
             )
         }
 
-        composable("cardMealUser/{idDrink}?colec={colec}",
+// Pantalla de tarjeta de comida del usuario.
+        composable(
+            route = "cardMealUser/{idDrink}?colec={colec}",
             arguments = listOf(
                 navArgument("idDrink") { type = NavType.StringType },
                 navArgument("colec") { type = NavType.StringType; defaultValue = "" }
@@ -102,7 +156,6 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
         ) {
             val idDoc = it.arguments?.getString("idDrink") ?: ""
             val colec = it.arguments?.getString("colec") ?: ""
-
 
             CardMealUser(
                 navController = navController,
@@ -114,7 +167,8 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
             )
         }
 
-        composable("createNewMeal"){
+// Pantalla de creación de nueva comida.
+        composable("createNewMeal") {
             CreateRegister(
                 navController = navController,
                 viewmodel = viewmodel,
@@ -124,8 +178,9 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
             )
         }
 
+// Pantalla de cámara.
         composable(
-            "camera/{email}?numb={numb}",
+            route = "camera/{email}?numb={numb}",
             arguments = listOf(
                 navArgument("email") { type = NavType.StringType },
                 navArgument("numb") { type = NavType.StringType; defaultValue = "" }
@@ -133,10 +188,17 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
         ) {
             val email = it.arguments?.getString("email") ?: ""
             val numb = it.arguments?.getString("numb") ?: ""
-            Camera(navController = navController, viewmodelA = viewmodelA, context = context, email = email, numb = numb)
+            Camera(
+                navController = navController,
+                viewmodelA = viewmodelA,
+                context = context,
+                email = email,
+                numb = numb
+            )
         }
 
-        composable("listMealUserCreater"){
+// Pantalla de lista de comidas creadas por el usuario.
+        composable("listMealUserCreater") {
             ListMealUserCreater(
                 navController = navController,
                 viewmodel = viewmodel,
@@ -146,28 +208,40 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
             )
         }
 
-        composable("video"){
+// Pantalla de vídeo.
+        composable("video") {
             Video(viewmodelA = viewmodelA)
         }
 
-        composable("cocktail"){
+// Pantalla de cocktails.
+        composable("cocktail") {
             CocktailScreen(navController, viewmodel, viewmodelA, LgViewModel, cocktailViewmodel)
         }
-        //ListaCocktailsApi
 
-        composable("listaCocktailsApi"){
+// Pantalla de lista de cocktails desde la API.
+        composable("listaCocktailsApi") {
             ListaCocktailsApi(navController, viewmodel, viewmodelA, LgViewModel, cocktailViewmodel)
         }
 
-        composable("listCocktailUser"){
+// Pantalla de lista de cocktails del usuario.
+        composable("listCocktailUser") {
             ListCocktailUser(navController, viewmodel, viewmodelA, LgViewModel, cocktailViewmodel)
         }
 
-        composable("cardCocktails"){
-            CardCocktails(navController = navController, viewmodel = cocktailViewmodel, context = context, viewmodelA, LgViewModel)
+        // Pantalla de tarjetas de cocktails.
+        composable("cardCocktails") {
+            CardCocktails(
+                navController = navController,
+                viewmodel = cocktailViewmodel,
+                context = context,
+                viewmodelA,
+                LgViewModel
+            )
         }
 
-        composable("cardCocktailUser/{idDrink}?colec={colec}",
+// Pantalla de tarjetas de cocktails del usuario.
+        composable(
+            route = "cardCocktailUser/{idDrink}?colec={colec}",
             arguments = listOf(
                 navArgument("idDrink") { type = NavType.StringType },
                 navArgument("colec") { type = NavType.StringType; defaultValue = "" }
@@ -175,8 +249,6 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
         ) {
             val idDoc = it.arguments?.getString("idDrink") ?: ""
             val colec = it.arguments?.getString("colec") ?: ""
-
-
             CardCocktailUser(
                 navController = navController,
                 viewmodel = cocktailViewmodel,
@@ -187,7 +259,8 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
             )
         }
 
-        composable("listCocktailUserCreater"){
+// Pantalla de lista de cocktails creados por el usuario.
+        composable("listCocktailUserCreater") {
             ListCocktailUserCreater(
                 navController = navController,
                 viewmodel = viewmodel,
@@ -197,19 +270,28 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
             )
         }
 
-
-        composable("registroM/{email}",
-            arguments= listOf(navArgument("email"){type = NavType.StringType})){
+// Pantalla de registro de usuario.
+        composable(
+            route = "registroM/{email}?numb={numb}",
+            arguments = listOf(
+                navArgument("email") { type = NavType.StringType },
+                navArgument("numb") { type = NavType.StringType; defaultValue = "" }
+            )
+        ) {
             val email = it.arguments?.getString("email") ?: ""
+            val numb = it.arguments?.getString("numb") ?: ""
             RegistroM(
                 navController = navController,
                 viewmodel = viewmodelA,
                 context = context,
-                email = email
+                email = email,
+                numb = numb
             )
         }
 
-        composable("ok"){
+
+        // Pantalla de tarea completada.
+        composable("ok") {
             OkTask(
                 viewmodel = viewmodel,
                 context = context,
@@ -218,8 +300,9 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
                 cocktailViewmodel = cocktailViewmodel
             )
         }
-        
-        composable("createNewLocal"){
+
+// Pantalla de creación de un nuevo local.
+        composable("createNewLocal") {
             CreateLocal(
                 navController = navController,
                 viewmodel = viewmodel,
@@ -229,7 +312,8 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
             )
         }
 
-        composable("listLocal"){
+// Pantalla de lista de locales.
+        composable("listLocal") {
             ListLocal(
                 navController = navController,
                 viewmodel = viewmodel,
@@ -238,12 +322,15 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
                 cocktailViewmodel = cocktailViewmodel
             )
         }
-        
-        composable("myGoogleMaps"){
+
+// Pantalla de mapas de Google personalizados.
+        composable("myGoogleMaps") {
             MyGoogleMaps(viewModel = viewmodelA, context = context)
         }
 
-        composable("cardLocalM/{idDrink}?colec={colec}",
+// Pantalla de tarjeta de local del usuario.
+        composable(
+            route = "cardLocalM/{idDrink}?colec={colec}",
             arguments = listOf(
                 navArgument("idDrink") { type = NavType.StringType },
                 navArgument("colec") { type = NavType.StringType; defaultValue = "" }
@@ -251,8 +338,6 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
         ) {
             val idDoc = it.arguments?.getString("idDrink") ?: ""
             val colec = it.arguments?.getString("colec") ?: ""
-
-
             CardLocalM(
                 navController = navController,
                 context = context,
@@ -261,6 +346,5 @@ fun NavManager(viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA:
                 colec = colec
             )
         }
-
     }
 }

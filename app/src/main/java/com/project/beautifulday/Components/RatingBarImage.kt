@@ -13,6 +13,14 @@ import com.project.beautifulday.R
 import kotlin.math.ceil
 import kotlin.math.floor
 
+/**
+ * Composable que muestra una barra de calificación utilizando imágenes para representar las estrellas.
+ *
+ * @param modifier Modificador que controla el tamaño y el diseño de la barra de calificación.
+ * @param rating Calificación actual.
+ * @param stars Número total de estrellas en la barra de calificación.
+ * @param starsColor Color de las estrellas.
+ */
 @Composable
 fun RatingBarImage(
     modifier: Modifier = Modifier.fillMaxWidth(),
@@ -20,13 +28,18 @@ fun RatingBarImage(
     stars: Int = 5,
     starsColor: Color = Color.Yellow,
 ) {
+    // Calcula el número de estrellas llenas, medias y vacías
     val filledStars = floor(rating).toInt()
     val unfilledStars = (stars - ceil(rating)).toInt()
     val halfStar = !(rating.rem(1).equals(0.0))
+
+    // Fila que contiene las estrellas de la barra de calificación
     Row(modifier = modifier) {
+        // Itera sobre las estrellas llenas y muestra los íconos correspondientes
         repeat(filledStars) {
             Icon(imageVector = Icons.Outlined.Star, contentDescription = null, tint = starsColor)
         }
+        // Muestra una estrella media si la calificación tiene parte decimal
         if (halfStar) {
             Icon(
                 painter = painterResource(R.drawable.star_half),
@@ -34,6 +47,7 @@ fun RatingBarImage(
                 tint = starsColor
             )
         }
+        // Itera sobre las estrellas vacías y muestra los íconos correspondientes
         repeat(unfilledStars) {
             Icon(
                 painter = painterResource(R.drawable.star_borde),

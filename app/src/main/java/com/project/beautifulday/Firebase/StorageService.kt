@@ -1,11 +1,7 @@
 package com.project.beautifulday.Firebase
 
-import android.content.ContentResolver
-import android.content.Context
-import android.graphics.Bitmap
-import android.media.MediaMetadataRetriever
-import android.net.Uri
 
+import android.net.Uri
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageMetadata
@@ -19,16 +15,22 @@ import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-class StorageService@Inject constructor(private val storage: FirebaseStorage) {
+/**
+ * Clase que proporciona servicios de almacenamiento utilizando Firebase Storage.
+ *
+ * @property storage Instancia de FirebaseStorage proporcionada por inyección de dependencias.
+ */
+class StorageService @Inject constructor(private val storage: FirebaseStorage) {
 
-
-    fun uploadBasicImage(uri: Uri) {
-        val reference = storage.reference.child(uri.lastPathSegment.orEmpty())
-        reference.putFile(uri)
-    }
-
+    /**
+     * Sube una imagen al almacenamiento y devuelve su URI de descarga.
+     *
+     * @param uri URI de la imagen a subir.
+     * @param email Dirección de correo electrónico asociada a la imagen.
+     * @return URI de descarga de la imagen subida.
+     */
     suspend fun uploadAndDownloadImage(uri: Uri, email: String): Uri {
-        return suspendCancellableCoroutine<Uri> { cancellableContinuation ->
+        return suspendCancellableCoroutine { cancellableContinuation ->
             val reference: StorageReference =
                 storage.reference.child("picture/$email/${uri.lastPathSegment}")
             reference.putFile(uri).addOnSuccessListener {
@@ -39,7 +41,12 @@ class StorageService@Inject constructor(private val storage: FirebaseStorage) {
         }
     }
 
-
+    /**
+     * Descarga la imagen del almacenamiento y resuelve el resultado en un URI.
+     *
+     * @param uploadTask Tarea de carga de la imagen.
+     * @param cancellableContinuation Continuación que se resolverá con el URI de descarga de la imagen.
+     */
     private fun downloadImage(
         uploadTask: UploadTask.TaskSnapshot, cancellableContinuation: CancellableContinuation<Uri>
     ) {
@@ -48,6 +55,12 @@ class StorageService@Inject constructor(private val storage: FirebaseStorage) {
             .addOnFailureListener { cancellableContinuation.resumeWithException(it) }
     }
 
+    /**
+     * Elimina una imagen del almacenamiento.
+     *
+     * @param imageName Nombre de la imagen a eliminar.
+     * @return true si la eliminación fue exitosa, false si no se pudo eliminar.
+     */
     suspend fun removeImage(imageName: String): Boolean {
         return try {
             val reference: StorageReference = storage.reference.child(imageName)
@@ -67,8 +80,12 @@ class StorageService@Inject constructor(private val storage: FirebaseStorage) {
         }
     }
 
-
-
+    /**
+     * Lee los metadatos de una imagen en el almacenamiento y devuelve su tipo MIME.
+     *
+     * @param referencia Referencia de la imagen en el almacenamiento.
+     * @return Tipo MIME de la imagen o null si no se pueden leer los metadatos.
+     */
     suspend fun readMetadata(referencia: String): String? {
         val storage = Firebase.storage
         val reference = storage.reference.child(referencia)
@@ -87,16 +104,16 @@ class StorageService@Inject constructor(private val storage: FirebaseStorage) {
         }
     }
 
-
-
-
-
+    /**
+     * Obtiene las URLs de descarga de todas las imágenes en un directorio del almacenamiento.
+     *
+     * @param dir Directorio en el almacenamiento.
+     * @return Lista de URI de descarga de las imágenes.
+     */
     suspend fun getAllImages(dir: String): List<Uri>{
         val reference: StorageReference = storage.reference.child("picture/$dir")
 
         val result: List<Uri> = reference.listAll().await().items.map{it.downloadUrl.await()}
         return result
     }
-
-
 }

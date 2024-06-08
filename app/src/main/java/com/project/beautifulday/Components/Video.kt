@@ -17,13 +17,22 @@ import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 
+/**
+ * Composable para reproducir videos utilizando ExoPlayer.
+ *
+ * @param viewmodelA ViewModel de la aplicación que contiene la URI del video a reproducir.
+ */
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 fun Video(viewmodelA: ViewmodelAplication) {
+    // URI del video
     val url = viewmodelA.uriVideo
+    // Crear el reproductor ExoPlayer
     val mediaPlayer = ExoPlayer.Builder(LocalContext.current).build()
+    // Crear el objeto MediaItem a partir de la URI del video
     val media = url?.let { MediaItem.fromUri(it) }
 
+    // LaunchedEffect para preparar y configurar el reproductor cuando cambia la URI del video
     LaunchedEffect(media) {
         if (media != null) {
             mediaPlayer.setMediaItem(media)
@@ -33,12 +42,14 @@ fun Video(viewmodelA: ViewmodelAplication) {
         mediaPlayer.prepare()
     }
 
+    // DisposableEffect para liberar los recursos del reproductor cuando el composable se desecha
     DisposableEffect(Unit) {
         onDispose {
             mediaPlayer.release()
         }
     }
 
+    // AndroidView que muestra el reproductor de video
     AndroidView(
         factory = { ctx ->
             PlayerView(ctx).apply {
@@ -51,3 +62,4 @@ fun Video(viewmodelA: ViewmodelAplication) {
             .fillMaxHeight()
     )
 }
+
