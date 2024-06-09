@@ -1,6 +1,5 @@
 package com.project.beautifulday.Components
 
-import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,7 +22,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import com.project.beautifulday.ViewModels.CocktailViewmodel
-import com.project.beautifulday.ViewModels.LogViewmodel
 import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.R
@@ -32,17 +30,13 @@ import com.project.beautifulday.R
  * Composable que muestra un mensaje de confirmación cuando se ha completado una tarea de registro.
  *
  * @param viewmodel ViewModel asociado a la tarea de registro.
- * @param context Actividad componente.
  * @param viewmodelA ViewModel de la aplicación.
- * @param LgViewModel ViewModel para el inicio de sesión.
  * @param cocktailViewmodel ViewModel asociado a las tareas de cócteles.
  */
 @Composable
 fun OkTask(
     viewmodel: MealViewmodel,
-    context: ComponentActivity,
     viewmodelA: ViewmodelAplication,
-    LgViewModel: LogViewmodel,
     cocktailViewmodel: CocktailViewmodel
 ) {
     // Observa el progreso de la tarea de registro de comidas

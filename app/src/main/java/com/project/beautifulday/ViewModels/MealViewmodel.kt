@@ -140,9 +140,6 @@ class MealViewmodel @Inject constructor(
     var averageRating by mutableStateOf(0.0)
         private set
 
-    var average by mutableStateOf(0.0)
-        private set
-
     private val _progress = MutableLiveData(true)
     val progress: LiveData<Boolean> = _progress
 
@@ -176,16 +173,7 @@ class MealViewmodel @Inject constructor(
         }
     }
 
-    /**
-     * Obtiene las categorías de comida por nombre de categoría.
-     *
-     * @param category Nombre de la categoría a buscar.
-     */
-    fun getMealCategory(category: String) {
-        viewModelScope.launch {
-            _categoryData.value = useCaseListCategory(category).categories ?: mutableListOf()
-        }
-    }
+
 
     /**
      * Obtiene una lista de todas las categorías de comida.
@@ -725,13 +713,7 @@ class MealViewmodel @Inject constructor(
         showOutLineText = !result
     }
 
-    /**
-     * Cambia el estado de la acción de traducción.
-     * @param value Nuevo estado de la acción de traducción.
-     */
-    fun changeActionTranslate(value: Boolean) {
-        actionTranslate = value
-    }
+
 
     /**
      * Cambia la traducción de la categoría.

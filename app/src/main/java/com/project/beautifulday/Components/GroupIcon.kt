@@ -77,6 +77,7 @@ fun GroupIcon(
                     .height(40.dp)
                     .width(40.dp)
                     .clickable {
+                        viewmodelA.clean()
                         viewmodelA.changeScreen("cocktail")
                         navController.navigate("cocktail")
                     }
@@ -110,6 +111,7 @@ fun GroupIcon(
                     .height(40.dp)
                     .width(40.dp)
                     .clickable {
+                        viewmodelA.clean()
                         viewmodelA.changeScreen("cocktail")
                         navController.navigate("cocktail")
                     }
@@ -138,6 +140,7 @@ fun GroupIcon(
                     .height(40.dp)
                     .width(40.dp)
                     .clickable {
+                        viewmodelA.clean()
                         viewmodelA.changeScreen("meal")
                         navController.navigate("meal")
                     }
@@ -171,6 +174,7 @@ fun GroupIcon(
                     .height(40.dp)
                     .width(40.dp)
                     .clickable {
+                        viewmodelA.clean()
                         viewmodelA.changeScreen("meal")
                         navController.navigate("meal")
                     }

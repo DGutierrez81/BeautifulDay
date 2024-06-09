@@ -34,8 +34,8 @@ import com.project.beautifulday.Components.MyGoogleMaps
 import com.project.beautifulday.Components.OkTask
 import com.project.beautifulday.Meal.ui.CardMeals
 import com.project.beautifulday.Components.Video
-import com.project.beautifulday.Meal.ui.CardLocalM
-import com.project.beautifulday.Meal.ui.ListLocal
+import com.project.beautifulday.Components.CardLocalM
+import com.project.beautifulday.Components.ListLocal
 import com.project.beautifulday.ViewModels.CocktailViewmodel
 
 /**
@@ -294,9 +294,7 @@ fun NavManager(
         composable("ok") {
             OkTask(
                 viewmodel = viewmodel,
-                context = context,
                 viewmodelA = viewmodelA,
-                LgViewModel = LgViewModel,
                 cocktailViewmodel = cocktailViewmodel
             )
         }
