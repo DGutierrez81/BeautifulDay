@@ -209,9 +209,22 @@ fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel,
 
                 }
                 if (email.equals(cocktail.emailUser)) {
+                    Text(
+                        text = "Modificar",
+                        modifier = Modifier
+                            .padding(2.dp)
+                            .clickable {
+                                viewmodelA.changeSlide(slide)
+                                viewmodel.changeUpdateCocktail(true)
+                                viewmodel.changeIdoc(Idoc)
+                                navController.navigate("createNewMeal")
+                            },
+                        color = colorResource(id = R.color.paynesGray)
+                    )
                     Text(text = "Borrar", modifier = Modifier
                         .padding(2.dp)
                         .clickable {
+                            viewmodelA.changeMessConfirm("Receta borrada correctamente")
                             viewmodelA.changeAlert(!showAlert)
                         },
                         color = colorResource(id = R.color.paynesGray)
@@ -246,8 +259,8 @@ fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel,
                     text = "Atras", modifier = Modifier
                         .padding(2.dp)
                         .clickable {
-                            viewmodelA.clean()
                             navController.popBackStack()
+                            viewmodelA.clean()
                         },
                     color = colorResource(id = R.color.paynesGray)
                 )
@@ -256,7 +269,7 @@ fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel,
     }
 
     CreateDialog(showAlert = showAlert, tittle = "Aviso", text = "¿Desea borrar el registro?", onDismiss = { viewmodelA.changeAlert(!showAlert) }) {
-        viewmodelA.deleteRegister(Idoc, colec) { navController.navigate("cocktail") }
+        viewmodelA.deleteRegister(Idoc, colec, {navController.navigate("ok")}) { navController.navigate("cocktail") }
         viewmodelA.changeSlide(slide)
         viewmodelA.changeAlert(!showAlert)
     }

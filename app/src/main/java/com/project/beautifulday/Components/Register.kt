@@ -1,5 +1,6 @@
 package com.project.beautifulday.Components
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -40,7 +41,10 @@ import com.project.beautifulday.R
  * @param LgViewmodel ViewModel que contiene la lógica de negocio y los estados relacionados con el registro de usuario.
  */
 @Composable
-fun Register(navController: NavController, LgViewmodel: LogViewmodel){
+fun Register(navController: NavController, LgViewmodel: LogViewmodel, context: ComponentActivity){
+
+    val updateUser = LgViewmodel.updateUsers
+    val idDoc = LgViewmodel.user.idDocument
 
     // Gestor de foco para manejar el enfoque de los campos de texto
     val focusManager = LocalFocusManager.current
@@ -108,7 +112,15 @@ fun Register(navController: NavController, LgViewmodel: LogViewmodel){
                 imeAction = ImeAction.Send
             ),
             keyboardActions = KeyboardActions(onSend = {
-                LgViewmodel.creauteUser(LgViewmodel.email, LgViewmodel.password) {navController.navigate("principal")}
+                if(updateUser){
+                    LgViewmodel.changeUser(LgViewmodel.userName, "userName")
+                    LgViewmodel.changeUser(LgViewmodel.email, "email")
+                    LgViewmodel.changeUser(LgViewmodel.password, "password")
+                    LgViewmodel.changeUpdateUser(false)
+                    LgViewmodel.updateUser(idDoc?: "", LgViewmodel.password,context) { navController.navigate("principal") }
+                }else{
+                    LgViewmodel.creauteUser(LgViewmodel.email, LgViewmodel.password) { navController.navigate("principal") }
+                }
                 focusManager.clearFocus()
             }),
             trailingIcon = {

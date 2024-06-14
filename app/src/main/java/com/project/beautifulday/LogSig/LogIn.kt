@@ -1,6 +1,7 @@
 package com.project.beautifulday.LogSig
 
 
+import androidx.activity.ComponentActivity
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -31,7 +32,8 @@ fun LogIn(
     loginVM: LogViewmodel,
     viewmodel: MealViewmodel,
     viewmodelA: ViewmodelAplication,
-    cocktailViewmodel: CocktailViewmodel
+    cocktailViewmodel: CocktailViewmodel,
+    context: ComponentActivity
 ) {
     // Collecting state values from the ViewModels
     val meals by viewmodel.mealsData.collectAsState()
@@ -62,12 +64,14 @@ fun LogIn(
                 navController = navController,
                 slide = slide,
                 viewmodelA = viewmodelA,
-                showDialog = showDialog
+                logViewmodel = loginVM,
+                showDialog = showDialog,
+                context = context
             )
         },
         bottomBar = {
             // Customized bottom bar
-            MyBottomBar(order = 6, navController, loginVM, viewmodelA)
+            MyBottomBar(order = 6, navController, loginVM, viewmodelA, context)
         }
     ) { innerPadding ->
         // Main content of the login screen
@@ -80,7 +84,8 @@ fun LogIn(
             showOutLinedText = false,
             showListMeals = false,
             meals = meals,
-            showViewCenter = 4
+            showViewCenter = 4,
+            context = context
         )
     }
 }

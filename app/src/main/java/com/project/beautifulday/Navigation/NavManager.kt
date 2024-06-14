@@ -71,7 +71,8 @@ fun NavManager(
                 viewmodel = viewmodel,
                 viewmodelA,
                 LgViewModel,
-                cocktailViewmodel
+                cocktailViewmodel,
+                context
             )
         }
         // Pantalla de comidas
@@ -81,7 +82,8 @@ fun NavManager(
                 viewmodel = viewmodel,
                 viewmodelA,
                 LgViewModel,
-                cocktailViewmodel
+                cocktailViewmodel,
+                context
             )
         }
         // Pantalla de nombre de comida
@@ -91,7 +93,8 @@ fun NavManager(
                 viewmodel = viewmodel,
                 viewmodelA,
                 LgViewModel,
-                cocktailViewmodel
+                cocktailViewmodel,
+                context
             )
         }
         // Pantalla de tarjetas de comidas
@@ -120,7 +123,8 @@ fun NavManager(
                 LgViewModel,
                 viewmodel,
                 viewmodelA,
-                cocktailViewmodel
+                cocktailViewmodel,
+                context
             )
         }
 
@@ -131,7 +135,8 @@ fun NavManager(
                 LgViewModel,
                 viewmodel,
                 viewmodelA,
-                cocktailViewmodel
+                cocktailViewmodel,
+                context
             )
         }
 
@@ -142,7 +147,8 @@ fun NavManager(
                 viewmodel = viewmodel,
                 viewmodelA = viewmodelA,
                 LgViewModel = LgViewModel,
-                cocktailViewmodel = cocktailViewmodel
+                cocktailViewmodel = cocktailViewmodel,
+                context = context
             )
         }
 
@@ -204,7 +210,8 @@ fun NavManager(
                 viewmodel = viewmodel,
                 viewmodelA = viewmodelA,
                 LgViewModel = LgViewModel,
-                cocktailViewmodel = cocktailViewmodel
+                cocktailViewmodel = cocktailViewmodel,
+                context = context
             )
         }
 
@@ -215,17 +222,17 @@ fun NavManager(
 
 // Pantalla de cocktails.
         composable("cocktail") {
-            CocktailScreen(navController, viewmodel, viewmodelA, LgViewModel, cocktailViewmodel)
+            CocktailScreen(navController, viewmodel, viewmodelA, LgViewModel, cocktailViewmodel, context)
         }
 
 // Pantalla de lista de cocktails desde la API.
         composable("listaCocktailsApi") {
-            ListaCocktailsApi(navController, viewmodel, viewmodelA, LgViewModel, cocktailViewmodel)
+            ListaCocktailsApi(navController, viewmodel, viewmodelA, LgViewModel, cocktailViewmodel, context)
         }
 
 // Pantalla de lista de cocktails del usuario.
         composable("listCocktailUser") {
-            ListCocktailUser(navController, viewmodel, viewmodelA, LgViewModel, cocktailViewmodel)
+            ListCocktailUser(navController, viewmodel, viewmodelA, LgViewModel, cocktailViewmodel, context)
         }
 
         // Pantalla de tarjetas de cocktails.
@@ -266,7 +273,8 @@ fun NavManager(
                 viewmodel = viewmodel,
                 viewmodelA = viewmodelA,
                 LgViewModel = LgViewModel,
-                cocktailViewmodel = cocktailViewmodel
+                cocktailViewmodel = cocktailViewmodel,
+                context = context
             )
         }
 
@@ -317,7 +325,8 @@ fun NavManager(
                 viewmodel = viewmodel,
                 viewmodelA = viewmodelA,
                 LgViewModel = LgViewModel,
-                cocktailViewmodel = cocktailViewmodel
+                cocktailViewmodel = cocktailViewmodel,
+                context = context
             )
         }
 

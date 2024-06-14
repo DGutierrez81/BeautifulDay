@@ -1,5 +1,6 @@
 package com.project.beautifulday.Components
 
+import androidx.activity.ComponentActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,6 +26,7 @@ import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.R
 import com.project.beautifulday.androidsmall1.jotiOne
 import com.project.beautifulday.ViewModels.CocktailViewmodel
+import com.project.beautifulday.ViewModels.LogViewmodel
 
 
 /**
@@ -52,9 +54,12 @@ fun MyTopBar(
     navController: NavController,
     slide: Boolean,
     viewmodelA: ViewmodelAplication,
-    showDialog: Boolean
+    logViewmodel: LogViewmodel,
+    showDialog: Boolean,
+    context: ComponentActivity
 ){
     val screen = viewmodelA.screen
+    val idDoc = logViewmodel.user.idDocument
     if(showMenu){
         Column(
             modifier = Modifier
@@ -80,6 +85,7 @@ fun MyTopBar(
                             fontFamily = jotiOne,
                             color = colorResource(id = R.color.paynesGray),
                             modifier = Modifier.clickable {
+                                viewmodelA.changeRandom(true)
                                 viewmodel.getRandom()
                                 navController.navigate("myCard")
                             }
@@ -132,6 +138,53 @@ fun MyTopBar(
 
                             Mytext(text = "Donde comer") { navController.navigate("listLocal")  }
 
+                            Spacer(modifier = Modifier.padding(20.dp))
+
+                            Column {
+                                Mytext(text = "Gestión usuario") { viewmodelA.changeSlide(slide)  }
+
+                                AnimatedVisibility(
+                                    visible = slide
+                                ) {
+                                    Column(
+                                        modifier = Modifier
+                                            .padding(3.dp)
+                                            .background(colorResource(id = R.color.electricBlue))
+                                    ) {
+                                        Mytext(text = "Modificar") {
+                                            logViewmodel.clean()
+                                            logViewmodel.fetchUser()
+                                            logViewmodel.changeUpdateUser(true)
+                                            navController.navigate("register")
+                                            viewmodelA.clean()
+                                        }
+
+                                        Mytext(text = "Borrar") {
+                                            viewmodelA.changeMessConfirm("Usuario eliminado correctamente")
+                                            logViewmodel.fetchUser()
+                                            viewmodelA.changeAlert(true)
+                                            viewmodelA.clean()
+                                            /*
+                                            viewmodelA.deleteRegister(idDoc?:"", "Users", {navController.navigate("ok")}){}
+                                            logViewmodel.deleteUser(context)
+                                            logViewmodel.logOut{
+                                                navController.navigate("principal") {
+                                                    // Limpia la pila de navegación hasta el destino inicial
+                                                    popUpTo(navController.graph.startDestinationId) {
+                                                        inclusive = true
+                                                    }
+                                                    // Esto asegura que la pantalla principal sea la única en la pila de backstack
+                                                    launchSingleTop = true
+                                                }
+                                            }
+                                            viewmodelA.changeSlide(slide)
+
+                                             */
+                                        }
+                                    }
+                                }
+                            }
+
                         }
                     }else {
 
@@ -141,6 +194,7 @@ fun MyTopBar(
                             fontFamily = jotiOne,
                             color = colorResource(id = R.color.paynesGray),
                             modifier = Modifier.clickable {
+                                viewmodelA.changeRandom(true)
                                 cocktailViewmodel.getRandom()
                                 navController.navigate("cardCocktails")
                             }
@@ -204,6 +258,53 @@ fun MyTopBar(
                             Spacer(modifier = Modifier.padding(20.dp))
 
                             Mytext(text = "Donde beber") { navController.navigate("listLocal")  }
+
+                            Spacer(modifier = Modifier.padding(20.dp))
+
+                            Column {
+                                Mytext(text = "Gestión usuario") { viewmodelA.changeSlide(slide)  }
+
+                                AnimatedVisibility(
+                                    visible = slide
+                                ) {
+                                    Column(
+                                        modifier = Modifier
+                                            .padding(3.dp)
+                                            .background(colorResource(id = R.color.electricBlue))
+                                    ) {
+                                        Mytext(text = "Modificar") {
+                                            logViewmodel.clean()
+                                            logViewmodel.fetchUser()
+                                            logViewmodel.changeUpdateUser(true)
+                                            navController.navigate("register")
+                                            viewmodelA.clean()
+                                        }
+
+                                        Mytext(text = "Borrar") {
+                                            viewmodelA.changeMessConfirm("Usuario eliminado correctamente")
+                                            logViewmodel.fetchUser()
+                                            viewmodelA.changeAlert(true)
+                                            viewmodelA.clean()
+                                            /*
+                                            viewmodelA.deleteRegister(idDoc?:"", "Users"){}
+                                            logViewmodel.deleteUser(context)
+                                            logViewmodel.logOut{
+                                                navController.navigate("principal") {
+                                                    // Limpia la pila de navegación hasta el destino inicial
+                                                    popUpTo(navController.graph.startDestinationId) {
+                                                        inclusive = true
+                                                    }
+                                                    // Esto asegura que la pantalla principal sea la única en la pila de backstack
+                                                    launchSingleTop = true
+                                                }
+                                            }
+                                            viewmodelA.changeSlide(slide)
+
+                                             */
+                                        }
+                                    }
+                                }
+                            }
 
                         }
                     }

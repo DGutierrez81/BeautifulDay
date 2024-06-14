@@ -1,5 +1,6 @@
 package com.project.beautifulday.ViewModels
 
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -93,6 +94,12 @@ class CocktailViewmodel@Inject constructor(
         private set
 
     var nameCocktail by mutableStateOf("")
+        private set
+
+    var IdDoc by mutableStateOf("")
+        private set
+
+    var updateCocktails by mutableStateOf(false)
         private set
 
     var cocktailList by mutableStateOf(mutableListOf<drinkState>())
@@ -571,6 +578,20 @@ class CocktailViewmodel@Inject constructor(
         }
     }
 
+    fun updateCocktail(iDoc: String, onSuccess: () -> Unit) {
+        viewModelScope.launch {
+            val result = withContext(Dispatchers.IO) {
+                Tasks.await(firestore.updateCocktail("Create cocktail", iDoc, cocktail))
+            }
+            if (result) {
+                onSuccess()
+            } else {
+                Log.d("ERROR", "Hubo un error al guardar el registro")
+            }
+        }
+        cleanVotes()
+    }
+
     /**
      * Actualiza la puntuación y el número de votos de un cóctel en Firestore.
      *
@@ -589,6 +610,16 @@ class CocktailViewmodel@Inject constructor(
             }
         }
         cleanVotes()
+    }
+
+    fun changeCocktail(value: String, text: String) {
+        when (text) {
+            "strDrink" -> if(value != "") cocktail = cocktail.copy(strDrink = value)
+            "strInstructions" -> if(value != "") cocktail = cocktail.copy(strInstructions = value)
+            "strList" -> if(value != "") cocktail = cocktail.copy(strList = value.split(",", " ").toMutableList())
+            "strDrinkThumb" -> if(value != "") cocktail = cocktail.copy(strDrinkThumb = value)
+            "strmedia" -> if(value != "") cocktail = cocktail.copy(strmedia = value)
+        }
     }
 
     /**
@@ -664,6 +695,14 @@ class CocktailViewmodel@Inject constructor(
      */
     fun clean() {
         nameCocktail = ""
+    }
+
+    fun changeIdoc(result: String){
+        IdDoc = result
+    }
+
+    fun changeUpdateCocktail(result: Boolean){
+        updateCocktails = result
     }
 
     /**

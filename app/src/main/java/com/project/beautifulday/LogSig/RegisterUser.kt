@@ -1,5 +1,6 @@
 package com.project.beautifulday.LogSig
 
+import androidx.activity.ComponentActivity
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -30,7 +31,8 @@ fun RegisterUser(
     loginVM: LogViewmodel,
     viewmodel: MealViewmodel,
     viewmodelA: ViewmodelAplication,
-    cocktailViewmodel: CocktailViewmodel
+    cocktailViewmodel: CocktailViewmodel,
+    context: ComponentActivity
 ) {
     // Collecting state values from the ViewModels
     val meals by viewmodel.mealsData.collectAsState()
@@ -61,12 +63,14 @@ fun RegisterUser(
                 navController = navController,
                 slide = slide,
                 viewmodelA = viewmodelA,
-                showDialog = showDialog
+                logViewmodel = loginVM,
+                showDialog = showDialog,
+                context = context
             )
         },
         bottomBar = {
             // Customized bottom bar
-            MyBottomBar(order = 7, navController, loginVM, viewmodelA)
+            MyBottomBar(order = 7, navController, loginVM, viewmodelA, context)
         }
     ) { innerPadding ->
         // Main content of the user registration screen
@@ -79,7 +83,8 @@ fun RegisterUser(
             showOutLinedText = false,
             showListMeals = false,
             meals = meals,
-            showViewCenter = 5
+            showViewCenter = 5,
+            context = context
         )
     }
 }

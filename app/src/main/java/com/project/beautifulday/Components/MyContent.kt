@@ -1,5 +1,6 @@
 package com.project.beautifulday.Components
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -60,7 +61,8 @@ fun MyContent(
     showOutLinedText: Boolean,
     showListMeals: Boolean,
     meals: List<MealState>,
-    showViewCenter: Int
+    showViewCenter: Int,
+    context: ComponentActivity
 ) {
     Box(
         modifier = Modifier
@@ -97,7 +99,7 @@ fun MyContent(
                 contentAlignment = Alignment.BottomCenter
             ) {
                 Column {
-                    ViewCenter(showCenter = showViewCenter, navController = navController, viewmodelA, LgViewModel = LgViewModel)
+                    ViewCenter(showCenter = showViewCenter, navController = navController, viewmodelA, LgViewModel = LgViewModel, context)
                     // Texto "DAY"
                     Box(
                         modifier = Modifier

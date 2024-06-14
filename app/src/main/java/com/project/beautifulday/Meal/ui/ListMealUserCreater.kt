@@ -1,5 +1,6 @@
 package com.project.beautifulday.Meal.ui
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.project.beautifulday.Components.BusquedaNombre
+import com.project.beautifulday.Components.CreateDialog
 import com.project.beautifulday.Components.DialogCategory
 import com.project.beautifulday.Components.MyBottomBar
 import com.project.beautifulday.Components.MyTopBar
@@ -51,7 +53,8 @@ fun ListMealUserCreater(
     viewmodel: MealViewmodel,
     viewmodelA: ViewmodelAplication,
     LgViewModel: LogViewmodel,
-    cocktailViewmodel: CocktailViewmodel
+    cocktailViewmodel: CocktailViewmodel,
+    context: ComponentActivity
 ){
     // Observa y obtiene los datos de la comida actual
     val mealData by viewmodel.mealData.collectAsState()
@@ -68,6 +71,9 @@ fun ListMealUserCreater(
     // Observa y obtiene el estado actual del progreso
     val progrees by viewmodel.progress.observeAsState(true)
     val screen = viewmodelA.screen
+    val iDoc = LgViewModel.user.idDocument
+
+    val showAlert = viewmodelA.showAlert
 
     // Realiza acciones al lanzar el efecto
     LaunchedEffect(Unit){
@@ -99,14 +105,36 @@ fun ListMealUserCreater(
                 navController = navController,
                 slide = slide,
                 viewmodelA = viewmodelA,
-                showDialog = showDialog
+                logViewmodel = LgViewModel,
+                showDialog = showDialog,
+                context = context
             )
         },
         bottomBar = {
             // Muestra la barra de navegación inferior personalizada
-            MyBottomBar(order = 3, navController = navController, LgViewModel = LgViewModel, viewmodelA)
+            MyBottomBar(order = 3, navController = navController, LgViewModel = LgViewModel, viewmodelA, context)
         }
     ) {innerPadding ->
+        CreateDialog(showAlert = showAlert, tittle = "Aviso", text = "¿Desea borrar el registro?", onDismiss = { viewmodelA.changeAlert(!showAlert) }) {
+            viewmodelA.deleteRegister(iDoc?:"", "Users",{navController.navigate("ok")}) {
+                LgViewModel.deleteUser(context)
+                LgViewModel.changeLogin(false)
+                LgViewModel.logOut{
+                    navController.navigate("principal") {
+                        // Limpia la pila de navegación hasta el destino inicial
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = true
+                        }
+                        // Esto asegura que la pantalla principal sea la única en la pila de backstack
+                        launchSingleTop = true
+                    }
+                }
+            }
+            viewmodelA.changeSlide(slide)
+            viewmodelA.changeAlert(!showAlert)
+
+        }
+
         // Contenido principal del Scaffold
         Box(
             modifier = Modifier
@@ -140,7 +168,8 @@ fun ListMealUserCreater(
                     navController = navController,
                     viewmodelA = viewmodelA,
                     LgViewModel = LgViewModel,
-                    showCenter = 2
+                    showCenter = 2,
+                    context = context
                 )
                 // Muestra la lista de comidas creadas por el usuario
                 Box(modifier = Modifier.padding(start = 30.dp, end = 30.dp)){

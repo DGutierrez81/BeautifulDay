@@ -54,7 +54,11 @@ fun CreateRegister(navController: NavController, viewmodel: MealViewmodel, viewm
     val ingrediente = viewmodelA.ingrediente
     val focusRequester = viewmodelA.focusRequest
     val screen = viewmodelA.screen
+    val updateMeal = viewmodel.updateMeal
+    val updateCocktails = cocktailViewmodel.updateCocktails
     val showCreateAlert = viewmodelA.showCreateAlert
+    val idDocMeal = viewmodel.IdDoc
+    val iDocCocktail = cocktailViewmodel.IdDoc
     val intentGalleryLancher = viewmodelA.intentGalleryLaucher()
     val intentGalleryLancheVideo = viewmodelA.intentGalleryLaucherVideo()
     val focusManager = LocalFocusManager.current
@@ -192,16 +196,41 @@ fun CreateRegister(navController: NavController, viewmodel: MealViewmodel, viewm
                     Text(text = "Enviar datos", modifier = Modifier
                         .padding(10.dp)
                         .clickable {
-                            createAlert(
-                                navController,
-                                viewmodelA,
-                                viewmodel,
-                                cocktailViewmodel,
-                                user.userName?: "",
-                                context
-                            )
+                            viewmodelA.changeMessConfirm("Receta guardada correctamente")
+                            if (updateMeal) {
+                                viewmodel.changeMeal(name, "strMeal")
+                                viewmodel.changeMeal(descripcion, "strInstructions")
+                                viewmodel.changeMeal(ingrediente, "strIngredients")
+                                viewmodel.changeMeal(foto, "strMealThumb")
+                                viewmodel.changeMeal(video, "strYoutube")
+                                viewmodel.updateMeal(idDocMeal){navController.navigate("listMealUserCreater")}
+                                viewmodel.changeUpdateMeal(false)
+                                viewmodelA.clean()
+                                viewmodel.changeIdoc("")
+
+                            }else if (updateCocktails){
+                                cocktailViewmodel.changeCocktail(name, "strDrink")
+                                cocktailViewmodel.changeCocktail(descripcion, "strInstructions")
+                                cocktailViewmodel.changeCocktail(ingrediente, "strList")
+                                cocktailViewmodel.changeCocktail(foto, "strDrinkThumb")
+                                cocktailViewmodel.changeCocktail(video, "strmedia")
+                                cocktailViewmodel.updateCocktail(iDocCocktail){navController.navigate("listCocktailUserCreater")}
+                                cocktailViewmodel.changeUpdateCocktail(false)
+                                viewmodelA.clean()
+                                cocktailViewmodel.changeIdoc("")
+                            } else {
+                                createAlert(
+                                    navController,
+                                    viewmodelA,
+                                    viewmodel,
+                                    cocktailViewmodel,
+                                    user.userName ?: "",
+                                    context
+                                )
+                            }
                         },
                         color = colorResource(id = R.color.paynesGray))
+
                 }
             }
         }

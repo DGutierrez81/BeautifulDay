@@ -129,6 +129,9 @@ class ViewmodelAplication @Inject constructor(
     var name by mutableStateOf("")
         private set
 
+    var random by mutableStateOf(false)
+        private set
+
     var pais by mutableStateOf("")
         private set
     var ciudad by mutableStateOf("")
@@ -178,8 +181,17 @@ class ViewmodelAplication @Inject constructor(
     var local by mutableStateOf(Local())
         private set
 
+    var coleccion by mutableStateOf("")
+        private set
+
     private val _progrees = MutableLiveData(true)
     val progrees: LiveData<Boolean> = _progrees
+
+    private val _progressCreated = MutableLiveData(true)
+    val progressCreated: LiveData<Boolean> = _progressCreated
+
+    var messConfirm by mutableStateOf("")
+        private set
 
     private val _localData = MutableStateFlow<List<Local>>(emptyList())
     val localData: StateFlow<List<Local>> = _localData
@@ -249,9 +261,11 @@ class ViewmodelAplication @Inject constructor(
 
         languageTranslator.translate(text)
             .addOnSuccessListener { translatedText ->
+                Log.d("ViewmodelAplication", "Traducción exitosa: $translatedText")
                 _state.value = state.value.copy(translatedText = translatedText)
             }
-            .addOnFailureListener {
+            .addOnFailureListener { exception ->
+                Log.e("ViewmodelAplication", "Error en la traducción: ${exception.message}")
                 downloadModelIfNotAviable(languageTranslator, context)
             }
     }
@@ -263,12 +277,17 @@ class ViewmodelAplication @Inject constructor(
 
         languageTranslator.downloadModelIfNeeded(conditions)
             .addOnSuccessListener {
+                Log.d("ViewmodelAplication", "Modelo descargado con éxito")
                 _state.value = state.value.copy(isButtonEnabled = true)
             }
-            .addOnFailureListener {
-                Toast.makeText(context, "No se ha podidio traducir", Toast.LENGTH_SHORT).show()
+            .addOnFailureListener { exception ->
+                Log.e("ViewmodelAplication", "Error al descargar el modelo: ${exception.message}")
+                Toast.makeText(context, "No se ha podido traducir", Toast.LENGTH_SHORT).show()
             }
+
     }
+
+
 
     // Método para cargar y obtener la URI de una imagen
     fun uploadAndGetImage(uri: Uri, email: String, onSuccessDownload: (Uri) -> Unit) {
@@ -429,18 +448,24 @@ class ViewmodelAplication @Inject constructor(
 
 
     // Método para eliminar un registro en Firestore
-    fun deleteRegister(documento: String, colec: String, onSuccess: () -> Unit) {
+    fun deleteRegister(documento: String, colec: String, onOk: () -> Unit,onSuccess: () -> Unit) {
+        _progressCreated.value = true
         viewModelScope.launch {
             try {
                 val result = withContext(Dispatchers.IO) { Tasks.await(firestore.deleteRegister(colec, documento)) }
                 if (result) {
+                    onOk()
+                    delay(3000)
+                    _progressCreated.value = false
+                    delay(3000)
                     onSuccess()
                     Log.d("BIEN", "ESTA TODO BIEN")
                 } else {
+                    _progressCreated.value = false
                     Log.d("ERROR", "Hubo un error al guardar el registro")
                 }
             } catch (e: Exception) {
-                Log.d("Error al borrar cocktail", "Error ${e.localizedMessage}")
+                Log.d("Error al borrar registro", "Error ${e.localizedMessage}")
             }
         }
     }
@@ -456,7 +481,7 @@ class ViewmodelAplication @Inject constructor(
         ubicacion: LatLng?
     ){
         val email = authService.email()
-        local = Local(nombreLocal = nombre, emailUser= email,fotoLocal = fotoLocal,  comentario = comentario, pais = pais, ciudad = ciudad, web = web, nameUser = nameUser, latitud = ubicacion!!.latitude, longitud = ubicacion.longitude)
+        local = Local(nombreLocal = nombre, emailUser= email,fotoLocal = fotoLocal,  comentario = comentario, pais = pais, ciudad = ciudad, web = web, nameUser = nameUser, latitud = ubicacion?.latitude, longitud = ubicacion?.longitude)
     }
 
 
@@ -600,6 +625,10 @@ class ViewmodelAplication @Inject constructor(
         _actionTranslate.value = value
     }
 
+    fun changeMessConfirm(result: String){
+        messConfirm = result
+    }
+
     fun calculateAverage(votes: Int, valueVote: Double): Double = valueVote/votes
 
     fun changeSlide(value: Boolean) {
@@ -638,6 +667,9 @@ class ViewmodelAplication @Inject constructor(
         name = result
     }
 
+    fun changeColeccion(result: String){
+        coleccion = result
+    }
     fun changePais(result: String) {
         pais = result
     }
@@ -667,6 +699,12 @@ class ViewmodelAplication @Inject constructor(
         screen = result
     }
 
+    var IdDoc by mutableStateOf("")
+        private set
+
+    var updateLocal by mutableStateOf(false)
+        private set
+
     // Método para obtener el email del usuario autenticado
     fun getEmail() {
         email = authService.email().toString()
@@ -686,6 +724,20 @@ class ViewmodelAplication @Inject constructor(
         }
     }
 
+    fun updateLocal(iDoc: String, colec: String, onSuccess: () -> Unit) {
+        viewModelScope.launch {
+            val result = withContext(Dispatchers.IO) {
+                Tasks.await(firestore.updateLocal(colec, iDoc, local))
+            }
+            if (result) {
+                onSuccess()
+            } else {
+                Log.d("ERROR", "Hubo un error al guardar el registro")
+            }
+        }
+        cleanVotes()
+    }
+
     fun updateStars(colec: String, iDoc: String, onSuccess: () -> Unit){
         viewModelScope.launch {
             val result = withContext(Dispatchers.IO) {
@@ -699,6 +751,19 @@ class ViewmodelAplication @Inject constructor(
             }
         }
         cleanVotes()
+    }
+
+    fun changeUpdateLocal(value: String, text: String) {
+        when (text) {
+            "nombreLocal" -> if(value != "") local = local.copy(nombreLocal = value)
+            "comentario" -> if(value != "") local = local.copy(comentario = value)
+            "web" -> if(value != "") local = local.copy(web = value)
+            "pais" -> if(value != "") local = local.copy(pais = value)
+            "ciudad" -> if(value != "") local = local.copy(ciudad = value)
+            "fotoLocal" -> if(value != "") local = local.copy(fotoLocal = value)
+            "latitud" -> if(value != "null") local = local.copy(latitud = value.toDouble())
+            "longitud" -> if(value != "null") local = local.copy(longitud = value.toDouble())
+        }
     }
 
     fun changeCurrentRating(current: Double){
@@ -723,6 +788,18 @@ class ViewmodelAplication @Inject constructor(
         currentRating = 0.0
     }
 
+    fun changeRandom(result: Boolean){
+        random = result
+    }
+
+    fun changeIdoc(result: String){
+        IdDoc = result
+    }
+
+    fun changeUpdateLocals(result: Boolean){
+        updateLocal = result
+    }
+
     // Método para limpiar todos los estados
     fun clean() {
         _slide.value = false
@@ -735,6 +812,7 @@ class ViewmodelAplication @Inject constructor(
         uriVideo = ""
         ingrediente = ""
         name = ""
+        random = false
     }
 }
 

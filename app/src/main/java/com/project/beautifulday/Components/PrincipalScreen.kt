@@ -1,5 +1,6 @@
 package com.project.beautifulday.Components
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
@@ -31,7 +32,8 @@ fun PrincipalScreen(
     viewmodel: MealViewmodel,
     viewmodelA: ViewmodelAplication,
     LgViewModel: LogViewmodel,
-    cocktailViewmodel: CocktailViewmodel
+    cocktailViewmodel: CocktailViewmodel,
+    context: ComponentActivity
 ) {
     // Obtiene los datos de comidas del ViewModel
     val meals by viewmodel.mealsData.collectAsState()
@@ -60,12 +62,14 @@ fun PrincipalScreen(
                 navController = navController,
                 slide = slide,
                 viewmodelA = viewmodelA,
-                showDialog = showDialog
+                logViewmodel = LgViewModel,
+                showDialog = showDialog,
+                context = context
             )
         },
         bottomBar = {
             // Configuración de la barra inferior personalizada
-            MyBottomBar(order, navController, LgViewModel, viewmodelA)
+            MyBottomBar(order, navController, LgViewModel, viewmodelA, context)
         }
     ) { innerPadding ->
         // Contenido principal de la pantalla
@@ -78,7 +82,8 @@ fun PrincipalScreen(
             showOutLinedText = false,
             showListMeals = false,
             meals = meals,
-            showViewCenter = 1
+            showViewCenter = 1,
+            context = context
         )
     }
 }

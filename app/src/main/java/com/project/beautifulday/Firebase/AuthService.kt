@@ -2,10 +2,14 @@ package com.project.beautifulday.Firebase
 
 
 
+import android.widget.Toast
+import androidx.activity.ComponentActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -60,7 +64,80 @@ class AuthService @Inject constructor(private val firebaseAuth: FirebaseAuth) {
      *
      * @return Objeto FirebaseUser correspondiente al usuario autenticado actualmente, o null si no hay ningún usuario autenticado.
      */
-    private fun getCurrentUser() = firebaseAuth.currentUser
+    fun getCurrentUser() = firebaseAuth.currentUser
+
+    suspend fun updatePassword(newPassword: String, context: ComponentActivity) {
+        val currentUser = getCurrentUser()
+        if (currentUser != null) {
+            withContext(Dispatchers.IO) {
+                currentUser.updatePassword(newPassword)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Toast.makeText(
+                                context,
+                                "Actualización de usuario realizada",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "No se pudo actualizar: ${task.exception?.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                    .addOnFailureListener { exception ->
+                        Toast.makeText(
+                            context,
+                            "Error al actualizar: ${exception.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            }
+        } else {
+            Toast.makeText(
+                context,
+                "Usuario no autenticado",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    // Función para eliminar un usuario
+    suspend fun deleteCurrentUser(context:ComponentActivity) {
+        val currentUser = getCurrentUser()
+
+        currentUser?.let { user ->
+            try {
+                user.delete()
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            // Usuario eliminado correctamente
+                            // Aquí puedes mostrar un mensaje al usuario o realizar otra acción
+                            Toast.makeText(
+                                context,
+                                "Usuario eliminado correctamente",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            // No se pudo eliminar el usuario, muestra un mensaje de error
+                            Toast.makeText(
+                                context,
+                                "No se pudo eliminar el usuario: ${task.exception?.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+            } catch (e: Exception) {
+                // Captura cualquier excepción
+                Toast.makeText(
+                    context,
+                    "Error al intentar eliminar el usuario: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
 
     /**
      * Cierra la sesión del usuario actual.

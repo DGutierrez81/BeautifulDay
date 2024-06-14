@@ -134,7 +134,13 @@ class MealViewmodel @Inject constructor(
     var showVotes by mutableStateOf(false)
         private set
 
+    var updateMeal by mutableStateOf(false)
+        private set
+
     var listVotes by mutableStateOf(listOf<Double>())
+        private set
+
+    var IdDoc by mutableStateOf("")
         private set
 
     var averageRating by mutableStateOf(0.0)
@@ -628,6 +634,21 @@ class MealViewmodel @Inject constructor(
      * @param iDoc ID del documento de la comida.
      * @param onSuccess Función que se ejecuta al tener éxito la operación.
      */
+
+    fun updateMeal(iDoc: String, onSuccess: () -> Unit) {
+        viewModelScope.launch {
+            val result = withContext(Dispatchers.IO) {
+                Tasks.await(firestore.updateMeal("Create meal", iDoc, meal))
+            }
+            if (result) {
+                onSuccess()
+            } else {
+                Log.d("ERROR", "Hubo un error al guardar el registro")
+            }
+        }
+        cleanVotes()
+    }
+
     fun updateStars(iDoc: String, onSuccess: () -> Unit) {
         viewModelScope.launch {
             val result = withContext(Dispatchers.IO) {
@@ -640,6 +661,16 @@ class MealViewmodel @Inject constructor(
             }
         }
         cleanVotes()
+    }
+
+    fun changeMeal(value: String, text: String) {
+        when (text) {
+            "strMeal" -> if(value != "") meal = meal.copy(strMeal = value)
+            "strInstructions" -> if(value != "") meal = meal.copy(strInstructions = value)
+            "strIngredients" -> if(value != "") meal = meal.copy(strIngredients = value.split(",", " ").toMutableList())
+            "strMealThumb" -> if(value != "") meal = meal.copy(strMealThumb = value)
+            "strYoutube" -> if(value != "") meal = meal.copy(strYoutube = value)
+        }
     }
 
     /**
@@ -705,6 +736,10 @@ class MealViewmodel @Inject constructor(
         listVotes = listVotes + newRating
     }
 
+    fun changeUpdateMeal(result: Boolean){
+        updateMeal = result
+    }
+
     /**
      * Cambia el estado de mostrar texto subrayado.
      * @param result Nuevo estado.
@@ -721,6 +756,10 @@ class MealViewmodel @Inject constructor(
      */
     fun changeTraducir(translate: String) {
         categoria = translate
+    }
+
+    fun changeIdoc(result: String){
+        IdDoc = result
     }
 
     /**

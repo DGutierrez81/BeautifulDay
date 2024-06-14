@@ -1,5 +1,6 @@
 package com.project.beautifulday.Meal.ui
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.project.beautifulday.Components.BusquedaNombre
+import com.project.beautifulday.Components.CreateDialog
 import com.project.beautifulday.Components.DialogCategory
 import com.project.beautifulday.Components.MyBottomBar
 import com.project.beautifulday.Components.MyTopBar
@@ -49,7 +51,8 @@ fun MealNameScreen(
     viewmodel: MealViewmodel,
     viewmodelA: ViewmodelAplication,
     LgViewModel: LogViewmodel,
-    cocktailViewmodel: CocktailViewmodel
+    cocktailViewmodel: CocktailViewmodel,
+    context: ComponentActivity
 ){
     // Observa y obtiene la lista de comidas
     val meals by viewmodel.mealsData.collectAsState()
@@ -66,6 +69,10 @@ fun MealNameScreen(
     if(login) order = 3
     // Observa y obtiene el estado actual del progreso
     val progrees by viewmodel.progress.observeAsState(true)
+
+    val iDoc = LgViewModel.user.idDocument
+
+    val showAlert = viewmodelA.showAlert
 
     // Muestra el diálogo de categorías si está activado
     if(showDialog) {
@@ -93,14 +100,35 @@ fun MealNameScreen(
                 navController,
                 slide,
                 viewmodelA,
-                showDialog
+                LgViewModel,
+                showDialog,
+                context = context
             )
         },
         bottomBar = {
             // Muestra la barra de navegación inferior personalizada
-            MyBottomBar(order, navController, LgViewModel, viewmodelA)
+            MyBottomBar(order, navController, LgViewModel, viewmodelA, context)
         }
     ) { innerPadding ->
+        CreateDialog(showAlert = showAlert, tittle = "Aviso", text = "¿Desea borrar el registro?", onDismiss = { viewmodelA.changeAlert(!showAlert) }) {
+            viewmodelA.deleteRegister(iDoc?:"", "Users",{navController.navigate("ok")}) {
+                LgViewModel.deleteUser(context)
+                LgViewModel.changeLogin(false)
+                LgViewModel.logOut{
+                    navController.navigate("principal") {
+                        // Limpia la pila de navegación hasta el destino inicial
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = true
+                        }
+                        // Esto asegura que la pantalla principal sea la única en la pila de backstack
+                        launchSingleTop = true
+                    }
+                }
+            }
+            viewmodelA.changeSlide(slide)
+            viewmodelA.changeAlert(!showAlert)
+
+        }
         // Contenido principal del Scaffold
         Box(
             modifier = Modifier
@@ -134,7 +162,8 @@ fun MealNameScreen(
                     navController = navController,
                     viewmodelA = viewmodelA,
                     LgViewModel = LgViewModel,
-                    showCenter = 2
+                    showCenter = 2,
+                    context = context
                 )
                 // Muestra la lista de nombres de comidas
                 Box(modifier = Modifier.padding(start = 30.dp, end = 30.dp)){

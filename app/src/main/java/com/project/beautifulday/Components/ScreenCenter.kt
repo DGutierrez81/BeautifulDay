@@ -1,5 +1,6 @@
 package com.project.beautifulday.Components
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,7 +35,8 @@ fun ScreenCenter(
     navController: NavController,
     viewmodelA: ViewmodelAplication,
     LgViewModel: LogViewmodel,
-    showCenter: Int
+    showCenter: Int,
+    context: ComponentActivity
 ){
     // Columna centrada horizontalmente
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -61,7 +63,7 @@ fun ScreenCenter(
         Box(modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.BottomCenter){
             Column {
-                ViewCenter(showCenter = showCenter, navController = navController, viewmodelA, LgViewModel = LgViewModel)
+                ViewCenter(showCenter = showCenter, navController = navController, viewmodelA, LgViewModel = LgViewModel, context)
                 // Texto "DAY" con estilo
                 Box(
                     modifier = Modifier

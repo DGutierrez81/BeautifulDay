@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -64,7 +65,8 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
     val slide by viewmodelA.slide.observeAsState(false)
     val login = LgViewModel.login
     val progrees by viewmodel.progress.observeAsState(true)
-    val mealState = viewmodel.mealsData
+    val random = viewmodelA.random
+
 
     // Columna principal que contiene el contenido de la tarjeta de comida.
     Column(
@@ -142,6 +144,17 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
                         )
                     }
                 }
+                if(random){
+                    Box(modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center){
+                        OutlinedButton(onClick = {
+                            viewmodelA.changeActionTranslate(true)
+                            viewmodel.getRandom()
+                        }) {
+                            Text(text = "Dame otra", color = colorResource(id = R.color.silver))
+                        }
+                    }
+                }
             }
         }
     }
@@ -190,7 +203,13 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
                         modifier = Modifier
                             .padding(2.dp)
                             .clickable {
-                                viewmodel.saveNewMeals("Meals", context, {navController.navigate("ok")}) {
+                                viewmodel.saveNewMeals(
+                                    "Meals",
+                                    context,
+                                    {
+                                        viewmodelA.changeMessConfirm("Receta guarda correctamenete")
+                                        navController.navigate("ok") }
+                                ) {
                                     Toast
                                         .makeText(
                                             context,
@@ -229,9 +248,8 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
                     modifier = Modifier
                         .padding(2.dp)
                         .clickable {
-                            viewmodelA.changeSlide(slide)
-                            viewmodelA.clean()
                             navController.popBackStack()
+                            viewmodelA.clean()
                         },
                     color = colorResource(id = R.color.paynesGray)
                 )

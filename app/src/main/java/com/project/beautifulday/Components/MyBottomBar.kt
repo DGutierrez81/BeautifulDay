@@ -1,5 +1,6 @@
 package com.project.beautifulday.Components
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,7 +27,7 @@ import com.project.beautifulday.ViewModels.ViewmodelAplication
  * @param viewmodelA ViewModel de la aplicación.
  */
 @Composable
-fun MyBottomBar(order: Int, navController: NavController, LgViewModel: LogViewmodel, viewmodelA: ViewmodelAplication){
+fun MyBottomBar(order: Int, navController: NavController, LgViewModel: LogViewmodel, viewmodelA: ViewmodelAplication, context: ComponentActivity){
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -44,7 +45,7 @@ fun MyBottomBar(order: Int, navController: NavController, LgViewModel: LogViewmo
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly) {
                 // Llamada a la función para mostrar los iconos según el orden
-                GroupIcon(order, navController, LgViewModel = LgViewModel, viewmodelA)
+                GroupIcon(order, navController, LgViewModel = LgViewModel, viewmodelA, context)
             }
         }
     }

@@ -38,16 +38,16 @@ fun CreateDialog(
             onDismissRequest = { onDismiss() },
             confirmButton = {
                 TextButton(onClick = { onConfirm() }) {
-                    Text(text = "Si")
+                    Text(text = "Si", color = colorResource(id = R.color.silver))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { onDismiss() }) {
-                    Text(text = "No", color = colorResource(id = R.color.silver))
+                    Text(text = "No", color = colorResource(id = R.color.electricBlue))
                 }
             },
-            title = { Text(text = tittle)},
-            text = { Text(text = text)},
+            title = { Text(text = tittle, color = colorResource(id = R.color.silver))},
+            text = { Text(text = text, color = colorResource(id = R.color.silver))},
             icon = { AsyncImage(model = R.drawable.logo, contentDescription = null) },
             shape = RoundedCornerShape(50.dp),
             containerColor = colorResource(id = R.color.paynesGray),

@@ -15,13 +15,13 @@ import com.project.beautifulday.ViewModels.ViewmodelAplication
 
 
 /**
- * Composable function to handle text translation.
+ * Función composable para manejar la traducción de texto.
  *
- * @param actionTranslate Flag indicating whether to translate the text.
- * @param text The text to be translated.
- * @param viewmodelA The ViewModel that handles translation actions.
- * @param context The current activity context.
- * @param state The translation state containing text to be translated and translated text.
+ * @param actionTranslate Indicador de si se debe traducir el texto.
+ * @param text El texto a traducir.
+ * @param viewmodelA El ViewModel que maneja las acciones de traducción.
+ * @param context El contexto de la actividad actual.
+ * @param state El estado de traducción que contiene el texto a ser traducido y el texto traducido.
  */
 @Composable
 fun ActionTransalate(
@@ -32,7 +32,7 @@ fun ActionTransalate(
     state: Traduction
 ) {
     if (actionTranslate) {
-        // If text translation is required
+        // Si se requiere traducir el texto
         Text(
             text = text,
             modifier = Modifier
@@ -42,17 +42,17 @@ fun ActionTransalate(
             textAlign = TextAlign.Center
         )
 
-        // Update the text to be translated in the ViewModel
+        // Actualizar el texto a ser traducido en el ViewModel
         viewmodelA.onTextToBeTranslatedChange(text)
 
-        // Request translation from the ViewModel when the button is clicked
+        // Solicitar la traducción desde el ViewModel cuando se hace clic en el botón
         viewmodelA.onTranslateButtonClick(
             text = state.textToBeTranslated,
             context = context
         )
     } else {
-        // If the text is already translated, display the translated text
-        state.translatedText?.let { translatedText ->
+        // Si el texto ya está traducido, mostrar el texto traducido
+        state.translatedText.let { translatedText ->
             val processedText = translatedText.replace(":", "\n")
             Text(
                 text = processedText,
@@ -65,3 +65,4 @@ fun ActionTransalate(
         }
     }
 }
+

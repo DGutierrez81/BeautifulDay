@@ -44,6 +44,11 @@ fun OkTask(
     // Observa el progreso de la tarea de registro de cócteles
     val progressCocktail by cocktailViewmodel.progressCreated.observeAsState(true)
 
+    val progressAppli by viewmodelA
+        .progressCreated.observeAsState(true)
+
+    val messConfirm = viewmodelA.messConfirm
+
     // Contenedor principal con alineación en el centro
     Box(
         modifier = Modifier
@@ -57,7 +62,7 @@ fun OkTask(
             modifier = Modifier.padding(16.dp)
         ) {
             // Verifica si se ha completado alguna de las tareas de registro
-            if (!progressMeal || !progressCocktail) {
+            if (!progressMeal || !progressCocktail || !progressAppli) {
                 // Muestra un icono de éxito y un mensaje de confirmación
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(
@@ -67,7 +72,7 @@ fun OkTask(
                         modifier = Modifier.size(120.dp)
                     )
                     Text(
-                        text = "Registro guardado correctamente",
+                        text = messConfirm,
                         color = colorResource(id = R.color.paynesGray)
                     )
                 }
@@ -81,8 +86,8 @@ fun OkTask(
                     )
                     Spacer(modifier = Modifier.padding(20.dp))
                     Text(
-                        text = "Guardando" + viewmodelA.getAnimatedDots(
-                            progressMeal || progressCocktail
+                        text = "Ejecutando" + viewmodelA.getAnimatedDots(
+                            progressMeal || progressCocktail || progressAppli
                         ),
                         color = colorResource(id = R.color.paynesGray),
                         modifier = Modifier.scale(2.0f)

@@ -273,11 +273,24 @@ fun CardLocalM(
                 // Opción de borrar la receta, solo visible si el usuario es el mismo que la subió
                 if (email.equals(local.emailUser)) {
                     Text(
+                        text = "Modificar",
+                        modifier = Modifier
+                            .padding(2.dp)
+                            .clickable {
+                                viewmodelA.changeSlide(slide)
+                                viewmodelA.changeUpdateLocals(true)
+                                viewmodelA.changeIdoc(Idoc)
+                                viewmodelA.changeColeccion(colec)
+                                navController.navigate("createNewLocal")
+                            },
+                        color = colorResource(id = R.color.paynesGray)
+                    )
+                    Text(
                         text = "Borrar",
                         modifier = Modifier
                             .padding(2.dp)
                             .clickable {
-                                //viewmodelA.changeSlide(slide)
+                                viewmodelA.changeMessConfirm("Local eliminado correctamente.")
                                 viewmodelA.clean()
                                 viewmodelA.changeAlert(!showAlert)
                             },
@@ -328,7 +341,7 @@ fun CardLocalM(
         tittle = "Aviso",
         text = "¿Desea borrar el registro?",
         onDismiss = { viewmodelA.changeAlert(!showAlert) }) {
-        viewmodelA.deleteRegister(Idoc, colec) { navController.navigate(screen) }
+        viewmodelA.deleteRegister(Idoc, colec, {navController.navigate("ok")}) { navController.navigate(screen) }
         viewmodelA.changeAlert(!showAlert)
     }
 

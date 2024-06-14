@@ -70,6 +70,9 @@ fun CreateLocal(navController: NavController, viewmodel: MealViewmodel, viewmode
     val focusManager = LocalFocusManager.current
     val savedLocation by viewmodelA.savedLocation.collectAsState()
     val location by viewmodelA.location.collectAsState()
+    val updateLocal = viewmodelA.updateLocal
+    val idIdoc = viewmodelA.IdDoc
+    val colec = viewmodelA.coleccion
 
     // Estado de los permisos de ubicación
     val locationPermissionState = rememberPermissionState(
@@ -165,14 +168,37 @@ fun CreateLocal(navController: NavController, viewmodel: MealViewmodel, viewmode
                             modifier = Modifier
                                 .padding(10.dp)
                                 .clickable {
-                                    createAlertLocal(
-                                        navController = navController,
-                                        viewmodelA = viewmodelA,
-                                        viewmodel = viewmodel,
-                                        cocktailViewmodel = cocktailViewmodel,
-                                        user = user.userName ?: "",
-                                        context = context
-                                    )
+                                    viewmodelA.changeMessConfirm("Local creado correctamente")
+                                    if (updateLocal) {
+                                        viewmodelA.changeUpdateLocal(name, "nombreLocal")
+                                        viewmodelA.changeUpdateLocal(comentario, "comentario")
+                                        viewmodelA.changeUpdateLocal(web, "web")
+                                        viewmodelA.changeUpdateLocal(pais, "pais")
+                                        viewmodelA.changeUpdateLocal(ciudad, "ciudad")
+                                        viewmodelA.changeUpdateLocal(foto, "fotoLocal")
+                                        viewmodelA.changeUpdateLocal(
+                                            savedLocation?.latitude.toString(),
+                                            "latitud"
+                                        )
+                                        viewmodelA.changeUpdateLocal(
+                                            savedLocation?.longitude.toString(),
+                                            "longitud"
+                                        )
+                                        viewmodelA.updateLocal(idIdoc, colec = colec) { navController.navigate("listLocal") }
+                                        viewmodelA.changeUpdateLocals(false)
+                                        viewmodelA.clean()
+                                        viewmodelA.changeIdoc("")
+
+                                    } else {
+                                        createAlertLocal(
+                                            navController = navController,
+                                            viewmodelA = viewmodelA,
+                                            viewmodel = viewmodel,
+                                            cocktailViewmodel = cocktailViewmodel,
+                                            user = user.userName ?: "",
+                                            context = context
+                                        )
+                                    }
                                 },
                             color = colorResource(id = R.color.paynesGray)
                         )

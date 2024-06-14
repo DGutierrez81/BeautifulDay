@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.navigation.NavController
 import com.project.beautifulday.Components.BusquedaNombre
+import com.project.beautifulday.Components.CreateDialog
 import com.project.beautifulday.Components.DialogCategory
 import com.project.beautifulday.Components.MyBottomBar
 import com.project.beautifulday.Components.MyTopBar
@@ -40,7 +41,8 @@ fun CocktailScreen(
     viewmodel: MealViewmodel,
     viewmodelA: ViewmodelAplication,
     LgViewModel: LogViewmodel,
-    cocktailViewmodel: CocktailViewmodel
+    cocktailViewmodel: CocktailViewmodel,
+    context: ComponentActivity
 ) {
     // Observa los datos de comidas del ViewModel
     val meal by viewmodel.mealsData.collectAsState()
@@ -52,6 +54,11 @@ fun CocktailScreen(
     val showDialog = viewmodelA.showDialog
     // Observa el estado de login del LogViewmodel
     val login = LgViewModel.login
+
+    val iDoc = LgViewModel.user.idDocument
+
+    val showAlert = viewmodelA.showAlert
+
     // Variable para determinar el orden de los elementos en la pantalla
     var order = 4
     if (login) order = 5
@@ -80,14 +87,36 @@ fun CocktailScreen(
                 navController = navController, // Controlador de navegación
                 slide = slide, // Estado de slide
                 viewmodelA = viewmodelA, // ViewModel de aplicación
-                showDialog = showDialog // Estado de showDialog
+                LgViewModel,
+                showDialog = showDialog, // Estado de showDialog
+                context = context
             )
         },
         bottomBar = {
             // Configuración de la barra inferior personalizada
-            MyBottomBar(order, navController, LgViewModel, viewmodelA)
+            MyBottomBar(order, navController, LgViewModel, viewmodelA, context)
         }
     ) { innerPadding ->
+        CreateDialog(showAlert = showAlert, tittle = "Aviso", text = "¿Desea borrar el registro?", onDismiss = { viewmodelA.changeAlert(!showAlert) }) {
+            viewmodelA.deleteRegister(iDoc?:"", "Users", {navController.navigate("ok")}) {
+                LgViewModel.deleteUser(context)
+                LgViewModel.changeLogin(false)
+                LgViewModel.logOut{
+                    navController.navigate("principal") {
+                        // Limpia la pila de navegación hasta el destino inicial
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = true
+                        }
+                        // Esto asegura que la pantalla principal sea la única en la pila de backstack
+                        launchSingleTop = true
+                    }
+                }
+            }
+            viewmodelA.changeSlide(slide)
+            viewmodelA.changeAlert(!showAlert)
+
+        }
+
         // Caja que contiene el contenido principal de la pantalla
         Box(
             modifier = Modifier
@@ -101,7 +130,8 @@ fun CocktailScreen(
                 navController = navController, // Controlador de navegación
                 viewmodelA = viewmodelA, // ViewModel de aplicación
                 LgViewModel = LgViewModel, // ViewModel de login
-                showCenter = 3 // Indica el contenido a mostrar en el centro
+                showCenter = 3, // Indica el contenido a mostrar en el centro
+                context = context
             )
 
             // Si showOutLineText es verdadero, muestra el campo de búsqueda

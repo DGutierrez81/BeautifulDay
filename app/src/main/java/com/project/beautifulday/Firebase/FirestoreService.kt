@@ -30,6 +30,56 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
             }
     }
 
+    fun updateUser(colec: String, iDoc: String, user: User, context: ComponentActivity): Task<Boolean> {
+        val result = TaskCompletionSource<Boolean>()
+
+        val plusVotes = hashMapOf(
+            "password" to user.password,
+            "userName" to user.userName,
+            "email" to user.email
+        )
+        fireStore.collection(colec).document(iDoc)
+            .update(plusVotes as Map<String, Any>)
+            .addOnSuccessListener {
+                result.setResult(true)
+                Toast.makeText(
+                    context,
+                    "Actualización de usuario realizada",
+                    Toast.LENGTH_SHORT
+                ).show()
+                Log.d("Actualizacion OK", "Se ha actualizado correctamente")
+            }
+            .addOnFailureListener {
+                result.setResult(false)
+                Log.d("Error al actualizar", "No se ha podido realizar la actualización.")
+            }
+
+        return result.task
+    }
+
+    suspend fun fetchUsers(email: String): User? {
+        return withContext(Dispatchers.IO) {
+            var user: User? = null
+            try {
+                val querySnapshot = fireStore.collection("Users")
+                    .whereEqualTo("email", email)
+                    .get()
+                    .await()
+
+                for (document in querySnapshot.documents) {
+                    val myDocument = document.toObject(User::class.java)?.copy(idDocument = document.id)
+                    if (myDocument != null) {
+                        user = myDocument
+                        break  // Exit loop after finding the first matching user
+                    }
+                }
+            } catch (e: Exception) {
+                Log.d("ERROR", "NO SE PUEDE ACCEDER AL REGISTRO: ${e.message}")
+            }
+            user
+        }
+    }
+
     // Función para obtener una lista de comidas asociadas a un correo electrónico
     suspend fun fetchMeal(email: String?): List<MealUser> {
         return withContext(Dispatchers.IO) {
@@ -457,6 +507,54 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
         return result.task
     }
 
+    fun updateMeal(colec: String, iDoc: String, meal: MealUser): Task<Boolean> {
+        val result = TaskCompletionSource<Boolean>()
+
+        val plusVotes = hashMapOf(
+            "strMeal" to meal.strMeal,
+            "strInstructions" to meal.strInstructions,
+            "strIngredients" to meal.strIngredients,
+            "strMealThumb" to meal.strMealThumb,
+            "strYoutube" to meal.strYoutube
+        )
+        fireStore.collection(colec).document(iDoc)
+            .update(plusVotes as Map<String, Any>)
+            .addOnSuccessListener {
+                result.setResult(true)
+                Log.d("Actualizacion OK", "Se ha actualizado correctamente")
+            }
+            .addOnFailureListener {
+                result.setResult(false)
+                Log.d("Error al actualizar", "No se ha podido realizar la actualización.")
+            }
+
+        return result.task
+    }
+
+    fun updateCocktail(colec: String, iDoc: String, cocktail: CocktailUser): Task<Boolean> {
+        val result = TaskCompletionSource<Boolean>()
+
+        val plusVotes = hashMapOf(
+            "strDrink" to cocktail.strDrink,
+            "strInstructions" to cocktail.strInstructions,
+            "strList" to cocktail.strList,
+            "strDrinkThumb" to cocktail.strDrinkThumb,
+            "strmedia" to cocktail.strmedia
+        )
+        fireStore.collection(colec).document(iDoc)
+            .update(plusVotes as Map<String, Any>)
+            .addOnSuccessListener {
+                result.setResult(true)
+                Log.d("Actualizacion OK", "Se ha actualizado correctamente")
+            }
+            .addOnFailureListener {
+                result.setResult(false)
+                Log.d("Error al actualizar", "No se ha podido realizar la actualización.")
+            }
+
+        return result.task
+    }
+
     /**
      * Actualiza las estrellas de una comida en Firestore.
      *
@@ -502,6 +600,33 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
             "puntuacion" to drink.puntuacion,
             "votes" to drink.votes,
             "listVotes" to drink.listVotes
+        )
+        fireStore.collection(colec).document(iDoc)
+            .update(plusVotes as Map<String, Any>)
+            .addOnSuccessListener {
+                result.setResult(true)
+                Log.d("Actualizacion OK", "Se ha actualizado correctamente")
+            }
+            .addOnFailureListener {
+                result.setResult(false)
+                Log.d("Error al actualizar", "No se ha podido realizar la actualización.")
+            }
+
+        return result.task
+    }
+
+    fun updateLocal(colec: String, iDoc: String, local: Local): Task<Boolean> {
+        val result = TaskCompletionSource<Boolean>()
+
+        val plusVotes = hashMapOf(
+            "nombreLocal" to local.nombreLocal,
+            "comentario" to local.comentario,
+            "web" to local.web,
+            "pais" to local.pais,
+            "ciudad" to local.ciudad,
+            "fotoLocal" to local.fotoLocal,
+            "latitud" to local.latitud,
+            "longitud" to local.longitud
         )
         fireStore.collection(colec).document(iDoc)
             .update(plusVotes as Map<String, Any>)
@@ -565,7 +690,7 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
             .delete()
             .addOnSuccessListener {
                 result.setResult(true)
-                Log.d("Exito al borrar", "Cocktail borrado con éxito")
+                Log.d("Exito al borrar", "Registro borrado con éxito")
             }
             .addOnFailureListener {
                 result.setResult(false)

@@ -108,15 +108,15 @@ dependencies {
     // Base de datos de Storage
     implementation("com.google.firebase:firebase-storage-ktx")
 
-    //DCS - Versión Alpha donde está el componente SearchBar
+    //Versión Alpha donde está el componente SearchBar
     implementation(platform("androidx.compose:compose-bom:2023.05.01"))
 
-    //DCS - Cambiamos la versión a la misma: 2023.05.01
+    //Cambiamos la versión a la misma: 2023.05.01
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.05.01"))
 
 
     //ML-KIT
-    implementation("com.google.mlkit:translate:17.0.0")
+    implementation("com.google.mlkit:translate:17.0.2")
 
     //Map compose
     implementation("com.google.maps.android:maps-compose:2.11.4")
@@ -136,14 +136,14 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-livedata:2.3.1")
     implementation ("androidx.compose.animation:animation-core:1.6.5")
 
-    //DCS - Dagger Hilt
+    //Dagger Hilt
     implementation("com.google.dagger:hilt-android:2.47")
     kapt("com.google.dagger:hilt-android-compiler:2.47")
 
-    //DCS - Navigation
+    //Navigation
     implementation("androidx.navigation:navigation-compose:2.7.7")
 
-    //DCS - Retrofit
+    //Retrofit
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
     //Map compose
@@ -160,8 +160,8 @@ dependencies {
     //Accompanist Permissions
     implementation ("com.google.accompanist:accompanist-permissions:0.20.0")
 
-    //DCS - Coil
-    //DCS - Coil es una biblioteca de carga de imágenes para Android que es compatible con Jetpack Compose.
+    //Coil
+    //Coil es una biblioteca de carga de imágenes para Android que es compatible con Jetpack Compose.
     implementation("io.coil-kt:coil-compose:2.4.0")
 }
 

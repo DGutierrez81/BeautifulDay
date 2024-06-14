@@ -1,6 +1,6 @@
 package com.project.beautifulday.Components
 
-import android.content.Intent
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -29,22 +29,25 @@ fun GroupIcon(
     order: Int,
     navController: NavController,
     LgViewModel: LogViewmodel,
-    viewmodelA: ViewmodelAplication
+    viewmodelA: ViewmodelAplication,
+    context: ComponentActivity
 ) {
+    val updateUser = LgViewModel.updateUsers
+    val idDoc = LgViewModel.user.idDocument
     when (order) {
         1 -> {
             // Icono para iniciar sesión
             Icon(
                 painter = painterResource(id = R.drawable.inicio2_key),
                 contentDescription = null,
-                tint = colorResource(id = R.color.silver),
+                tint = colorResource(id = R.color.paynesGray),
                 modifier = Modifier.clickable { navController.navigate("login") }
             )
             // Icono para registrarse
             Icon(
                 painter = painterResource(id = R.drawable.inicio2_plus),
                 contentDescription = null,
-                tint = colorResource(id = R.color.silver),
+                tint = colorResource(id = R.color.paynesGray),
                 modifier = Modifier.clickable { navController.navigate("register") }
             )
         }
@@ -53,7 +56,7 @@ fun GroupIcon(
             Icon(
                 painter = painterResource(id = R.drawable.inicio2_key),
                 contentDescription = null,
-                tint = colorResource(id = R.color.silver),
+                tint = colorResource(id = R.color.paynesGray),
                 modifier = Modifier.clickable {
                     LgViewModel.clean()
                     navController.navigate("login")
@@ -63,7 +66,7 @@ fun GroupIcon(
             Icon(
                 painter = painterResource(id = R.drawable.inicio2_plus),
                 contentDescription = null,
-                tint = colorResource(id = R.color.silver),
+                tint = colorResource(id = R.color.paynesGray),
                 modifier = Modifier.clickable {
                     LgViewModel.clean()
                     navController.navigate("register")
@@ -88,7 +91,7 @@ fun GroupIcon(
             Icon(
                 painter = painterResource(id = R.drawable.android_small_1_vectorete),
                 contentDescription = null,
-                tint = colorResource(id = R.color.silver),
+                tint = colorResource(id = R.color.paynesGray),
                 modifier = Modifier.clickable {
                     LgViewModel.logOut {
                         LgViewModel.clean()
@@ -122,14 +125,14 @@ fun GroupIcon(
             Icon(
                 painter = painterResource(id = R.drawable.inicio2_key),
                 contentDescription = null,
-                tint = colorResource(id = R.color.silver),
+                tint = colorResource(id = R.color.paynesGray),
                 modifier = Modifier.clickable { navController.navigate("login") }
             )
             // Icono para registrarse
             Icon(
                 painter = painterResource(id = R.drawable.inicio2_plus),
                 contentDescription = null,
-                tint = colorResource(id = R.color.silver),
+                tint = colorResource(id = R.color.paynesGray),
                 modifier = Modifier.clickable { navController.navigate("register") }
             )
             // Icono para ver comidas
@@ -151,7 +154,7 @@ fun GroupIcon(
             Icon(
                 painter = painterResource(id = R.drawable.android_small_1_vectorete),
                 contentDescription = null,
-                tint = colorResource(id = R.color.silver),
+                tint = colorResource(id = R.color.paynesGray),
                 modifier = Modifier.clickable {
                     LgViewModel.logOut {
                         LgViewModel.clean()
@@ -185,7 +188,7 @@ fun GroupIcon(
             Icon(
                 painter = painterResource(id = R.drawable.inicio2_vector),
                 contentDescription = null,
-                tint = colorResource(id = R.color.silver),
+                tint = colorResource(id = R.color.paynesGray),
                 modifier = Modifier.clickable {
                     LgViewModel.login(LgViewModel.email, LgViewModel.password) { navController.navigate("principal") }
                 }
@@ -196,9 +199,17 @@ fun GroupIcon(
             Icon(
                 painter = painterResource(id = R.drawable.inicio2_vector),
                 contentDescription = null,
-                tint = colorResource(id = R.color.silver),
+                tint = colorResource(id = R.color.paynesGray),
                 modifier = Modifier.clickable {
-                    LgViewModel.creauteUser(LgViewModel.email, LgViewModel.password) { navController.navigate("principal") }
+                    if(updateUser){
+                        LgViewModel.changeUser(LgViewModel.userName, "userName")
+                        LgViewModel.changeUser(LgViewModel.email, "email")
+                        LgViewModel.changeUser(LgViewModel.password, "password")
+                        LgViewModel.changeUpdateUser(false)
+                        LgViewModel.updateUser(idDoc?: "", LgViewModel.password,context) { navController.navigate("principal") }
+                    }else{
+                        LgViewModel.creauteUser(LgViewModel.email, LgViewModel.password) { navController.navigate("principal") }
+                    }
                 }
             )
         }
@@ -207,7 +218,7 @@ fun GroupIcon(
             Icon(
                 painter = painterResource(id = R.drawable.android_small_1_vectorete),
                 contentDescription = null,
-                tint = colorResource(id = R.color.silver),
+                tint = colorResource(id = R.color.paynesGray),
                 modifier = Modifier.clickable {
                     LgViewModel.clean()
                     navController.navigate("principal") {

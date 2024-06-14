@@ -21,6 +21,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.project.beautifulday.Components.BusquedaNombre
+import com.project.beautifulday.Components.CreateDialog
 import com.project.beautifulday.Components.DialogCategory
 import com.project.beautifulday.Components.MyBottomBar
 import com.project.beautifulday.Components.MyTopBar
@@ -46,7 +47,8 @@ fun ListaCocktailsApi(
     viewmodel: MealViewmodel,
     viewmodelA: ViewmodelAplication,
     LgViewModel: LogViewmodel,
-    cocktailViewmodel: CocktailViewmodel
+    cocktailViewmodel: CocktailViewmodel,
+    context: ComponentActivity
 ) {
     // Observa los datos de comidas del ViewModel
     val meals by viewmodel.mealsData.collectAsState()
@@ -62,6 +64,9 @@ fun ListaCocktailsApi(
     val login = LgViewModel.login
     // Observa el estado de progreso del ViewModel de cócteles
     val progrees by cocktailViewmodel.progress.observeAsState(true)
+    val iDoc = LgViewModel.user.idDocument
+
+    val showAlert = viewmodelA.showAlert
     // Determina el orden de los elementos en la pantalla
     var order = 2
     if (login) order = 5
@@ -92,14 +97,36 @@ fun ListaCocktailsApi(
                 navController = navController,
                 slide = slide,
                 viewmodelA = viewmodelA,
-                showDialog = showDialog
+                logViewmodel = LgViewModel,
+                showDialog = showDialog,
+                context = context
             )
         },
         bottomBar = {
             // Configuración de la barra inferior personalizada
-            MyBottomBar(order, navController, LgViewModel, viewmodelA)
+            MyBottomBar(order, navController, LgViewModel, viewmodelA, context)
         }
     ) { innerPadding ->
+
+        CreateDialog(showAlert = showAlert, tittle = "Aviso", text = "¿Desea borrar el registro?", onDismiss = { viewmodelA.changeAlert(!showAlert) }) {
+            viewmodelA.deleteRegister(iDoc?:"", "Users", {navController.navigate("ok")}) {
+                LgViewModel.deleteUser(context)
+                LgViewModel.changeLogin(false)
+                LgViewModel.logOut{
+                    navController.navigate("principal") {
+                        // Limpia la pila de navegación hasta el destino inicial
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = true
+                        }
+                        // Esto asegura que la pantalla principal sea la única en la pila de backstack
+                        launchSingleTop = true
+                    }
+                }
+            }
+            viewmodelA.changeSlide(slide)
+            viewmodelA.changeAlert(!showAlert)
+
+        }
 
         Box(
             modifier = Modifier
@@ -129,7 +156,8 @@ fun ListaCocktailsApi(
                     navController = navController,
                     viewmodelA = viewmodelA,
                     LgViewModel = LgViewModel,
-                    showCenter = 3
+                    showCenter = 3,
+                     context = context
                 )
                 Box(modifier = Modifier.padding(start = 30.dp, end = 30.dp)) {
                     // Muestra los nombres de los cócteles obtenidos desde la API

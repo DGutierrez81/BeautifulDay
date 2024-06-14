@@ -48,6 +48,7 @@ import com.project.beautifulday.Components.RatingBarImage
 import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.R
+import com.project.beautifulday.ViewModels.LogViewmodel
 import com.project.beautifulday.androidsmall1.jotiOne
 
 
@@ -265,10 +266,23 @@ fun CardMealUser(
                 // Opción de borrar la receta, solo visible si el usuario es el mismo que la subió
                 if (email.equals(meal.emailUser)) {
                     Text(
+                        text = "Modificar",
+                        modifier = Modifier
+                            .padding(2.dp)
+                            .clickable {
+                                viewmodelA.changeSlide(slide)
+                                viewmodel.changeUpdateMeal(true)
+                                viewmodel.changeIdoc(Idoc)
+                                navController.navigate("createNewMeal")
+                            },
+                        color = colorResource(id = R.color.paynesGray)
+                    )
+                    Text(
                         text = "Borrar",
                         modifier = Modifier
                             .padding(2.dp)
                             .clickable {
+                                viewmodelA.changeMessConfirm("Receta borrada correctamenete")
                                 viewmodelA.changeSlide(slide)
                                 viewmodelA.changeAlert(!showAlert)
                             },
@@ -304,8 +318,8 @@ fun CardMealUser(
                     modifier = Modifier
                         .padding(2.dp)
                         .clickable {
-                            viewmodelA.clean()
                             navController.popBackStack()
+                            viewmodelA.clean()
                         },
                     color = colorResource(id = R.color.paynesGray)
                 )
@@ -319,7 +333,7 @@ fun CardMealUser(
         tittle = "Aviso",
         text = "¿Desea borrar el registro?",
         onDismiss = { viewmodelA.changeAlert(!showAlert) }) {
-        viewmodelA.deleteRegister(Idoc, colec) { navController.navigate("meal") }
+        viewmodelA.deleteRegister(Idoc, colec, {navController.navigate("ok")}) { navController.navigate("meal") }
         viewmodelA.changeAlert(!showAlert)
     }
 
@@ -349,6 +363,7 @@ fun CardMealUser(
                     Column {
                         OutlinedButton(
                             onClick = {
+                                viewmodel.changeIdoc(Idoc)
                                 viewmodel.changeValueVotes(currentRating, "puntuacion","")
                                 viewmodel.changeValueVotes(1.0, "votes","")
                                 viewmodel.changeValueVotes(0.0, "listVotes", email)

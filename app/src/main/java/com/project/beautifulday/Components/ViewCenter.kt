@@ -1,5 +1,6 @@
 package com.project.beautifulday.Components
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,7 +28,8 @@ fun ViewCenter(
     showCenter: Int,
     navController: NavController,
     viewmodelA: ViewmodelAplication,
-    LgViewModel: LogViewmodel
+    LgViewModel: LogViewmodel,
+    context: ComponentActivity
 ) {
     // Seleccionar el contenido central según la opción
     when (showCenter) {
@@ -58,7 +60,7 @@ fun ViewCenter(
         }
         5 -> {
             // Mostrar pantalla de registro
-            Register(navController, LgViewModel)
+            Register(navController, LgViewModel, context)
         }
     }
 }

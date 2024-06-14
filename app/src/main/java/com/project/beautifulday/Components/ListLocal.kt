@@ -1,5 +1,6 @@
 package com.project.beautifulday.Components
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,7 +47,8 @@ fun ListLocal(
     viewmodel: MealViewmodel,
     viewmodelA: ViewmodelAplication,
     LgViewModel: LogViewmodel,
-    cocktailViewmodel: CocktailViewmodel
+    cocktailViewmodel: CocktailViewmodel,
+    context: ComponentActivity
 ){
     // Observa y obtiene los datos de la comida actual
     val localData by viewmodelA.localData.collectAsState()
@@ -62,6 +64,9 @@ fun ListLocal(
     val login = LgViewModel.login
     // Observa y obtiene el estado actual del progreso
     val progrees by viewmodelA.progrees.observeAsState(true)
+    val iDoc = LgViewModel.user.idDocument
+
+    val showAlert = viewmodelA.showAlert
 
     val screen = viewmodelA.screen
     var order = 3
@@ -104,14 +109,34 @@ fun ListLocal(
                 navController = navController,
                 slide = slide,
                 viewmodelA = viewmodelA,
-                showDialog = showDialog
+                logViewmodel =  LgViewModel,
+                showDialog = showDialog,
+                context = context
             )
         },
         bottomBar = {
             // Muestra la barra de navegación inferior personalizada
-            MyBottomBar(order = order, navController = navController, LgViewModel = LgViewModel, viewmodelA)
+            MyBottomBar(order = order, navController = navController, LgViewModel = LgViewModel, viewmodelA,context)
         }
     ) {innerPadding ->
+        CreateDialog(showAlert = showAlert, tittle = "Aviso", text = "¿Desea borrar el registro?", onDismiss = { viewmodelA.changeAlert(!showAlert) }) {
+            viewmodelA.deleteRegister(iDoc?:"", "Users", {navController.navigate("ok")}) {
+                LgViewModel.deleteUser(context)
+                LgViewModel.logOut{
+                    navController.navigate("principal") {
+                        // Limpia la pila de navegación hasta el destino inicial
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = true
+                        }
+                        // Esto asegura que la pantalla principal sea la única en la pila de backstack
+                        launchSingleTop = true
+                    }
+                }
+            }
+            viewmodelA.changeSlide(slide)
+            viewmodelA.changeAlert(!showAlert)
+
+        }
         // Contenido principal del Scaffold
         Box(
             modifier = Modifier
@@ -145,7 +170,8 @@ fun ListLocal(
                     navController = navController,
                     viewmodelA = viewmodelA,
                     LgViewModel = LgViewModel,
-                    showCenter = showCenter
+                    showCenter = showCenter,
+                    context = context
                 )
                 // Muestra la lista de comidas creadas por el usuario
                 Box(modifier = Modifier.padding(start = 30.dp, end = 30.dp)){
