@@ -1,19 +1,15 @@
 package com.project.beautifulday.ViewModels
 
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionContext
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.tasks.Tasks
@@ -38,10 +34,6 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class LogViewmodel@Inject constructor(private val authService: AuthService, private val firestore: FirestoreService): ViewModel() {
-
-    // Estado del indicador de carga
-    val _isLoading = mutableStateOf(false)
-    val isLoading: MutableState<Boolean> = _isLoading
 
     // Estado para mostrar u ocultar la alerta
     private val _showAlert = mutableStateOf(false)
@@ -86,7 +78,6 @@ class LogViewmodel@Inject constructor(private val authService: AuthService, priv
     fun login(user: String, password: String, onSuccess: () -> Unit){
         viewModelScope.launch() {
             try{
-                _isLoading.value = true
                 val result = withContext(Dispatchers.IO){
                     authService.login(user, password)
                 }
@@ -101,7 +92,6 @@ class LogViewmodel@Inject constructor(private val authService: AuthService, priv
                 showAlert(dialog = false)
                 Log.d("ERROR EN JETPACK", "ERROR: ${e.localizedMessage}")
             }finally {
-                _isLoading.value = false
             }
 
         }
@@ -116,7 +106,6 @@ class LogViewmodel@Inject constructor(private val authService: AuthService, priv
      */
     fun creauteUser(email: String, password: String,  onSuccess: () -> Unit){
         viewModelScope.launch {
-            _isLoading.value = true
 
             try{
                 val result: FirebaseUser? = withContext(Dispatchers.IO){
@@ -133,7 +122,6 @@ class LogViewmodel@Inject constructor(private val authService: AuthService, priv
                 showAlert(dialog = false)
                 Log.d("ERROR EN JETPACK", "ERROR: ${e.localizedMessage}")
             }finally {
-                _isLoading.value = false
             }
         }
     }
@@ -158,28 +146,16 @@ class LogViewmodel@Inject constructor(private val authService: AuthService, priv
         }
     }
 
-
-    /*
-    fun updateUser(iDoc: String, context: ComponentActivity,onSuccess: () -> Unit) {
-        viewModelScope.launch {
-            val result = withContext(Dispatchers.IO) {
-                Tasks.await(firestore.updateUser("Users", iDoc, user, context))
-            }
-            if (result) {
-                onSuccess()
-            } else {
-                Log.d("ERROR", "Hubo un error al guardar el registro")
-            }
-        }
-    }
-
+    /**
+     * Actualiza la información del usuario en el sistema de autenticación y en Firestore.
+     *
+     * @param iDoc Identificador del documento del usuario en Firestore.
+     * @param newPassword Nueva contraseña para el usuario.
+     * @param context Contexto de la actividad actual.
+     * @param onSuccess Función a ejecutar en caso de éxito.
      */
-
     fun updateUser(iDoc: String, newPassword: String, context: ComponentActivity, onSuccess: () -> Unit) {
-
         viewModelScope.launch {
-            _isLoading.value = true
-
             try {
                 // Actualiza la contraseña del usuario autenticado
                 authService.updatePassword(newPassword, context)
@@ -197,35 +173,47 @@ class LogViewmodel@Inject constructor(private val authService: AuthService, priv
             } catch (e: Exception) {
                 Log.d("ERROR EN JETPACK", "ERROR: ${e.localizedMessage}")
             } finally {
-                _isLoading.value = false
             }
         }
     }
-    fun fetchUser() {
 
+    /**
+     * Obtiene la información del usuario autenticado desde Firestore.
+     */
+    fun fetchUser() {
         val email = authService.email()
 
         viewModelScope.launch {
-            user = firestore.fetchUsers(email?: "")?: User()
+            user = firestore.fetchUsers(email ?: "") ?: User()
             delay(3000)
-
         }
     }
 
-    fun deleteUser(context: ComponentActivity){
+    /**
+     * Elimina al usuario autenticado actual del sistema.
+     *
+     * @param context Contexto de la actividad actual.
+     */
+    fun deleteUser(context: ComponentActivity) {
         viewModelScope.launch {
             authService.deleteCurrentUser(context)
         }
     }
 
+    /**
+     * Cambia un atributo específico del usuario.
+     *
+     * @param value Nuevo valor para el atributo del usuario.
+     * @param text Atributo del usuario a cambiar (por ejemplo, "userName", "email", "password").
+     */
     fun changeUser(value: String, text: String) {
         when (text) {
-            "userName" -> if(value != "") user = user.copy(userName = value)
-            "email" -> if(value != "") user = user.copy(email = value)
-            "password" -> if(value != "") user = user.copy(password = value)
-
+            "userName" -> if (value != "") user = user.copy(userName = value)
+            "email" -> if (value != "") user = user.copy(email = value)
+            "password" -> if (value != "") user = user.copy(password = value)
         }
     }
+
 
     /**
      * Función para verificar si el usuario ha iniciado sesión.
