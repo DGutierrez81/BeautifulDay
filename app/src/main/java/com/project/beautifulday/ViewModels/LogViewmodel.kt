@@ -51,8 +51,7 @@ class LogViewmodel@Inject constructor(private val authService: AuthService, priv
     var userName by mutableStateOf("")
         private set
 
-    var idDoc by mutableStateOf("")
-        private set
+
 
     var user by mutableStateOf(User())
         private set
@@ -164,7 +163,6 @@ class LogViewmodel@Inject constructor(private val authService: AuthService, priv
                 val result = withContext(Dispatchers.IO) {
                     Tasks.await(firestore.updateUser("Users", iDoc, user, context))
                 }
-
                 if (result) {
                     onSuccess()
                 } else {
@@ -173,6 +171,7 @@ class LogViewmodel@Inject constructor(private val authService: AuthService, priv
             } catch (e: Exception) {
                 Log.d("ERROR EN JETPACK", "ERROR: ${e.localizedMessage}")
             } finally {
+                clean()
             }
         }
     }
@@ -304,10 +303,6 @@ class LogViewmodel@Inject constructor(private val authService: AuthService, priv
 
     fun changeUpdateUser(result: Boolean){
         updateUsers = result
-    }
-
-    fun changeIdDoc(result: String){
-        idDoc = result
     }
 
     /**

@@ -164,22 +164,6 @@ fun MyTopBar(
                                             logViewmodel.fetchUser()
                                             viewmodelA.changeAlert(true)
                                             viewmodelA.clean()
-                                            /*
-                                            viewmodelA.deleteRegister(idDoc?:"", "Users", {navController.navigate("ok")}){}
-                                            logViewmodel.deleteUser(context)
-                                            logViewmodel.logOut{
-                                                navController.navigate("principal") {
-                                                    // Limpia la pila de navegación hasta el destino inicial
-                                                    popUpTo(navController.graph.startDestinationId) {
-                                                        inclusive = true
-                                                    }
-                                                    // Esto asegura que la pantalla principal sea la única en la pila de backstack
-                                                    launchSingleTop = true
-                                                }
-                                            }
-                                            viewmodelA.changeSlide(slide)
-
-                                             */
                                         }
                                     }
                                 }
@@ -285,22 +269,6 @@ fun MyTopBar(
                                             logViewmodel.fetchUser()
                                             viewmodelA.changeAlert(true)
                                             viewmodelA.clean()
-                                            /*
-                                            viewmodelA.deleteRegister(idDoc?:"", "Users"){}
-                                            logViewmodel.deleteUser(context)
-                                            logViewmodel.logOut{
-                                                navController.navigate("principal") {
-                                                    // Limpia la pila de navegación hasta el destino inicial
-                                                    popUpTo(navController.graph.startDestinationId) {
-                                                        inclusive = true
-                                                    }
-                                                    // Esto asegura que la pantalla principal sea la única en la pila de backstack
-                                                    launchSingleTop = true
-                                                }
-                                            }
-                                            viewmodelA.changeSlide(slide)
-
-                                             */
                                         }
                                     }
                                 }
