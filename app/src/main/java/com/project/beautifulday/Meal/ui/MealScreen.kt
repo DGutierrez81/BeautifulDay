@@ -102,6 +102,7 @@ fun MealScreen(
             MyBottomBar(order, navController, LgViewModel, viewmodelA, context)
         }
     ) { innerPadding ->
+        //
         CreateDialog(showAlert = showAlert, tittle = "Aviso", text = "¿Desea borrar el registro?", onDismiss = { viewmodelA.changeAlert(!showAlert) }) {
             viewmodelA.deleteRegister(iDoc?:"", "Users",{navController.navigate("ok")}) {
                 LgViewModel.deleteUser(context)
