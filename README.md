@@ -56,7 +56,7 @@ Beautiful Day es una aplicación que permite a los usuarios, tanto registrados c
 
 ## Contribuir
 
-1. **[Descargar la APK de la aplicación](https://github.com/DGutierrez81/BeautifulDay/blob/master/app/release/BeautifulDay.apk)**
+1. **[Descargar la APK de la aplicación](https://github.com/DGutierrez81/BeautifulDay/blob/master/app/release/app-release.apk)**
 2. **Clonar el repositorio**
    ```bash
    git clone https://github.com/tu_usuario/BeautifulDay.git
