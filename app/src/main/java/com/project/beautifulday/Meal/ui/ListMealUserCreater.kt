@@ -130,7 +130,6 @@ fun ListMealUserCreater(
                     }
                 }
             }
-            viewmodelA.changeSlide(slide)
             viewmodelA.changeAlert(!showAlert)
 
         }

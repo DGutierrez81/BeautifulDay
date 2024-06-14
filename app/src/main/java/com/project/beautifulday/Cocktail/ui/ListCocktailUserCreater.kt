@@ -128,7 +128,7 @@ fun ListCocktailUserCreater(
                     }
                 }
             }
-            viewmodelA.changeSlide(slide)
+
             viewmodelA.changeAlert(!showAlert)
 
         }

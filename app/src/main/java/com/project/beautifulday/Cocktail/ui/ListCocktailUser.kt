@@ -113,7 +113,6 @@ fun ListCocktailUser(
                     }
                 }
             }
-            viewmodelA.changeSlide(slide)
             viewmodelA.changeAlert(!showAlert)
 
         }

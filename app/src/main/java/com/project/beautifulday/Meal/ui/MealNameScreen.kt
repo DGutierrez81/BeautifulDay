@@ -125,7 +125,6 @@ fun MealNameScreen(
                     }
                 }
             }
-            viewmodelA.changeSlide(slide)
             viewmodelA.changeAlert(!showAlert)
 
         }

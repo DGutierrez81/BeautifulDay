@@ -117,7 +117,6 @@ fun MealScreen(
                     }
                 }
             }
-            viewmodelA.changeSlide(slide)
             viewmodelA.changeAlert(!showAlert)
 
         }

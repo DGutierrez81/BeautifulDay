@@ -112,7 +112,6 @@ fun CocktailScreen(
                     }
                 }
             }
-            viewmodelA.changeSlide(slide)
             viewmodelA.changeAlert(!showAlert)
 
         }
