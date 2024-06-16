@@ -106,6 +106,7 @@ fun MealScreen(
             viewmodelA.deleteRegister(iDoc?:"", "Users",{navController.navigate("ok")}) {
                 LgViewModel.deleteUser(context)
                 LgViewModel.changeLogin(false)
+                LgViewModel.clean()
                 LgViewModel.logOut{
                     navController.navigate("principal") {
                         // Limpia la pila de navegación hasta el destino inicial

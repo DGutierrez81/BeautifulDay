@@ -145,7 +145,7 @@ fun Camera(navController: NavController, viewmodelA: ViewmodelAplication, contex
                 )){
             if(uriFoto == resultUri.toString()){
                 AsyncImage(model = resultUri, contentDescription = "image selected by user", contentScale = ContentScale.Crop)
-                //viewmodelA.changeUriVideo(resultUri.toString())
+
             }
             if(uriVideo == resultUri.toString()){
 

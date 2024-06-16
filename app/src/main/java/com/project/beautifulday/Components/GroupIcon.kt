@@ -48,7 +48,11 @@ fun GroupIcon(
                 painter = painterResource(id = R.drawable.inicio2_plus),
                 contentDescription = null,
                 tint = colorResource(id = R.color.paynesGray),
-                modifier = Modifier.clickable { navController.navigate("register") }
+                modifier = Modifier.clickable {
+                    LgViewModel.clean()
+                    LgViewModel.changeUpdateUser(false)
+                    navController.navigate("register")
+                }
             )
         }
         2 -> {
@@ -68,6 +72,7 @@ fun GroupIcon(
                 contentDescription = null,
                 tint = colorResource(id = R.color.paynesGray),
                 modifier = Modifier.clickable {
+                    LgViewModel.changeUpdateUser(false)
                     LgViewModel.clean()
                     navController.navigate("register")
                 }
@@ -133,7 +138,11 @@ fun GroupIcon(
                 painter = painterResource(id = R.drawable.inicio2_plus),
                 contentDescription = null,
                 tint = colorResource(id = R.color.paynesGray),
-                modifier = Modifier.clickable { navController.navigate("register") }
+                modifier = Modifier.clickable {
+                    LgViewModel.changeUpdateUser(false)
+                    LgViewModel.clean()
+                    navController.navigate("register")
+                }
             )
             // Icono para ver comidas
             AsyncImage(
@@ -203,9 +212,7 @@ fun GroupIcon(
                 modifier = Modifier.clickable {
                     if(updateUser){
                         LgViewModel.changeUser(LgViewModel.userName, "userName")
-                        LgViewModel.changeUser(LgViewModel.email, "email")
                         LgViewModel.changeUser(LgViewModel.password, "password")
-                        LgViewModel.changeUpdateUser(false)
                         LgViewModel.updateUser(idDoc?: "", LgViewModel.password,context) { navController.navigate("principal") }
                     }else{
                         LgViewModel.creauteUser(LgViewModel.email, LgViewModel.password) { navController.navigate("principal") }

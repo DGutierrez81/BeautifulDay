@@ -12,11 +12,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
@@ -408,19 +411,31 @@ class MealViewmodel @Inject constructor(
                 contentAlignment = Alignment.Center
             ) {
                 Column {
-                    AsyncImage(
-                        model = url,
-                        contentDescription = "Meal Image",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .width(120.dp)
-                            .height(120.dp)
-                            .clip(RoundedCornerShape(100.dp))
-                            .clickable {
-                                navController.navigate("cardMealUser/${meal.idDocument}?colec=$colec")
-                                actionTranslate = true
-                            }
-                    )
+                    if(url != ""){
+                        AsyncImage(
+                            model = url,
+                            contentDescription = "Meal Image",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .width(120.dp)
+                                .height(120.dp)
+                                .clip(RoundedCornerShape(100.dp))
+                                .clickable {
+                                    navController.navigate("cardMealUser/${meal.idDocument}?colec=$colec")
+                                    actionTranslate = true
+                                }
+                        )
+                    }else{
+                        Icon(
+                            painterResource(id = R.drawable.ic_image),
+                            contentDescription = null,
+                            modifier = Modifier.size(100.dp)
+                                .clickable {
+                                    navController.navigate("cardMealUser/${meal.idDocument}?colec=$colec")
+                                },
+                            tint = colorResource(id = R.color.paynesGray)
+                        )
+                    }
                     Text(
                         text = meal.strMeal ?: "",
                         modifier = Modifier

@@ -21,11 +21,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -39,6 +41,7 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
@@ -193,6 +196,9 @@ class ViewmodelAplication @Inject constructor(
     var messConfirm by mutableStateOf("")
         private set
 
+    var openGoogle by mutableStateOf(false)
+        private set
+
     private val _localData = MutableStateFlow<List<Local>>(emptyList())
     val localData: StateFlow<List<Local>> = _localData
 
@@ -207,6 +213,8 @@ class ViewmodelAplication @Inject constructor(
 
     private val _localizacion = MutableStateFlow<LatLng?>(null)
     val localizacion: StateFlow<LatLng?> get() = _localizacion
+
+
 
     fun changeLocalizacion(result: LatLng?){
         _localizacion.value = result
@@ -581,18 +589,30 @@ class ViewmodelAplication @Inject constructor(
                 contentAlignment = Alignment.Center
             ) {
                 Column {
-                    AsyncImage(
-                        model = url,
-                        contentDescription = "Local Image",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .width(120.dp)
-                            .height(120.dp)
-                            .clip(RoundedCornerShape(100.dp))
-                            .clickable {
-                                navController.navigate("cardLocalM/${local.idDocument}?colec=$colec")
-                            }
-                    )
+                    if(url != ""){
+                        AsyncImage(
+                            model = url,
+                            contentDescription = "Local Image",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .width(120.dp)
+                                .height(120.dp)
+                                .clip(RoundedCornerShape(100.dp))
+                                .clickable {
+                                    navController.navigate("cardLocalM/${local.idDocument}?colec=$colec")
+                                }
+                        )
+                    }else{
+                        Icon(
+                            painterResource(id = R.drawable.ic_image),
+                            contentDescription = null,
+                            modifier = Modifier.size(100.dp)
+                                .clickable {
+                                    navController.navigate("cardLocalM/${local.idDocument}?colec=$colec")
+                                },
+                            tint = colorResource(id = R.color.paynesGray)
+                        )
+                    }
                     Text(
                         text = local.nombreLocal ?: "",
                         modifier = Modifier
@@ -800,6 +820,10 @@ class ViewmodelAplication @Inject constructor(
         updateLocal = result
     }
 
+    fun changeOpenGoogle(result: Boolean){
+        openGoogle = result
+    }
+
     // Método para limpiar todos los estados
     fun clean() {
         _slide.value = false
@@ -813,6 +837,8 @@ class ViewmodelAplication @Inject constructor(
         ingrediente = ""
         name = ""
         random = false
+        pais = ""
+        ciudad = ""
     }
 }
 

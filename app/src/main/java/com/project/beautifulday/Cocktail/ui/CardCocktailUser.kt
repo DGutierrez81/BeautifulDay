@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ButtonDefaults
@@ -116,14 +117,24 @@ fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel,
                         }
                     }
                 } else {
-                    AsyncImage(
-                        model = cocktail.strDrinkThumb,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(300.dp),
-                        contentScale = ContentScale.Crop
-                    )
+                    if(cocktail.strDrinkThumb != ""){
+                        AsyncImage(
+                            model = cocktail.strDrinkThumb,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(300.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                    }else{
+                        Icon(
+                            painterResource(id = R.drawable.ic_image),
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxWidth()
+                                .height(300.dp),
+                            tint = colorResource(id = R.color.silver)
+                        )
+                    }
                 }
 
                 Row(
@@ -196,7 +207,7 @@ fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel,
                     },
                     color = colorResource(id = R.color.paynesGray)
                 )
-                if (colec == "Create $screen") {
+                if (colec == "Create $screen" && cocktail.strmedia != "") {
                     Text(text = "Ver video", modifier = Modifier
                         .padding(2.dp)
                         .clickable {
@@ -209,18 +220,20 @@ fun CardCocktailUser(navController: NavController, viewmodel: CocktailViewmodel,
 
                 }
                 if (email.equals(cocktail.emailUser)) {
-                    Text(
-                        text = "Modificar",
-                        modifier = Modifier
-                            .padding(2.dp)
-                            .clickable {
-                                viewmodelA.changeSlide(slide)
-                                viewmodel.changeUpdateCocktail(true)
-                                viewmodel.changeIdoc(Idoc)
-                                navController.navigate("createNewMeal")
-                            },
-                        color = colorResource(id = R.color.paynesGray)
-                    )
+                    if (colec == "Create $screen") {
+                        Text(
+                            text = "Modificar",
+                            modifier = Modifier
+                                .padding(2.dp)
+                                .clickable {
+                                    viewmodelA.changeSlide(slide)
+                                    viewmodel.changeUpdateCocktail(true)
+                                    viewmodel.changeIdoc(Idoc)
+                                    navController.navigate("createNewMeal")
+                                },
+                            color = colorResource(id = R.color.paynesGray)
+                        )
+                    }
                     Text(text = "Borrar", modifier = Modifier
                         .padding(2.dp)
                         .clickable {

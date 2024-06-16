@@ -164,7 +164,6 @@ fun MyTopBar(
                                             logViewmodel.fetchUser()
                                             viewmodelA.changeAlert(true)
                                             viewmodelA.clean()
-                                            logViewmodel.clean()
                                         }
                                     }
                                 }
@@ -270,7 +269,6 @@ fun MyTopBar(
                                             logViewmodel.fetchUser()
                                             viewmodelA.changeAlert(true)
                                             viewmodelA.clean()
-                                            logViewmodel.clean()
                                         }
                                     }
                                 }

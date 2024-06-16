@@ -335,6 +335,7 @@ fun NavManager(
             MyGoogleMaps(viewModel = viewmodelA, context = context)
         }
 
+
 // Pantalla de tarjeta de local del usuario.
         composable(
             route = "cardLocalM/{idDrink}?colec={colec}",

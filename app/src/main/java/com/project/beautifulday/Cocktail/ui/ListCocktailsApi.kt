@@ -68,7 +68,7 @@ fun ListaCocktailsApi(
 
     val showAlert = viewmodelA.showAlert
     // Determina el orden de los elementos en la pantalla
-    var order = 2
+    var order = 4
     if (login) order = 5
 
     // Si showDialog es verdadero, muestra el diálogo de categoría

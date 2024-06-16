@@ -1,9 +1,6 @@
 package com.project.beautifulday.Meal.ui
 
-import android.content.Intent
-import android.net.Uri
-import android.widget.Toast
-import androidx.activity.ComponentActivity
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -17,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -25,23 +23,37 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 import com.project.beautifulday.Components.ActionTransalate
 import com.project.beautifulday.ViewModels.LogViewmodel
 import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.R
 import com.project.beautifulday.androidsmall1.jotiOne
-
+import android.content.Intent
+import android.net.Uri
+import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 
 
 /**
@@ -56,9 +68,10 @@ import com.project.beautifulday.androidsmall1.jotiOne
  * @param viewmodelA ViewmodelAplication para gestionar el estado relacionado con la UI.
  * @param LgViewModel LogViewmodel para gestionar el estado de inicio de sesión y acciones relacionadas.
  */
+
+
 @Composable
 fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: ComponentActivity, viewmodelA: ViewmodelAplication, LgViewModel: LogViewmodel) {
-    // Observando varias variables de estado de los viewmodels.
     val meal = viewmodel.meal
     val actionTranslate by viewmodelA.actionTranslate.observeAsState(true)
     val state = viewmodelA.state.value
@@ -67,16 +80,56 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
     val progrees by viewmodel.progress.observeAsState(true)
     val random = viewmodelA.random
 
+    var showDialog by remember { mutableStateOf(false) }
 
-    // Columna principal que contiene el contenido de la tarjeta de comida.
+    if (showDialog) {
+        Dialog(onDismissRequest = { showDialog = false }) {
+            Box(
+                modifier = Modifier
+                    .height(500.dp)
+                    .background(colorResource(id = R.color.paynesGray))
+                    .border(BorderStroke(2.dp, colorResource(id = R.color.silver))),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    AndroidView(
+                        factory = { context ->
+                        YouTubePlayerView(context).apply {
+                            addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
+                                override fun onReady(youTubePlayer: YouTubePlayer) {
+                                    meal.strYoutube?.let { url ->
+                                        val videoId = Uri.parse(url).getQueryParameter("v")
+                                        videoId?.let {
+                                            youTubePlayer.cueVideo(it, 0f)
+                                        }
+                                    }
+                                }
+                            })
+                        }
+                    }, modifier = Modifier
+                            .fillMaxWidth()
+                            .height(300.dp)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    OutlinedButton(onClick = { val intent = Intent(Intent.ACTION_VIEW, Uri.parse(meal.strYoutube))
+                        context.startActivity(intent) }) {
+                        Text("Ir a youtube", color = colorResource(id = R.color.silver))
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    OutlinedButton(onClick = { showDialog = false }) {
+                        Text("Cerrar", color = colorResource(id = R.color.silver))
+                    }
+                }
+            }
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = colorResource(id = R.color.paynesGray)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        // Muestra el nombre de la comida.
         Text(
             text = meal.strMeal ?: "",
             modifier = Modifier
@@ -88,24 +141,19 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
             textAlign = TextAlign.Center
         )
 
-        // Tarjeta que contiene la imagen y los detalles de la comida.
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(
                 modifier = Modifier
                     .background(colorResource(id = R.color.paynesGray))
             ) {
-
-                // Muestra un indicador de carga si los datos están siendo obtenidos.
-                if(progrees) {
+                if (progrees) {
                     Box(
                         Modifier
                             .fillMaxWidth()
                             .height(300.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             CircularProgressIndicator(color = colorResource(id = R.color.silver))
                             Spacer(modifier = Modifier.padding(3.dp))
                             Text(
@@ -115,7 +163,6 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
                         }
                     }
                 } else {
-                    // Muestra la imagen de la comida cuando los datos están listos.
                     AsyncImage(
                         model = meal.strMealThumb,
                         contentDescription = null,
@@ -126,7 +173,6 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
                     )
                 }
 
-                // Lista que muestra los ingredientes y las instrucciones de la comida.
                 LazyColumn(
                     modifier = Modifier
                         .padding(20.dp)
@@ -134,7 +180,6 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     item {
-                        // Componente personalizado para traducir el texto si es necesario.
                         ActionTransalate(
                             actionTranslate = actionTranslate,
                             text = "Ingredients:" + "\n" + meal.strIngredients?.joinToString() + "\n" + ":Instructions:" + "\n" + meal.strInstructions,
@@ -144,9 +189,8 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
                         )
                     }
                 }
-                if(random){
-                    Box(modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center){
+                if (random) {
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                         OutlinedButton(onClick = {
                             viewmodelA.changeActionTranslate(true)
                             viewmodel.getRandom()
@@ -159,21 +203,16 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
         }
     }
 
-    // Columna que contiene iconos de acciones adicionales.
     Column {
-        // Icono que permite cambiar el estado de la vista deslizante.
         Icon(
             painter = painterResource(id = R.drawable.density),
             contentDescription = null,
             tint = colorResource(id = R.color.silver),
             modifier = Modifier
-                .clickable {
-                    viewmodelA.changeSlide(slide)
-                }
+                .clickable { viewmodelA.changeSlide(slide) }
                 .padding(start = 5.dp, top = 8.dp)
         )
 
-        // Visibilidad animada para mostrar las opciones adicionales cuando `slide` es verdadero.
         AnimatedVisibility(
             visible = slide,
             enter = slideInHorizontally(),
@@ -184,7 +223,6 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
                     .padding(3.dp)
                     .background(colorResource(id = R.color.silver))
             ) {
-                // Opción para traducir el texto.
                 Text(
                     text = "Traducir",
                     modifier = Modifier
@@ -196,8 +234,7 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
                     color = colorResource(id = R.color.paynesGray)
                 )
 
-                // Opción para guardar la comida si el usuario está logueado.
-                if(login) {
+                if (login) {
                     Text(
                         text = "Guardar",
                         modifier = Modifier
@@ -208,7 +245,8 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
                                     context,
                                     {
                                         viewmodelA.changeMessConfirm("Receta guarda correctamenete")
-                                        navController.navigate("ok") }
+                                        navController.navigate("ok")
+                                    }
                                 ) {
                                     Toast
                                         .makeText(
@@ -224,25 +262,18 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
                         color = colorResource(id = R.color.paynesGray)
                     )
 
-                    // Opción para ver el video de la receta en YouTube.
                     Text(
                         text = "Ver video",
                         modifier = Modifier
                             .padding(2.dp)
                             .clickable {
-                                context.startActivity(
-                                    Intent(
-                                        Intent.ACTION_VIEW,
-                                        Uri.parse(meal.strYoutube)
-                                    )
-                                )
                                 viewmodelA.changeSlide(slide)
+                                showDialog = true
                             },
                         color = colorResource(id = R.color.paynesGray)
                     )
                 }
 
-                // Opción para volver atrás.
                 Text(
                     text = "Atras",
                     modifier = Modifier
@@ -257,3 +288,6 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
         }
     }
 }
+
+
+

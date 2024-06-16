@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FirebaseFirestore
 import com.project.beautifulday.Cocktail.ui.States.CocktailUser
 import com.project.beautifulday.Local
@@ -30,23 +31,17 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
             }
     }
 
-    fun updateUser(colec: String, iDoc: String, user: User, context: ComponentActivity): Task<Boolean> {
+    fun updateUser(colec: String, iDoc: String, user: User): Task<Boolean> {
         val result = TaskCompletionSource<Boolean>()
 
         val plusVotes = hashMapOf(
             "password" to user.password,
-            "userName" to user.userName,
-            "email" to user.email
+            "userName" to user.userName
         )
         fireStore.collection(colec).document(iDoc)
             .update(plusVotes as Map<String, Any>)
             .addOnSuccessListener {
                 result.setResult(true)
-                Toast.makeText(
-                    context,
-                    "Actualización de usuario realizada",
-                    Toast.LENGTH_SHORT
-                ).show()
                 Log.d("Actualizacion OK", "Se ha actualizado correctamente")
             }
             .addOnFailureListener {
@@ -698,4 +693,5 @@ class FirestoreService@Inject constructor(private val fireStore: FirebaseFiresto
             }
         return result.task
     }
+
 }

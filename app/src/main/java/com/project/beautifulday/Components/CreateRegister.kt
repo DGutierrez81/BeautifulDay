@@ -242,31 +242,54 @@ fun CreateRegister(navController: NavController, viewmodel: MealViewmodel, viewm
             tittle = "Aviso",
             text = "Tiene registros sin rellenar\n¿Desea seguir?",
             onDismiss = { viewmodelA.changeCreateAlerte(!showCreateAlert) }) {
-            viewmodel.saveMealCreater(
-                name,
-                "",
-                "",
-                descripcion,
-                foto,
-                "",
-                video,
-                ingrediente
-                    .split(",", " ")
-                    .toMutableList(),
-                mutableListOf(),
-                user.userName
-            )
-            viewmodel.saveNewMeals("Create $screen", context, {navController.navigate("ok")}) {
-                Toast
-                    .makeText(
-                        context,
-                        "registro guardado correctamente",
-                        Toast.LENGTH_SHORT
-                    )
-                    .show()
-                viewmodelA.clean()
-                navController.navigate(screen)
-                viewmodelA.changeCreateAlerte(false)
+            if(screen == "meal"){
+                viewmodel.saveMealCreater(
+                    name,
+                    "",
+                    "",
+                    descripcion,
+                    foto,
+                    "",
+                    video,
+                    ingrediente
+                        .split(",", " ")
+                        .toMutableList(),
+                    mutableListOf(),
+                    user.userName
+                )
+                viewmodel.saveNewMeals("Create $screen", context, {navController.navigate("ok")}) {
+                    Toast
+                        .makeText(
+                            context,
+                            "Registro guardado correctamente",
+                            Toast.LENGTH_SHORT
+                        )
+                        .show()
+                    viewmodelA.clean()
+                    navController.navigate("meal")
+                }
+            }else{
+                cocktailViewmodel.SaveCocktailCreater(
+                    name,
+                    descripcion,
+                    foto,
+                    ingrediente
+                        .split(",", " ")
+                        .toMutableList(),
+                    video,
+                    user.userName
+                )
+                cocktailViewmodel.saveNewCocktail("Create $screen", context, {navController.navigate("ok")}) {
+                    Toast
+                        .makeText(
+                            context,
+                            "Cocktail guardado correctamente",
+                            Toast.LENGTH_SHORT
+                        )
+                        .show()
+                    viewmodelA.clean()
+                    navController.navigate("cocktail")
+                }
             }
         }
     }

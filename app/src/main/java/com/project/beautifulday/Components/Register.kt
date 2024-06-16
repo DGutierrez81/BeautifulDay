@@ -78,28 +78,30 @@ fun Register(navController: NavController, LgViewmodel: LogViewmodel, context: C
                 unfocusedIndicatorColor = Color.Transparent,
             )
         )
-        Spacer(modifier = Modifier.height(15.dp))
-        // Campo de texto para el correo electrónico
-        OutlinedTextField(
-            value = LgViewmodel.email,
-            onValueChange = { LgViewmodel.changeEmail(it) },
-            label = { Text(text = "Email", color = colorResource(id = R.color.paynesGray)) },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Next
-            ),
-            keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
-            trailingIcon = { Icon(Icons.Default.Email, contentDescription = "Icon email", tint = colorResource(id = R.color.paynesGray)) },
-            modifier = Modifier.background(Color.White, shape = RoundedCornerShape(100.dp)),
-            shape = RoundedCornerShape(100.dp),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White,
-                disabledContainerColor = Color.White,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
+        if(!updateUser){
+            Spacer(modifier = Modifier.height(15.dp))
+            // Campo de texto para el correo electrónico
+            OutlinedTextField(
+                value = LgViewmodel.email,
+                onValueChange = { LgViewmodel.changeEmail(it) },
+                label = { Text(text = "Email", color = colorResource(id = R.color.paynesGray)) },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
+                trailingIcon = { Icon(Icons.Default.Email, contentDescription = "Icon email", tint = colorResource(id = R.color.paynesGray)) },
+                modifier = Modifier.background(Color.White, shape = RoundedCornerShape(100.dp)),
+                shape = RoundedCornerShape(100.dp),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White,
+                    disabledContainerColor = Color.White,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                )
             )
-        )
+        }
         Spacer(modifier = Modifier.height(15.dp))
         // Campo de texto para la contraseña
         OutlinedTextField(
@@ -114,9 +116,7 @@ fun Register(navController: NavController, LgViewmodel: LogViewmodel, context: C
             keyboardActions = KeyboardActions(onSend = {
                 if(updateUser){
                     LgViewmodel.changeUser(LgViewmodel.userName, "userName")
-                    LgViewmodel.changeUser(LgViewmodel.email, "email")
                     LgViewmodel.changeUser(LgViewmodel.password, "password")
-                    LgViewmodel.changeUpdateUser(false)
                     LgViewmodel.updateUser(idDoc?: "", LgViewmodel.password,context) { navController.navigate("principal") }
                 }else{
                     LgViewmodel.creauteUser(LgViewmodel.email, LgViewmodel.password) { navController.navigate("principal") }

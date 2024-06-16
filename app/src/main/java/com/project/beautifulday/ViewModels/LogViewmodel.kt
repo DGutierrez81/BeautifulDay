@@ -161,7 +161,7 @@ class LogViewmodel@Inject constructor(private val authService: AuthService, priv
 
                 // Actualiza los datos del usuario en Firestore
                 val result = withContext(Dispatchers.IO) {
-                    Tasks.await(firestore.updateUser("Users", iDoc, user, context))
+                    Tasks.await(firestore.updateUser("Users", iDoc, user))
                 }
                 if (result) {
                     onSuccess()
@@ -208,7 +208,6 @@ class LogViewmodel@Inject constructor(private val authService: AuthService, priv
     fun changeUser(value: String, text: String) {
         when (text) {
             "userName" -> if (value != "") user = user.copy(userName = value)
-            "email" -> if (value != "") user = user.copy(email = value)
             "password" -> if (value != "") user = user.copy(password = value)
         }
     }

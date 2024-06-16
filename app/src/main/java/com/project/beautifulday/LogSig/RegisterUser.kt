@@ -39,14 +39,23 @@ fun RegisterUser(
     val slide by viewmodelA.slide.observeAsState(false)
     val showDialog = viewmodelA.showDialog
     val showAlert = loginVM.showAlert.value
+    val password = loginVM.password
 
     // Show an alert dialog if showAlert is true
     if (showAlert) {
-        Alert(
-            onDismiss = { loginVM.showAlert(showAlert) },
-            titulo = "Aviso",
-            contenido = "Error al ingresar los datos"
-        )
+        if(password.length < 6){
+            Alert(
+                onDismiss = { loginVM.showAlert(showAlert) },
+                titulo = "Aviso",
+                contenido = "La password debe de tener al menos 6 dígitos"
+            )
+        }else{
+            Alert(
+                onDismiss = { loginVM.showAlert(showAlert) },
+                titulo = "Aviso",
+                contenido = "Error al ingresar los datos"
+            )
+        }
     }
 
     // Scaffold for the user registration screen layout

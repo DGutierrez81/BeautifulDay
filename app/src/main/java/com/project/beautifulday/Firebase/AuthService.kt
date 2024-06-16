@@ -64,7 +64,7 @@ class AuthService @Inject constructor(private val firebaseAuth: FirebaseAuth) {
      *
      * @return Objeto FirebaseUser correspondiente al usuario autenticado actualmente, o null si no hay ningún usuario autenticado.
      */
-    fun getCurrentUser() = firebaseAuth.currentUser
+    private fun getCurrentUser() = firebaseAuth.currentUser
 
     suspend fun updatePassword(newPassword: String, context: ComponentActivity) {
         val currentUser = getCurrentUser()
@@ -104,7 +104,7 @@ class AuthService @Inject constructor(private val firebaseAuth: FirebaseAuth) {
     }
 
     // Función para eliminar un usuario
-    suspend fun deleteCurrentUser(context:ComponentActivity) {
+    fun deleteCurrentUser(context:ComponentActivity) {
         val currentUser = getCurrentUser()
 
         currentUser?.let { user ->

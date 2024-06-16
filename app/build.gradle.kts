@@ -79,7 +79,8 @@ dependencies {
     // Glide
     implementation("com.github.bumptech.glide:glide:4.15.1")
 
-
+    //Youtube
+    implementation ("com.pierfrancescosoffritti.androidyoutubeplayer:chromecast-sender:0.28")
 
 
     //Test
