@@ -41,7 +41,10 @@ fun GroupIcon(
                 painter = painterResource(id = R.drawable.inicio2_key),
                 contentDescription = null,
                 tint = colorResource(id = R.color.paynesGray),
-                modifier = Modifier.clickable { navController.navigate("login") }
+                modifier = Modifier.clickable {
+                    viewmodelA.clean()
+                    navController.navigate("login")
+                }
             )
             // Icono para registrarse
             Icon(
@@ -131,7 +134,10 @@ fun GroupIcon(
                 painter = painterResource(id = R.drawable.inicio2_key),
                 contentDescription = null,
                 tint = colorResource(id = R.color.paynesGray),
-                modifier = Modifier.clickable { navController.navigate("login") }
+                modifier = Modifier.clickable {
+                    viewmodelA.clean()
+                    navController.navigate("login")
+                }
             )
             // Icono para registrarse
             Icon(

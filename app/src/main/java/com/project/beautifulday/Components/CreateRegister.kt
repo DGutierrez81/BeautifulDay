@@ -252,7 +252,7 @@ fun CreateRegister(navController: NavController, viewmodel: MealViewmodel, viewm
                     "",
                     video,
                     ingrediente
-                        .split(",", " ")
+                        .split(",")
                         .toMutableList(),
                     mutableListOf(),
                     user.userName
@@ -274,7 +274,7 @@ fun CreateRegister(navController: NavController, viewmodel: MealViewmodel, viewm
                     descripcion,
                     foto,
                     ingrediente
-                        .split(",", " ")
+                        .split(",")
                         .toMutableList(),
                     video,
                     user.userName

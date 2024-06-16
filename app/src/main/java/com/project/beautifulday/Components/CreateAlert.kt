@@ -47,7 +47,7 @@ fun createAlert(navController: NavController, viewmodelA: ViewmodelAplication, v
                 "",
                 video,
                 ingrediente
-                    .split(",", " ")
+                    .split(",")
                     .toMutableList(),
                 mutableListOf(),
                 user
@@ -69,7 +69,7 @@ fun createAlert(navController: NavController, viewmodelA: ViewmodelAplication, v
                 descripcion,
                 foto,
                 ingrediente
-                    .split(",", " ")
+                    .split(",")
                     .toMutableList(),
                 video,
                 user
