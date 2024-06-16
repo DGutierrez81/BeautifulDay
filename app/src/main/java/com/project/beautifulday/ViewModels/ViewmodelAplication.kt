@@ -831,6 +831,7 @@ class ViewmodelAplication @Inject constructor(
         showDialog = false
         resultUri = null
         id = ""
+        showCreateAlert = false
         descripcion = ""
         uriFoto = ""
         uriVideo = ""
