@@ -53,6 +53,7 @@ fun MyTopBar(
     mealName: String,
     navController: NavController,
     slide: Boolean,
+    slideUser: Boolean,
     viewmodelA: ViewmodelAplication,
     logViewmodel: LogViewmodel,
     showDialog: Boolean,
@@ -73,7 +74,7 @@ fun MyTopBar(
                 item {
                     Mytext(text = "Busqueda por nombre") {
                         viewmodel.changeshowOutLineText(
-                            showOutLineText
+                            !showOutLineText
                         )
                     }
                     if(screen == "meal"){
@@ -85,6 +86,7 @@ fun MyTopBar(
                             fontFamily = jotiOne,
                             color = colorResource(id = R.color.paynesGray),
                             modifier = Modifier.clickable {
+                                viewmodel.changeshowOutLineText(false)
                                 viewmodelA.changeRandom(true)
                                 viewmodel.getRandom()
                                 navController.navigate("myCard")
@@ -93,7 +95,10 @@ fun MyTopBar(
                         Spacer(modifier = Modifier.padding(20.dp))
 
                         Column {
-                            Mytext(text = "Categorias") { viewmodelA.changeSlide(slide) }
+                            Mytext(text = "Categorias") {
+                                viewmodel.changeshowOutLineText(false)
+                                viewmodelA.changeSlide(slide)
+                            }
 
                             AnimatedVisibility(
                                 visible = slide
@@ -120,31 +125,44 @@ fun MyTopBar(
                         if(login){
                             Spacer(modifier = Modifier.padding(20.dp))
 
-                            Mytext(text = "Favoritos") { navController.navigate("listMealUser") }
+                            Mytext(text = "Favoritos") {
+                                viewmodel.changeshowOutLineText(false)
+                                navController.navigate("listMealUser")
+                            }
 
                             Spacer(modifier = Modifier.padding(20.dp))
 
-                            Mytext(text = "Ver recetas socios") { navController.navigate("listMealUserCreater") }
+                            Mytext(text = "Ver recetas socios") {
+                                viewmodel.changeshowOutLineText(false)
+                                navController.navigate("listMealUserCreater") }
 
                             Spacer(modifier = Modifier.padding(20.dp))
 
-                            Mytext(text = "Crear receta") { navController.navigate("createNewMeal")  }
+                            Mytext(text = "Crear receta") {
+                                viewmodel.changeshowOutLineText(false)
+                                navController.navigate("createNewMeal")  }
 
                             Spacer(modifier = Modifier.padding(20.dp))
 
-                            Mytext(text = "Crear local") { navController.navigate("createNewLocal") }
+                            Mytext(text = "Crear local") {
+                                viewmodel.changeshowOutLineText(false)
+                                navController.navigate("createNewLocal") }
 
                             Spacer(modifier = Modifier.padding(20.dp))
 
-                            Mytext(text = "Donde comer") { navController.navigate("listLocal")  }
+                            Mytext(text = "Donde comer") {
+                                viewmodel.changeshowOutLineText(false)
+                                navController.navigate("listLocal")  }
 
                             Spacer(modifier = Modifier.padding(20.dp))
 
                             Column {
-                                Mytext(text = "Gestión usuario") { viewmodelA.changeSlide(slide)  }
+                                Mytext(text = "Gestión usuario") {
+                                    viewmodel.changeshowOutLineText(false)
+                                    viewmodelA.changeSlideUser(!slideUser)  }
 
                                 AnimatedVisibility(
-                                    visible = slide
+                                    visible = slideUser
                                 ) {
                                     Column(
                                         modifier = Modifier
@@ -186,7 +204,9 @@ fun MyTopBar(
                         Spacer(modifier = Modifier.padding(20.dp))
 
                         Column {
-                            Mytext(text = "Categorias") { viewmodelA.changeSlide(slide) }
+                            Mytext(text = "Categorias") {
+                                viewmodel.changeshowOutLineText(false)
+                                viewmodelA.changeSlide(slide) }
 
                             AnimatedVisibility(
                                 visible = slide
@@ -225,31 +245,43 @@ fun MyTopBar(
                         }
                         if(login){
                             Spacer(modifier = Modifier.padding(20.dp))
-                            Mytext(text = "Favoritos") { navController.navigate("listCocktailUser") }
+                            Mytext(text = "Favoritos") {
+                                viewmodel.changeshowOutLineText(false)
+                                navController.navigate("listCocktailUser") }
 
                             Spacer(modifier = Modifier.padding(20.dp))
 
-                            Mytext(text = "Ver cocktail socios") { navController.navigate("listCocktailUserCreater") }
+                            Mytext(text = "Ver cocktail socios") {
+                                viewmodel.changeshowOutLineText(false)
+                                navController.navigate("listCocktailUserCreater") }
 
                             Spacer(modifier = Modifier.padding(20.dp))
 
-                            Mytext(text = "Crear cocktail") { navController.navigate("createNewMeal") }
+                            Mytext(text = "Crear cocktail") {
+                                viewmodel.changeshowOutLineText(false)
+                                navController.navigate("createNewMeal") }
 
                             Spacer(modifier = Modifier.padding(20.dp))
 
-                            Mytext(text = "Crear local") { navController.navigate("createNewLocal") }
+                            Mytext(text = "Crear local") {
+                                viewmodel.changeshowOutLineText(false)
+                                navController.navigate("createNewLocal") }
 
                             Spacer(modifier = Modifier.padding(20.dp))
 
-                            Mytext(text = "Donde beber") { navController.navigate("listLocal")  }
+                            Mytext(text = "Donde beber") {
+                                viewmodel.changeshowOutLineText(false)
+                                navController.navigate("listLocal")  }
 
                             Spacer(modifier = Modifier.padding(20.dp))
 
                             Column {
-                                Mytext(text = "Gestión usuario") { viewmodelA.changeSlide(slide)  }
+                                Mytext(text = "Gestión usuario") {
+                                    viewmodel.changeshowOutLineText(false)
+                                    viewmodelA.changeSlideUser(!slideUser)  }
 
                                 AnimatedVisibility(
-                                    visible = slide
+                                    visible = slideUser
                                 ) {
                                     Column(
                                         modifier = Modifier

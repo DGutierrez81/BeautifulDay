@@ -38,6 +38,7 @@ fun LogIn(
     // Collecting state values from the ViewModels
     val meals by viewmodel.mealsData.collectAsState()
     val slide by viewmodelA.slide.observeAsState(false)
+    val slideUser by viewmodelA.slideUser.observeAsState(false)
     val showDialog = viewmodelA.showDialog
     val showAlert = loginVM.showAlert.value
 
@@ -63,6 +64,7 @@ fun LogIn(
                 mealName = "",
                 navController = navController,
                 slide = slide,
+                slideUser = slideUser,
                 viewmodelA = viewmodelA,
                 logViewmodel = loginVM,
                 showDialog = showDialog,

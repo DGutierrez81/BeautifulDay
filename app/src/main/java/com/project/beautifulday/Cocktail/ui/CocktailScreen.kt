@@ -50,6 +50,7 @@ fun CocktailScreen(
     val showOutLineText = viewmodel.showOutLineText
     // Observa el estado del slide del ViewmodelAplication
     val slide by viewmodelA.slide.observeAsState(false)
+    val slideUser by viewmodelA.slideUser.observeAsState(false)
     // Observa el estado del showDialog del ViewmodelAplication
     val showDialog = viewmodelA.showDialog
     // Observa el estado de login del LogViewmodel
@@ -86,6 +87,7 @@ fun CocktailScreen(
                 mealName = "Cocktail", // Título de la pantalla
                 navController = navController, // Controlador de navegación
                 slide = slide, // Estado de slide
+                slideUser = slideUser,
                 viewmodelA = viewmodelA, // ViewModel de aplicación
                 LgViewModel,
                 showDialog = showDialog, // Estado de showDialog

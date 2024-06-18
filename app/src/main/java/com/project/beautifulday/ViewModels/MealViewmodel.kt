@@ -760,7 +760,7 @@ class MealViewmodel @Inject constructor(
      * @param result Nuevo estado.
      */
     fun changeshowOutLineText(result: Boolean) {
-        showOutLineText = !result
+        showOutLineText = result
     }
 
 

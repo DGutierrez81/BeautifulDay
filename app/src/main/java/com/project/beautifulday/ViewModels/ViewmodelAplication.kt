@@ -127,6 +127,9 @@ class ViewmodelAplication @Inject constructor(
 
     private val _slide = MutableLiveData<Boolean>()
     val slide: LiveData<Boolean> = _slide
+
+    private val _slideUser = MutableLiveData<Boolean>()
+    val slideUser: LiveData<Boolean> = _slideUser
     var showDialog by mutableStateOf(false)
         private set
     var name by mutableStateOf("")
@@ -141,7 +144,7 @@ class ViewmodelAplication @Inject constructor(
         private set
     var id by mutableStateOf("")
         private set
-    private val validIds = (0..99999).map { it.toString() }.toSet()
+
     var ingrediente by mutableStateOf("")
         private set
     var web by mutableStateOf("")
@@ -655,6 +658,9 @@ class ViewmodelAplication @Inject constructor(
         _slide.value = !value
     }
 
+    fun changeSlideUser(value: Boolean){
+        _slideUser.value = value
+    }
     fun changeShowVotes(result: Boolean){
         showVotes = result
     }
@@ -827,6 +833,7 @@ class ViewmodelAplication @Inject constructor(
     // Método para limpiar todos los estados
     fun clean() {
         _slide.value = false
+        _slideUser.value = false
         _actionTranslate.value = true
         showDialog = false
         resultUri = null

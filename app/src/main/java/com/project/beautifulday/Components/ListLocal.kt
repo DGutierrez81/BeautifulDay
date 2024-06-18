@@ -58,6 +58,7 @@ fun ListLocal(
     val showOutLineText = viewmodel.showOutLineText
     // Observa y obtiene el estado actual del deslizamiento
     val slide by viewmodelA.slide.observeAsState(false)
+    val slideUser by viewmodelA.slideUser.observeAsState(false)
     // Observa y obtiene el estado actual de mostrar el diálogo
     val showDialog = viewmodelA.showDialog
     // Observa y obtiene el estado actual de inicio de sesión
@@ -108,6 +109,7 @@ fun ListLocal(
                 mealName = "Socios",
                 navController = navController,
                 slide = slide,
+                slideUser = slideUser,
                 viewmodelA = viewmodelA,
                 logViewmodel =  LgViewModel,
                 showDialog = showDialog,

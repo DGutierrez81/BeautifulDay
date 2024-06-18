@@ -39,6 +39,7 @@ fun PrincipalScreen(
     val meals by viewmodel.mealsData.collectAsState()
     // Observa el estado del slide del ViewModel de aplicación
     val slide by viewmodelA.slide.observeAsState(false)
+    val slideUser by viewmodelA.slideUser.observeAsState(false)
     // Observa el estado del showDialog del ViewModel de aplicación
     val showDialog = viewmodelA.showDialog
     // Observa el estado de login del ViewModel de inicio de sesión
@@ -61,6 +62,7 @@ fun PrincipalScreen(
                 mealName = "",
                 navController = navController,
                 slide = slide,
+                slideUser = slideUser,
                 viewmodelA = viewmodelA,
                 logViewmodel = LgViewModel,
                 showDialog = showDialog,
