@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ButtonDefaults
@@ -49,7 +48,6 @@ import com.project.beautifulday.Components.RatingBarImage
 import com.project.beautifulday.ViewModels.MealViewmodel
 import com.project.beautifulday.ViewModels.ViewmodelAplication
 import com.project.beautifulday.R
-import com.project.beautifulday.ViewModels.LogViewmodel
 import com.project.beautifulday.androidsmall1.jotiOne
 
 

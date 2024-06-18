@@ -840,6 +840,7 @@ class ViewmodelAplication @Inject constructor(
         random = false
         pais = ""
         ciudad = ""
+        web = ""
     }
 }
 
