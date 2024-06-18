@@ -60,7 +60,6 @@ fun MyTopBar(
     context: ComponentActivity
 ){
     val screen = viewmodelA.screen
-    val idDoc = logViewmodel.user.idDocument
     if(showMenu){
         Column(
             modifier = Modifier
