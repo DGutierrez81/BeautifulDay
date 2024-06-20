@@ -189,6 +189,7 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
                         )
                     }
                 }
+                //traducir
                 if (random) {
                     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                         OutlinedButton(onClick = {
