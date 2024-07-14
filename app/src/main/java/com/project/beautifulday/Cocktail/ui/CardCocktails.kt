@@ -144,7 +144,8 @@ fun CardCocktails(navController: NavController, viewmodel: CocktailViewmodel, co
                     Box(modifier = Modifier.fillMaxWidth(),
                         contentAlignment = Alignment.Center){
                         OutlinedButton(onClick = {
-                            viewmodelA.changeActionTranslate(true)
+                            viewmodelA.clean()
+                            viewmodelA.changeRandom(true)
                             viewmodel.getRandom()
                         }) {
                             Text(text = "Dame otro", color = colorResource(id = R.color.silver))

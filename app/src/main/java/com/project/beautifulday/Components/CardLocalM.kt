@@ -91,7 +91,7 @@ fun CardLocalM(
     // Observa y obtiene el estado actual del progreso
     val progress by viewmodelA.progrees.observeAsState(true)
     val screen = viewmodelA.screen
-    var openGoogle = viewmodelA.openGoogle
+    //var openGoogle = viewmodelA.openGoogle
 
 
 
@@ -269,7 +269,6 @@ fun CardLocalM(
                                     viewmodelA.changeLocalizacion(LatLng(latitud, longitud))
                                 }
                             }
-                            //navController.navigate("myGoogleMaps")
                             viewmodelA.changeOpenGoogle(true)
                             viewmodelA.changeSlide(slide)
                         },
