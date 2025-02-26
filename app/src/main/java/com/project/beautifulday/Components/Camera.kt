@@ -93,7 +93,7 @@ fun Camera(navController: NavController, viewmodelA: ViewmodelAplication, contex
                     .background(color = colorResource(id = R.color.paynesGray))) {
                     OutlinedButton(onClick = {
                         uri = viewmodelA.generateUri(context, namePhoto, "jpg")
-                        intentCameraLaucher.launch(uri)
+                        (uri as? Uri)?.let { intentCameraLaucher.launch(it) }
                         showDialog = false
                     }, modifier = Modifier
                         .fillMaxWidth()
@@ -108,7 +108,7 @@ fun Camera(navController: NavController, viewmodelA: ViewmodelAplication, contex
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedButton(onClick = {
                         uri = viewmodelA.generateUri(context, namePhoto, "mp4")
-                        intentCameraLaucherVideo.launch(uri)
+                        (uri as? Uri)?.let { intentCameraLaucherVideo.launch(it) }
                         showDialog = false
                     }, modifier = Modifier
                         .fillMaxWidth()
@@ -215,9 +215,11 @@ fun Camera(navController: NavController, viewmodelA: ViewmodelAplication, contex
                 )
                 .focusRequester(focusRequester),
 
-            colors = TextFieldDefaults.textFieldColors(
-
-                containerColor = Color.White,
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+                disabledContainerColor = Color.White,
+                errorContainerColor = Color.White,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent),
             maxLines = 1,

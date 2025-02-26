@@ -230,8 +230,10 @@ class LogViewmodel@Inject constructor(private val authService: AuthService, priv
     fun logOut(onSuccess: () -> Unit){
         viewModelScope.launch(Dispatchers.IO) {
             authService.logOut()
+            withContext(Dispatchers.Main) { // Regresa al hilo principal para la navegación
+                onSuccess()
+            }
         }
-        onSuccess()
     }
 
     /**

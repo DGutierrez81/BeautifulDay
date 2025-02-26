@@ -122,7 +122,7 @@ fun ListMealUser(
                 LgViewModel.logOut{
                     navController.navigate("principal") {
                         // Limpia la pila de navegación hasta el destino inicial
-                        popUpTo(navController.graph.startDestinationId) {
+                        popUpTo(0) {
                             inclusive = true
                         }
                         // Esto asegura que la pantalla principal sea la única en la pila de backstack
