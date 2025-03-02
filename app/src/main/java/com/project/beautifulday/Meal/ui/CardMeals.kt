@@ -229,7 +229,7 @@ fun CardMeals(navController: NavController, viewmodel: MealViewmodel, context: C
                         .padding(2.dp)
                         .clickable {
                             viewmodelA.changeActionTranslate(!actionTranslate)
-                            viewmodelA.changeSlide(slide)
+                            viewmodelA.changeSlide(!slide)
                         },
                     color = colorResource(id = R.color.paynesGray)
                 )

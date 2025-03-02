@@ -90,7 +90,7 @@ fun Register(navController: NavController, LgViewmodel: LogViewmodel, context: C
                     imeAction = ImeAction.Next
                 ),
                 keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
-                trailingIcon = { Icon(Icons.Default.Email, contentDescription = "Icon email", tint = colorResource(id = R.color.paynesGray)) },
+                trailingIcon = { Icon(imageVector =  Icons.Default.Email, contentDescription = "Icon email", tint = colorResource(id = R.color.paynesGray)) },
                 modifier = Modifier.background(Color.White, shape = RoundedCornerShape(100.dp)),
                 shape = RoundedCornerShape(100.dp),
                 colors = TextFieldDefaults.colors(
